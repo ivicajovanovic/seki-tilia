@@ -57,6 +57,9 @@ if (!existsSync(visualDesignSkillPath)) errors.push("Nedostaje obavezni skills/v
 if (!review.includes("- [x] Vizuelni dizajn je izrađen i pregledan prema skills/visual-design/SKILL.md.")) {
   errors.push("Nedostaje potvrda obavezne vizuelne provere prema skills/visual-design/SKILL.md.");
 }
+if (!review.includes("- [x] Logo, glavna poruka, ponuda, proizvod i CTA, kada postoje, jasno su vidljivi i kontrastni u svakom formatu.")) {
+  errors.push("Nedostaje potvrda provere vidljivosti i kontrasta obaveznih elemenata u svakom formatu.");
+}
 
 const textToCheck = [
   JSON.stringify(input ?? {}),

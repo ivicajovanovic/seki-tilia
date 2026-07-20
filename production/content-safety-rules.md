@@ -36,6 +36,7 @@ Status: SPREMNO ZA LJUDSKU PROVERU | BLOKIRANO
 - [ ] Lokacijski podaci su potvrđeni ili nisu navedeni.
 - [ ] Nema dijagnoze, terapijske preporuke ni obećanja rezultata.
 - [ ] Vizual ne predstavlja generisanu osobu kao stvarnog zaposlenog.
+- [ ] Logo, glavna poruka, ponuda, proizvod i CTA, kada postoje, jasno su vidljivi i kontrastni u svakom formatu.
 - [ ] Tekst je jezički i vizuelno pregledan.
 
 Napomene i nedostajući podaci:

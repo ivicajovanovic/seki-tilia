@@ -58,5 +58,6 @@ izvozi/GGGG-MM-DD-slug-objave/
 - Da li su zdravstvene tvrdnje proverene ili uklonjene?
 - Da li je odabrana ispravna lokacija i njen kontakt?
 - Da li je tekst na grafici čitljiv na telefonu?
+- Da li su logo, glavna poruka, ponuda, proizvod i CTA, kada postoje, jasno vidljivi i kontrastni u svakom formatu?
 - Da li caption sadrži jasan, nenametljiv poziv na akciju?
 - Da li je stručna osoba pregledala objavu kada je to potrebno?

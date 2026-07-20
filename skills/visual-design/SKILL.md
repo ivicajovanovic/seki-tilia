@@ -224,6 +224,8 @@ When generating imagery:
 - Extend it with neutrals, tints, shades, or one campaign accent only when needed.
 - When no brand system exists, derive color from the subject, audience, image, and market position rather than generic industry stereotypes.
 - Ensure text contrast remains strong across the full image.
+- Inspect every exported format at full size and at thumbnail size. Keep the logo, primary message, offer, product, and CTA, when present, immediately visible against their direct backgrounds.
+- Never place a logo, text, icon, or CTA in the same or nearly the same color and value as its direct background. When contrast is insufficient, move it to a controlled solid surface or use an appropriate supplied logo variant. Never recolor, redraw, stretch, or otherwise alter the original logo to solve contrast.
 - Apply texture, grain, gradients, shadows, metallic effects, and blur sparingly and consistently.
 - Premium does not automatically mean black and gold. Medical does not automatically mean blue. Youth does not automatically mean neon.
 
@@ -295,6 +297,7 @@ Inspect the rendered output, not just the source or prompt. Revise until all app
 #### Mobile and technical quality
 
 - [ ] Headline and essential details remain readable at approximately 25% preview size.
+- [ ] Logo, primary message, offer, product, and CTA, when present, are clearly visible and contrast with their direct backgrounds in every exported format.
 - [ ] Critical content stays inside safe margins and survives likely feed crops.
 - [ ] Text does not sit over uncontrolled visual noise.
 - [ ] Images are sharp enough and do not show generation or compositing defects.
