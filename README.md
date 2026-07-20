@@ -1,4 +1,4 @@
-# AU Šeki-Tilia — agent-pokretan studio za društvene mreže
+# AU Šeki-Tilia: agent-pokretan studio za društvene mreže
 
 Lokalni produkcioni sistem za pripremu Instagram i Facebook sadržaja za mrežu apoteka AU Šeki-Tilija. Namenjen je čoveku koji vodi društvene mreže i LLM agentima koji izrađuju materijale u ovom repou.
 
@@ -13,7 +13,23 @@ Sistem **ne objavljuje automatski** na društvene mreže. Agent priprema komplet
 - AI vizual kada nema odgovarajuće fotografije
 - `review.md` sa sadržajnom, operativnom i bezbednosnom proverom
 
-## Brz početak
+## Preuzimanje i pokretanje na drugom računaru
+
+Repo sadrži kompletan sistem, šablone, logo, skripte i zaključane JavaScript zavisnosti. Ne sadrži privatne briefove, fotografije klijenta niti gotove objave, jer oni ostaju lokalni na računaru sa kog radiš.
+
+Potrebni su Git, Node.js 20 ili noviji i Codex/LLM agent koji ima pristup fajlovima repoa i generisanju slika.
+
+```bash
+git clone https://github.com/ivicajovanovic/seki-tilia.git
+cd seki-tilia/video-renderer
+npm ci
+npm run lint
+cd ..
+```
+
+Posle toga otvori root folder `seki-tilia` u Codex-u. `AGENTS.md` i `HANDOFF.md` daju agentu sav potreban kontekst za rad.
+
+## Brz početak nove objave
 
 Otvori novu Codex/LLM sesiju u root-u ovog repoa i pošalji:
 

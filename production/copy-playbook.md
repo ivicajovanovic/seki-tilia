@@ -24,9 +24,23 @@ Meta u svojim aktuelnim smernicama naglašava da caption treba da doda kontekst 
 | „Svratite u najbližu apoteku.” | „Kupite odmah!” kod zdravstveno osetljivih kategorija |
 
 - Piši na srpskom, latinicom, uz obraćanje sa „vi”.
+- Tekst mora biti pravopisno i gramatički ispravan. Ovo važi i za tekst koji ide na grafiku, Story i video, ne samo za caption.
+- Ne koristi em crtu (`—`). Koristi tačku, zarez, dvotačku, zagradu ili novu rečenicu.
 - Rečenice su kratke; jedan pasus ima najviše dve do tri rečenice.
-- Emoji nisu obavezni. Ako se koriste, najviše jedan u hook-u i jedan uz CTA; ne koristiti emoji kao zamenu za informaciju.
-- Ne dodavati više od osam relevantnih hashtagova. U svakoj objavi mogu se ponoviti `#AUSekiTilia` i, kada je relevantno, potvrđeno mesto; ostali zavise od teme.
+- Emoji nisu obavezni. Podrazumevano ih ne koristiti; ako se koriste, najviše jedan do dva u celoj objavi i nikada kao zamenu za informaciju.
+- Ne dodavati više od osam relevantnih hashtagova. U svakoj objavi mogu se ponoviti `#AUSekiTilia` i, kada je relevantno, potvrđeno mesto; ostali zavise od stvarne teme.
+
+## Pravilo protiv generičkog AI teksta
+
+Pre predaje, agent uklanja sve što može da zvuči kao prazna, univerzalna reklama. Posebno izbegava:
+
+- „Vaše zdravlje je na prvom mestu”, „mali korak ka boljem sutra”, „otkrijte moć” i slične neodređene fraze;
+- višestruke uzvičnike, hitnost bez potvrđenog razloga i superlative bez dokaza;
+- nabrajanje opštih koristi koje nisu vezane za konkretan proizvod ili situaciju;
+- pitanje na kraju objave koje nema prirodnu vezu sa sadržajem;
+- ponavljanje iste poruke u grafici, videu i captionu bez nove korisne informacije.
+
+Završni tekst mora da odgovori na tri pitanja: šta je konkretna informacija, zašto je korisna osobi koja prati profil i koji je jedan smislen sledeći korak.
 
 ## Struktura po formatu
 
