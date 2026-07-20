@@ -23,7 +23,7 @@ Pre rada pročitaj:
 
 - Kada korisnik dostavi adresu, telefon i radno vreme, ažuriraj postojeći zapis ili dodaj novi zapis u `brand/brand-config.json`. Ne rasipaj iste kontakt-podatke po šablonima ili pojedinačnim objavama.
 - Koristi stabilan `id` lokacije, izveden iz mesta i/ili naziva koji klijent potvrdi (na primer `petrovac-na-mlavi-centar`).
-- Fotografije koje korisnik podeli u podfolderima po apoteci zadržavaju se u tom izvornom folderu; ne mešaj ih sa slikama druge lokacije i ne preimenuj originale.
+- Fotografije koje korisnik podeli u podfolderima po apoteci čuvaj u `client-assets/locations/<id-lokacije>/`; ne mešaj ih sa slikama druge lokacije i ne preimenuj originale.
 - Pri lokalnoj objavi koristi samo fotografije i kontakt-podatke iz potvrđenog foldera/zapisa te apoteke.
 
 ## Bezbednost sadržaja

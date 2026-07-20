@@ -10,6 +10,7 @@
 /productions/*
 !/productions/.gitkeep
 /video-renderer/public/jobs/
+/client-assets/locations/
 
 # Secrets and local tooling
 .env

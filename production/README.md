@@ -29,6 +29,12 @@ productions/2026/08/001-2026-08-12-naziv-objave/
 
 Redni broj se računa unutar meseca. Originali u `source/` se ne menjaju niti prepisuju.
 
+## Podaci koje čekamo od klijenta
+
+Pre lokalnih objava popuniti `brand/brand-config.json` podacima za svaku apoteku: oznaka lokacije, mesto, adresa, telefon i radno vreme sa eventualnim odstupanjima.
+
+Fotografije apoteka se lokalno čuvaju u `client-assets/locations/<id-lokacije>/`. Fotografije proizvoda, briefovi i finalni materijali za konkretnu objavu idu u njen `source/` folder. Ni jedna od tih datoteka se ne objavljuje na GitHub-u po podrazumevanom pravilu.
+
 ## Režim za AI slike
 
 Podrazumevani režim je **direct-generation**: agent dostupnim generatorom slika pravi potreban originalni vizual, čuva/uvezuje ga uz paket objave i koristi ga u grafici i videu.
