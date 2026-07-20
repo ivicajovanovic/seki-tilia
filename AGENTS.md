@@ -14,6 +14,8 @@ Pre rada na svakom vizualu obavezno pročitaj `skills/visual-design/SKILL.md`. P
 
 Ovaj skill služi isključivo dizajnu grafika, slika i videa. Ne koristi ga za izmene captiona, CTA formulacija, hashtagova ili drugih copy odluka. Za copy su merodavni `production/copy-playbook.md` i bezbednosna pravila, koji imaju prednost ako postoji sukob.
 
+Pre rada na vizualu proveri `brand/design-references/` kada folder sadrži materijale. Koristi ih kao referencu za kvalitet, čitanje kompozicije, hijerarhiju, ritam i obradu, nikada kao šablon za doslovno kopiranje. Referentni materijal ne menja pravila brenda, potvrđene činjenice ni obavezni dizajn-skill.
+
 ## Kada korisnik pošalje materijale za novu objavu
 
 1. Otvori novi folder komandom `node production/scripts/create-post.mjs --slug "kratak-naziv"` (po potrebi dodaj `--date GGGG-MM-DD`).
