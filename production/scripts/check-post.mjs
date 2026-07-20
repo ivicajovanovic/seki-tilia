@@ -66,6 +66,7 @@ const prohibitedPatterns = [
   { pattern: /\bleči\w*|\bizleči\w*/u, reason: "tvrdnja o lečenju" },
   { pattern: /\bgarantuje\w*|\btrenutno rešava\w*/u, reason: "obećanje rezultata" },
   { pattern: /\bbezbedno za svakoga\b/u, reason: "apsolutna bezbednosna tvrdnja" },
+  { pattern: /—/u, reason: "upotreba em crte" },
 ];
 
 for (const { pattern, reason } of prohibitedPatterns) {
