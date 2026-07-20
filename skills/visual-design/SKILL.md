@@ -1,7 +1,6 @@
 ---
 name: social-media-post-design
 description: Create finished, agency-grade static social media advertising graphics and supporting captions for businesses. Use whenever the user asks to design, generate, remake, improve, or adapt an Instagram, Facebook, LinkedIn, or similar feed post; paid ad creative; promotional graphic; product or service announcement; event poster; real-estate listing; tourism offer; medical-service post; company-page "objava"; or an individual carousel slide. Trigger even from a sparse brief or supplied logo, photo, website, or reference image. The primary deliverable is the rendered visual, not design advice. Infer art direction, hierarchy, and layout, but never invent publishable facts. Do not use for video, Reels, or full campaign strategy unless creating a static cover or slide.
-compatibility: Designed for agents with image-generation plus reliable layout, text-rendering, or design tools. When those tools are unavailable, return a production-ready specification and clearly state that no final visual was rendered.
 metadata:
   version: "2.0"
 ---
@@ -174,12 +173,34 @@ Useful defaults, not rigid rules:
 #### Typography
 
 - Treat the headline as a compositional form, not merely text placed on top.
-- Use brand fonts when supplied. Otherwise choose typefaces that fit the subject and provide clear role contrast.
+- Use supplied brand fonts whenever they exist. Do not override an established brand type system with these defaults.
+- When no fonts are supplied, use **Literata + IBM Plex Sans** as the default pairing. Use Literata for primary headlines, editorial statements, large numerals, and occasional expressive italic accents. Use IBM Plex Sans for subheadlines, descriptions, dates, benefits, calls to action, and contact information.
+- Use IBM Plex Sans Condensed selectively for compact dates, locations, labels, schedules, and narrow information modules. Do not use it for longer paragraphs.
+- Avoid Inter, Poppins, Montserrat, Roboto, Open Sans, Lato, Nunito, and generic display-sans pairings by default. Use them only when they belong to the supplied brand system or are explicitly requested.
 - Use no more font personalities than the concept requires. Weight, width, case, scale, and spacing can create hierarchy within one family.
 - Control line breaks manually. Avoid orphaned words, awkward hyphenation, compressed line spacing, and accidental tangencies.
 - Use all caps only for short labels, dates, places, or deliberately forceful headlines.
 - Keep body copy and contact information legible on a phone, not only at full canvas size.
 - Preserve spelling, names, local grammar, capitalization, currency formatting, diacritics, and script exactly.
+
+##### Default type hierarchy when no brand fonts are supplied
+
+- Primary headline: Literata 700–900
+- Expressive accent: Literata Italic 500–700
+- Subheadline: IBM Plex Sans 500–600
+- Dates, locations, and compact labels: IBM Plex Sans Condensed 600–700
+- Body copy and contact information: IBM Plex Sans 400–500
+- CTA: IBM Plex Sans 600–700, with restrained letter spacing when useful
+
+Use no more than two font families in one graphic. Treat variants from the same family as one family. Do not pair two highly expressive display faces.
+
+Choose an alternative pairing only when the creative direction clearly calls for it:
+
+- Fraunces + Source Sans 3 for warm, crafted, hospitality, food, interior, and lifestyle communication.
+- Unbounded + IBM Plex Sans for culture, events, music, youth, and bold contemporary campaigns. Reserve Unbounded for short display text.
+- Source Serif 4 + IBM Plex Sans for restrained institutional, professional, and premium communication.
+
+Verify before finalizing that every chosen typeface supports all required Serbian Latin characters: `Č Ć Š Ž Đ č ć š ž đ`. When Cyrillic is required, verify the complete Serbian Cyrillic character set before building the layout. Never replace a missing glyph with a different font inside the same word.
 
 #### Imagery
 
