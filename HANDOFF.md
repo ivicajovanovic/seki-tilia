@@ -4,6 +4,19 @@
 
 Ovaj repo je lokalni, agent-pokretan sistem za izradu objava za AU Šeki-Tilija. Agent priprema sve materijale; korisnik ih na kraju ručno pregleda i objavljuje na Instagramu i Facebooku.
 
+## Trenutno čekamo od klijenta
+
+Sistem, brend pravila i šabloni su spremni. Da bi lokalne objave bile potpune i tačne, od klijenta još očekujemo:
+
+1. **Podatke za svaku apoteku:** potvrđen naziv/oznaku lokacije, mesto, adresu, telefon, redovno radno vreme i svako odstupanje (subota, nedelja, praznici).
+2. **Fotografije apoteka:** po mogućnosti eksterijer, enterijer i detalje koji se smeju javno koristiti.
+3. **Fotografije proizvoda i brendova:** kada klijent želi promociju konkretnog proizvoda ili akcije.
+4. **Aktuelne informacije za objavu:** tačan proizvod, cena ili popust, rok akcije, dostupne lokacije i sve obavezne napomene.
+
+Kada stignu podaci lokacija, agent ih unosi centralno u `brand/brand-config.json`. Fotografije se čuvaju lokalno u `client-assets/locations/<id-lokacije>/`, po jednoj apoteci u zasebnom folderu. Pogledaj `client-assets/README.md` za raspored.
+
+Dok podaci ne stignu, agent ne sme da izmišlja adresu, telefon, radno vreme, dostupnost proizvoda niti lokaciju na kojoj akcija važi.
+
 ## Pročitaj pre bilo kakvog rada
 
 1. `AGENTS.md` — obavezna pravila rada agenta.
