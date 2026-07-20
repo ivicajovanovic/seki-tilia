@@ -31,6 +31,7 @@ const input = readJson("input.json");
 const videoProps = readJson("video-props.json");
 const reviewPath = resolve(postDirectory, "review.md");
 const review = existsSync(reviewPath) ? readFileSync(reviewPath, "utf8") : "";
+const visualDesignSkillPath = resolve(postDirectory, "../../../../skills/visual-design/SKILL.md");
 const captionPath = ["generated/caption.md", "final/caption.md"].map((file) => resolve(postDirectory, file)).find(existsSync);
 const caption = captionPath ? readFileSync(captionPath, "utf8") : "";
 
@@ -52,6 +53,10 @@ for (const field of ["eyebrow", "headline", "supportingText", "offerLabel", "cta
 
 if (!caption) warnings.push("Caption još nije sačuvan u generated/caption.md ili final/caption.md.");
 if (!review.includes("Status: SPREMNO ZA LJUDSKU PROVERU")) errors.push("review.md nema status SPREMNO ZA LJUDSKU PROVERU.");
+if (!existsSync(visualDesignSkillPath)) errors.push("Nedostaje obavezni skills/visual-design/SKILL.md.");
+if (!review.includes("- [x] Vizuelni dizajn je izrađen i pregledan prema skills/visual-design/SKILL.md.")) {
+  errors.push("Nedostaje potvrda obavezne vizuelne provere prema skills/visual-design/SKILL.md.");
+}
 
 const textToCheck = [
   JSON.stringify(input ?? {}),

@@ -1,4 +1,4 @@
-import { fontFamily, loadFont } from "@remotion/google-fonts/Manrope";
+import { loadFont as loadLocalFont } from "@remotion/fonts";
 import React from "react";
 import {
   AbsoluteFill,
@@ -20,6 +20,7 @@ type VideoProps = {
   cta: string;
   imageSrc?: string;
   locationLine?: string;
+  designVariant?: "standard" | "product-offer";
 };
 
 const colors = {
@@ -29,7 +30,14 @@ const colors = {
   beige: "#B2A69A",
 };
 
-loadFont("normal", { weights: ["400", "600", "700", "800"], subsets: ["latin-ext", "cyrillic"] });
+const fontFamily = "Manrope";
+void loadLocalFont({
+  display: "block",
+  family: fontFamily,
+  format: "woff2",
+  url: staticFile("assets/manrope-latin-ext.woff2"),
+  weight: "200 800",
+});
 
 const easeOut = Easing.bezier(0.16, 1, 0.3, 1);
 
@@ -61,6 +69,7 @@ const Reveal: React.FC<React.PropsWithChildren<{ from: number; distance?: number
 const ProductVisual: React.FC<{ imageSrc?: string }> = ({ imageSrc }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const resolvedImageSrc = imageSrc?.startsWith("/") ? staticFile(imageSrc.slice(1)) : imageSrc;
   const scale = interpolate(frame, [fps * 2.5, fps * 4], [0.93, 1], {
     easing: easeOut,
     extrapolateLeft: "clamp",
@@ -94,9 +103,9 @@ const ProductVisual: React.FC<{ imageSrc?: string }> = ({ imageSrc }) => {
           width: 420,
         }}
       />
-      {imageSrc ? (
+      {resolvedImageSrc ? (
         <Img
-          src={imageSrc}
+          src={resolvedImageSrc}
           style={{
             height: "86%",
             maxWidth: "82%",
@@ -140,9 +149,26 @@ export const SekiTiliaPromo: React.FC<VideoProps> = ({
   cta,
   imageSrc,
   locationLine,
+  designVariant,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+
+  if (designVariant === "product-offer") {
+    return (
+      <SekiTiliaProductOffer
+        eyebrow={eyebrow}
+        headline={headline}
+        supportingText={supportingText}
+        offerLabel={offerLabel}
+        cta={cta}
+        imageSrc={imageSrc}
+        locationLine={locationLine}
+        animated
+      />
+    );
+  }
+
   const closingOpacity = interpolate(frame, [fps * 8, fps * 8.5], [0, 1], {
     easing: easeOut,
     extrapolateLeft: "clamp",
@@ -294,8 +320,24 @@ export const SekiTiliaPost: React.FC<VideoProps> = ({
   cta,
   imageSrc,
   locationLine,
+  designVariant,
 }) => {
   const { height } = useVideoConfig();
+
+  if (designVariant === "product-offer") {
+    return (
+      <SekiTiliaProductOffer
+        eyebrow={eyebrow}
+        headline={headline}
+        supportingText={supportingText}
+        offerLabel={offerLabel}
+        cta={cta}
+        imageSrc={imageSrc}
+        locationLine={locationLine}
+      />
+    );
+  }
+
   const isStory = height > 1500;
 
   return (
@@ -381,6 +423,214 @@ export const SekiTiliaPost: React.FC<VideoProps> = ({
     </AbsoluteFill>
   );
 };
+
+function SekiTiliaProductOffer({
+  eyebrow,
+  headline,
+  supportingText,
+  offerLabel,
+  cta,
+  imageSrc,
+  locationLine,
+  animated = false,
+}: VideoProps & { animated?: boolean }) {
+  const frame = useCurrentFrame();
+  const { fps, height } = useVideoConfig();
+  const isStory = height > 1500;
+  const resolvedImageSrc = imageSrc?.startsWith("/") ? staticFile(imageSrc.slice(1)) : imageSrc;
+  const textProgress = animated
+    ? interpolate(frame, [0, fps * 0.55], [0, 1], {
+        easing: easeOut,
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+      })
+    : 1;
+  const productProgress = animated
+    ? interpolate(frame, [fps * 0.8, fps * 1.65], [0, 1], {
+        easing: easeOut,
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+      })
+    : 1;
+  const footerProgress = animated
+    ? interpolate(frame, [fps * 2.05, fps * 2.6], [0, 1], {
+        easing: easeOut,
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+      })
+    : 1;
+  const closingOpacity = animated
+    ? interpolate(frame, [fps * 8.4, fps * 8.9], [0, 1], {
+        easing: easeOut,
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+      })
+    : 0;
+
+  return (
+    <AbsoluteFill
+      style={{
+        backgroundColor: colors.cream,
+        color: colors.petrol,
+        fontFamily,
+        overflow: "hidden",
+      }}
+    >
+      <div
+        style={{
+          backgroundColor: colors.petrol,
+          borderRadius: isStory ? "96px 96px 0 0" : "72px 72px 0 0",
+          bottom: 0,
+          height: isStory ? "41%" : "37%",
+          left: 0,
+          position: "absolute",
+          right: 0,
+        }}
+      />
+      <div
+        style={{
+          backgroundColor: colors.lime,
+          borderRadius: "50%",
+          height: isStory ? 450 : 330,
+          opacity: 0.9,
+          position: "absolute",
+          right: isStory ? -160 : -120,
+          top: isStory ? -180 : -150,
+          width: isStory ? 450 : 330,
+        }}
+      />
+      <div
+        style={{
+          boxSizing: "border-box",
+          display: "flex",
+          flexDirection: "column",
+          gap: isStory ? 32 : 22,
+          height: "100%",
+          padding: isStory ? "94px 82px 82px" : "60px 72px 58px",
+          position: "relative",
+        }}
+      >
+        <div style={{ alignItems: "center", display: "flex", justifyContent: "space-between", opacity: textProgress }}>
+          <div
+            style={{
+              color: colors.petrol,
+              fontSize: isStory ? 30 : 23,
+              fontWeight: 800,
+              letterSpacing: isStory ? 3.4 : 2.6,
+              textTransform: "uppercase",
+            }}
+          >
+            {eyebrow}
+          </div>
+          <Img src={staticFile("assets/logo-mark.svg")} style={{ height: isStory ? 82 : 64, width: isStory ? 82 : 64 }} />
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: isStory ? 20 : 12, opacity: textProgress }}>
+          <div style={{ fontSize: isStory ? 104 : 76, fontWeight: 800, letterSpacing: -4, lineHeight: 0.98 }}>
+            {headline}
+          </div>
+          <div style={{ fontSize: isStory ? 40 : 30, fontWeight: 600, lineHeight: 1.22, maxWidth: "88%" }}>
+            {supportingText}
+          </div>
+        </div>
+
+        <div
+          style={{
+            alignItems: "center",
+            backgroundColor: colors.beige,
+            borderRadius: isStory ? 74 : 56,
+            display: "flex",
+            flex: 1,
+            justifyContent: "center",
+            minHeight: isStory ? 640 : 385,
+            overflow: "hidden",
+            position: "relative",
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: colors.lime,
+              borderRadius: "50%",
+              height: isStory ? 460 : 350,
+              position: "absolute",
+              right: isStory ? -135 : -110,
+              top: isStory ? -120 : -95,
+              width: isStory ? 460 : 350,
+            }}
+          />
+          {resolvedImageSrc ? (
+            <Img
+              src={resolvedImageSrc}
+              style={{
+                filter: "drop-shadow(0 26px 22px rgba(15, 21, 25, 0.20))",
+                height: "93%",
+                maxWidth: "88%",
+                objectFit: "contain",
+                opacity: productProgress,
+                position: "relative",
+                scale: interpolate(productProgress, [0, 1], [0.9, 1]),
+                translate: `0 ${interpolate(productProgress, [0, 1], [48, 0])}px`,
+              }}
+            />
+          ) : null}
+        </div>
+
+        <div
+          style={{
+            alignItems: "flex-start",
+            color: colors.cream,
+            display: "flex",
+            flexDirection: "column",
+            gap: isStory ? 18 : 12,
+            opacity: footerProgress,
+            padding: isStory ? "8px 8px 0" : "3px 6px 0",
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: colors.lime,
+              borderRadius: 999,
+              color: colors.petrol,
+              fontSize: isStory ? 42 : 31,
+              fontWeight: 800,
+              letterSpacing: -1.2,
+              lineHeight: 1,
+              padding: isStory ? "22px 30px" : "16px 23px",
+            }}
+          >
+            {offerLabel}
+          </div>
+          <div style={{ fontSize: isStory ? 36 : 27, fontWeight: 700, lineHeight: 1.18 }}>{cta}</div>
+          <div style={{ fontSize: isStory ? 27 : 20, fontWeight: 600, opacity: 0.76 }}>{locationLine ?? "AU Šeki-Tilia"}</div>
+        </div>
+      </div>
+
+      {animated ? (
+        <div
+          style={{
+            alignItems: "center",
+            backgroundColor: colors.petrol,
+            color: colors.cream,
+            display: "flex",
+            flexDirection: "column",
+            gap: 28,
+            inset: 0,
+            justifyContent: "center",
+            opacity: closingOpacity,
+            padding: 96,
+            position: "absolute",
+            textAlign: "center",
+          }}
+        >
+          <Img src={staticFile("assets/logo-mark.svg")} style={{ height: 122, width: 122 }} />
+          <div style={{ fontSize: 74, fontWeight: 800, letterSpacing: -3 }}>AU Šeki-Tilia</div>
+          <div style={{ color: colors.lime, fontSize: 50, fontWeight: 800 }}>{offerLabel}</div>
+          <div style={{ fontSize: 38, fontWeight: 600, lineHeight: 1.2 }}>{cta}</div>
+        </div>
+      ) : null}
+    </AbsoluteFill>
+  );
+}
 
 export const MyComposition: React.FC = () => {
   return (

@@ -5,6 +5,7 @@
 /*.jpg
 /*.jpeg
 /*.png
+/public/
 
 # Real post briefs, client assets and rendered deliverables stay local
 /productions/*

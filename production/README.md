@@ -47,6 +47,12 @@ Ako direktno generisanje nije dostupno ili korisnik želi svoj lokalni generator
 
 Ako je dovoljno dobra fotografija proizvoda koju je klijent poslao, ne pravi se AI prompt.
 
+## Obavezna vizuelna provera
+
+Pre dizajniranja i pre finalnog izvoza agent čita `skills/visual-design/SKILL.md`. Skill vodi art direkciju, kompoziciju, tipografiju, obradu fotografije i pregled rendera. Njegova provera dizajna se evidentira u `review.md` i blokira status spremnosti dok nije potvrđena.
+
+Skill se ne koristi za izmene copy-ja. Za caption, CTA, hashtagove i zdravstveno osetljive formulacije i dalje važe `production/copy-playbook.md` i `production/content-safety-rules.md`.
+
 ## Renderovanje grafika i videa
 
 Iz foldera `video-renderer/` agent koristi `video-props.json` iz foldera objave.

@@ -10,6 +10,10 @@ Pre rada pročitaj:
 4. `production/content-safety-rules.md`
 5. `production/copy-playbook.md`
 
+Pre rada na svakom vizualu obavezno pročitaj `skills/visual-design/SKILL.md`. Primeni ga za art direkciju, hijerarhiju, kompoziciju, tipografiju, obradu slike, vizuelni sistem i pregled renderovanih materijala. Za Reels ga primeni na vizuelnu direkciju kadrova i ključne kadrove, a pravila za animaciju i render ostaju u postojećem Remotion toku. Pre statusa `SPREMNO ZA LJUDSKU PROVERU` obavezno izvedi pregled finalnih rendera prema njegovoj kontrolnoj listi i evidentiraj ga u `review.md`.
+
+Ovaj skill služi isključivo dizajnu grafika, slika i videa. Ne koristi ga za izmene captiona, CTA formulacija, hashtagova ili drugih copy odluka. Za copy su merodavni `production/copy-playbook.md` i bezbednosna pravila, koji imaju prednost ako postoji sukob.
+
 ## Kada korisnik pošalje materijale za novu objavu
 
 1. Otvori novi folder komandom `node production/scripts/create-post.mjs --slug "kratak-naziv"` (po potrebi dodaj `--date GGGG-MM-DD`).
