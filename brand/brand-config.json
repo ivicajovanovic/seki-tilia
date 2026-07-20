@@ -1,0 +1,39 @@
+{
+  "brand": {
+    "name": "AU Šeki-Tilia",
+    "city": "Petrovac na Mlavi",
+    "tone": ["stručan", "smiren", "topao", "razumljiv"],
+    "addressing": "vi"
+  },
+  "colors": {
+    "petrol": "#1C3B42",
+    "cream": "#F7F5EC",
+    "lime": "#B8E100",
+    "beige": "#B2A69A",
+    "charcoal": "#0F1519"
+  },
+  "fonts": {
+    "display": "Manrope",
+    "body": "Manrope"
+  },
+  "logos": {
+    "primary": "../logos/logo1.svg",
+    "horizontal": "../logos/logo2.svg",
+    "mark": "../logos/logo3.svg"
+  },
+  "locations": [],
+  "locationPolicy": {
+    "expectedMinimum": 14,
+    "dataCollection": "postepeno",
+    "requireKnownLocationForLocalPost": true
+  },
+  "content": {
+    "monthlyFeedPosts": 12,
+    "monthlyReels": 4,
+    "channels": ["instagram", "facebook"]
+  },
+  "safety": {
+    "prohibitedPromotions": ["lekovi", "antibiotici"],
+    "requiresManualReview": true
+  }
+}
