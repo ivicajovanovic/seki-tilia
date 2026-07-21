@@ -2,9 +2,11 @@
 /IMG.pdf
 /ovde smo stali.md
 /prvi prompt
+/PODACI O OGRANCIMA.docx
 /*.jpg
 /*.jpeg
 /*.png
+!/ovako mora biti.png
 /public/
 
 # Real post briefs, client assets and rendered deliverables stay local

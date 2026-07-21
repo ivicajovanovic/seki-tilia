@@ -15,16 +15,24 @@ Pre rada na svakom vizualu obavezno pročitaj `skills/visual-design/SKILL.md`. P
 
 U svakom formatu proveri vidljivost i kontrast svih obaveznih elemenata: logoa, glavne poruke, ponude, proizvoda i CTA-a kada je prisutan. Pregledaj render u punoj veličini i kao umanjeni prikaz telefona. Ne postavljaj logo, tekst ili ikonu u istu ili gotovo istu boju kao neposrednu pozadinu. Ako je kontrast nedovoljan, premesti element na kontrolisanu podlogu ili upotrebi odgovarajuću originalnu verziju logoa. Ne menjaj boju, proporcije ni oblik originalnog logoa.
 
+Kada klijentov proizvod stiže kao transparentni PNG, u `video-props.json` postavi `imageBackground` na `transparent`. Takav proizvod mora da stoji slobodno na kompoziciji, bez dodatnog pravougaonog rama, kartice, okvira ili podloge, i mora biti dovoljno velik da bude glavni vizuelni element. Ne koristi prazninu da bi proizvod ostao mali. Pravougaona podloga je dozvoljena samo za neprovidnu sliku označenu kao `opaque`, kada je potrebna radi kontrasta.
+
+Na svakoj grafičkoj i video objavi obavezno koristi najmanje jednu smislenu profesionalnu ikonu iz `lucide-react`; čista tekstualna objava je jedini izuzetak. Ikona mora podržati stvarnu informaciju ili navigaciju, nikada služiti kao nasumična dekoracija. Za nepotvrđene zdravstvene koristi ne koristi medicinske ikone. Kada nema potvrđene produktne tvrdnje, koristi neutralnu ikonu lokacije/dostupnosti uz CTA.
+
 Ovaj skill služi isključivo dizajnu grafika, slika i videa. Ne koristi ga za izmene captiona, CTA formulacija, hashtagova ili drugih copy odluka. Za copy su merodavni `production/copy-playbook.md` i bezbednosna pravila, koji imaju prednost ako postoji sukob.
 
 Pre rada na vizualu proveri `brand/design-references/` kada folder sadrži materijale. Koristi ih isključivo kao stilsku i dizajnersku inspiraciju za kvalitet, čitanje kompozicije, hijerarhiju, ritam i obradu, nikada kao šablon za doslovno kopiranje. Reference mogu biti iz potpuno drugih niša i zato iz njih ne preuzimaj temu, proizvod, zdravstvene tvrdnje, copy, CTA, publiku, cenu, rokove ni brend kontekst. Referentni materijal ne menja pravila brenda, potvrđene činjenice ni obavezni dizajn-skill.
 
+`ovako mora biti.png` u korenu repoa je autorski odobrena interna referenca i može se koristiti za familiju `premium-product-stage`. Preuzimaj njenu dizajnersku gramatiku sa stvarnim varijacijama: velika asimetrična ponuda, dominantna produktna scena, organski oblik/podijum i petrol CTA završetak. Ne repliciraj raspored piksel po piksel. Transparentni PNG proizvoda ostaje slobodan preko scene, bez pravougaonog rama, kartice ili podloge. Organski oblik, podijum i senka služe sceni, ne kao okvir proizvoda. Red sa ikonama ili benefitima dodaj samo kada su sve konkretne tvrdnje potvrđene za aktuelni proizvod; nije dozvoljeno prenošenje zdravstvenih tvrdnji iz reference.
+
 Pre izrade rendera popuni `generated/design-direction.json` prema `brand/design-system.md`. Izaberi jednu od podržanih familija renderer-a, zabeleži najmanje jednu referencu, dve stvarno primenjene dizajnerske osobine i po čemu se kompozicija razlikuje od poslednje tri objave. Ne koristi istu `signature` kombinaciju familije, logo-podloge, tretmana proizvoda i modula ponude kao u bilo kojoj od poslednje tri evidentirane objave. Za logo znaka koristi se isključivo rendererova krem logo-kartica; nije dozvoljeno postavljanje znaka direktno na limeta polje, fotografiju ili dekorativni oblik.
+
+Pravougaoni paneli, kartice, podloge proizvoda, footeri, okviri i logo-kartica moraju imati oštre uglove. Zaobljenje je dozvoljeno samo za pill-dugme ili kratku CTA/ponudnu oznaku i za čiste kružne dekorativne oblike. Ne pretvaraj pravougaone strukturne elemente u rounded cards.
 
 ## Kada korisnik pošalje materijale za novu objavu
 
 1. Otvori novi folder komandom `node production/scripts/create-post.mjs --slug "kratak-naziv"` (po potrebi dodaj `--date GGGG-MM-DD`).
-2. Doslovno sačuvaj korisnikov brief u `brief.md`; izvorne slike stavi u `source/` bez menjanja originala.
+2. Doslovno sačuvaj korisnikov brief u `brief.md`; izvorne slike stavi u `source/` bez menjanja originala. Sve radne rendere, pregledačke slike i sistemske testove čuvaj isključivo u tom paketu, pod `generated/`; ne ostavljaj ih u `/tmp` ili van `productions/`.
 3. Popuni `input.json`, a zatim napravi predlog sadržaja prema `production/copy-playbook.md`: caption, tekst za grafike i `video-props.json`.
 4. Ako je potreban AI vizual, direktno ga generiši dostupnim generatorom slika i sačuvaj/uvezi rezultat u paket objave. Ako direktno generisanje nije dostupno ili ga korisnik ne želi, napiši `generated/image-prompt.md` za lokalni generator. Ne predstavljaj generisanu osobu kao stvarnu zaposlenu apoteke.
 5. Ne renderuj finalnu promociju dok `review.md` i `generated/design-direction.json` ne sadrže ispunjenu kontrolnu listu i status `SPREMNO ZA LJUDSKU PROVERU`.

@@ -14,7 +14,8 @@ const postDirectory = resolve(postArgument);
 const repositoryRoot = resolve(postDirectory, "../../../../");
 const errors = [];
 const warnings = [];
-const supportedFamilies = new Set(["product-atelier", "editorial-split", "minimal-offer", "product-card"]);
+const supportedFamilies = new Set(["product-atelier", "editorial-split", "minimal-offer", "product-card", "premium-product-stage"]);
+const supportedImageBackgrounds = new Set(["transparent", "opaque"]);
 const requiredRenderKeys = ["feed", "story", "reels-intro", "reels-offer", "reels-closing"];
 
 const readJson = (path, label) => {
@@ -86,6 +87,9 @@ for (const field of ["eyebrow", "headline", "supportingText", "offerLabel", "cta
 if (!supportedFamilies.has(videoProps?.designVariant)) {
   errors.push("video-props.json koristi nepodržanu designVariant vrednost.");
 }
+if (videoProps?.imageSrc?.trim() && !supportedImageBackgrounds.has(videoProps?.imageBackground)) {
+  errors.push("video-props.json mora navesti imageBackground kao transparent ili opaque kada koristi sliku proizvoda.");
+}
 
 if (!caption) warnings.push("Caption još nije sačuvan u generated/caption.md ili final/caption.md.");
 if (!review.includes("Status: SPREMNO ZA LJUDSKU PROVERU")) errors.push("review.md nema status SPREMNO ZA LJUDSKU PROVERU.");
@@ -95,6 +99,22 @@ if (!review.includes("- [x] Vizuelni dizajn je izrađen i pregledan prema skills
 }
 if (!review.includes("- [x] Logo, glavna poruka, ponuda, proizvod i CTA, kada postoje, jasno su vidljivi i kontrastni u svakom formatu.")) {
   errors.push("Nedostaje potvrda provere vidljivosti i kontrasta obaveznih elemenata u svakom formatu.");
+}
+if (input?.postType !== "tekstualna-objava" && !review.includes("- [x] Korišćena je najmanje jedna semantička Lucide ikona na svakoj grafici i video kadru, osim kod čiste tekstualne objave.")) {
+  errors.push("Nedostaje potvrda korišćenja semantičke Lucide ikone na grafici i video kadrovima.");
+}
+if (!review.includes("- [x] Pravougaoni paneli, kartice, footeri, proizvodne podloge, okviri i logo-kartica imaju oštre uglove. Zaobljenje je korišćeno samo za pill-dugme/ponudnu oznaku ili kružni dekorativni oblik.")) {
+  errors.push("Nedostaje potvrda provere oštrih uglova pravougaonih elemenata.");
+}
+if (!review.includes("- [x] Transparentni PNG proizvoda, kada je korišćen, nema dodatni pravougaoni ram, karticu, okvir ni podlogu, a proizvod je dovoljno velik da nosi kadar bez suvišne praznine.")) {
+  errors.push("Nedostaje potvrda provere tretmana transparentnog PNG proizvoda i njegove vizuelne skale.");
+}
+const requiresPremiumProductSceneReview = videoProps?.designVariant === "premium-product-stage" || videoProps?.imageBackground === "transparent";
+if (requiresPremiumProductSceneReview && !review.includes("- [x] Produktna scena ima dominantan proizvod i namerni vizuelni kontekst, bez nedovršenog praznog prostora. Kada je proizvod transparentni PNG, nema dodatni pravougaoni ram, karticu, okvir ni podlogu.")) {
+  errors.push("Nedostaje potvrda da produktna scena ima dominantan proizvod, namerni kontekst i ispravan tretman transparentnog PNG-a.");
+}
+if (videoProps?.designVariant === "premium-product-stage" && !videoProps?.imageSrc?.trim()) {
+  errors.push("premium-product-stage zahteva imageSrc, jer proizvod mora biti glavni vizuelni element scene.");
 }
 
 if (!supportedFamilies.has(designDirection?.family)) errors.push("Nedostaje podržana dizajnerska familija u design-direction.json.");
@@ -106,7 +126,12 @@ if (!Array.isArray(designDirection?.referenceFiles) || designDirection.reference
   errors.push("Nedostaje referenca u design-direction.json.");
 } else {
   for (const referenceFile of designDirection.referenceFiles) {
-    if (typeof referenceFile !== "string" || !existsSync(resolve(repositoryRoot, "brand/design-references", referenceFile))) {
+    const referencePath = typeof referenceFile !== "string"
+      ? null
+      : referenceFile === "ovako mora biti.png"
+        ? resolve(repositoryRoot, referenceFile)
+        : resolve(repositoryRoot, "brand/design-references", referenceFile);
+    if (!referencePath || !existsSync(referencePath)) {
       errors.push(`Nepostojeća dizajnerska referenca: ${referenceFile}.`);
     }
   }
@@ -142,6 +167,27 @@ if (!renderer.includes("AUSekiManrope") || !rendererCss.includes("font-family: \
   errors.push("Renderer nema obavezno učitavanje punog Manrope fonta bez fallbacka.");
 }
 if (!renderer.includes("LogoOnCreamCard")) errors.push("Renderer nema obaveznu krem logo-karticu.");
+if (!renderer.includes('from "lucide-react"') || !renderer.includes("<MapPin")) {
+  errors.push("Renderer nema obaveznu Lucide ikonu za grafičke i video objave.");
+}
+if (!renderer.includes('const isTransparentProduct = imageBackground === "transparent";') || !renderer.includes('backgroundColor: isTransparentProduct ? "transparent"') || !renderer.includes('{!isTransparentProduct &&')) {
+  errors.push("Renderer nema obavezan režim koji uklanja pravougaoni ram/podlogu oko transparentnog PNG proizvoda.");
+}
+const premiumProductStageStart = renderer.indexOf("const PremiumProductStage");
+const premiumProductStageEnd = premiumProductStageStart === -1 ? -1 : renderer.indexOf("const SekiTiliaPost", premiumProductStageStart);
+const premiumProductStageRenderer = premiumProductStageStart === -1 ? "" : renderer.slice(premiumProductStageStart, premiumProductStageEnd === -1 ? undefined : premiumProductStageEnd);
+if (!renderer.includes('case "premium-product-stage": return <PremiumProductStage') || !premiumProductStageRenderer) {
+  errors.push("Renderer nema podržanu premium-product-stage familiju.");
+} else if (!premiumProductStageRenderer.includes('const isTransparentProduct = imageBackground === "transparent";') || !premiumProductStageRenderer.includes('backgroundColor: isTransparentProduct ? "transparent"') || !premiumProductStageRenderer.includes('overflow: isTransparentProduct ? "visible"')) {
+  errors.push("premium-product-stage nema obavezan transparentni režim bez pravougaonog rama/podloge oko proizvoda.");
+}
+const roundedRectangleLines = renderer
+  .split("\n")
+  .filter((line) => /\b(?:borderRadius|border(?:Top|Bottom)(?:Left|Right)Radius)\s*:/.test(line))
+  .filter((line) => !/borderRadius:\s*(?:999|[\"']50%[\"'])/.test(line));
+if (roundedRectangleLines.length > 0) {
+  errors.push("Renderer koristi nedozvoljeno zaobljenje pravougaonih elemenata. Dozvoljeni su samo pill-dugme/ponudna oznaka i čisti krugovi.");
+}
 
 const publishableTextToCheck = [JSON.stringify(videoProps ?? {}), caption].join(" ").toLocaleLowerCase("sr-Latn-RS");
 const prohibitedPatterns = [
