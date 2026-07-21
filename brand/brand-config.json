@@ -21,10 +21,137 @@
     "horizontal": "../logos/logo2.svg",
     "mark": "../logos/logo3.svg"
   },
-  "locations": [],
+  "locations": [
+    {
+      "id": "petrovac-na-mlavi-sediste",
+      "name": "Apoteka Šeki-Tilia, sedište",
+      "city": "Petrovac na Mlavi",
+      "address": "Srpskih Vladara 304",
+      "postalCode": "12300",
+      "phone": "012/327-507",
+      "email": "sekitilija@gmail.com",
+      "workingHours": {
+        "mondayFriday": "07:00-20:00",
+        "saturday": "08:00-20:00",
+        "sunday": "08:00-14:00"
+      }
+    },
+    {
+      "id": "zagubica",
+      "name": "Apoteka Šeki-Tilia, ogranak Žagubica",
+      "city": "Žagubica",
+      "address": "Nikole Pašića 1",
+      "postalCode": "12320",
+      "phone": "012/764-30-30",
+      "workingHours": null
+    },
+    {
+      "id": "donji-milanovac-1",
+      "name": "Apoteka Šeki-Tilia, ogranak Donji Milanovac 1",
+      "city": "Donji Milanovac",
+      "address": "Nikole Pašića bb",
+      "postalCode": "19220",
+      "phone": "030/590-333",
+      "workingHours": null
+    },
+    {
+      "id": "krepoljin",
+      "name": "Apoteka Šeki-Tilia, ogranak Krepoljin",
+      "city": "Krepoljin",
+      "address": "Kneza Lazara 17",
+      "postalCode": "12316",
+      "phone": "012/764-21-02",
+      "workingHours": null
+    },
+    {
+      "id": "aleksandrovac",
+      "name": "Apoteka Šeki-Tilia, ogranak Aleksandrovac",
+      "city": "Aleksandrovac",
+      "address": "Kralja Aleksandra Obrenovića 51",
+      "postalCode": "12370",
+      "phone": "012/710-17-45",
+      "workingHours": null
+    },
+    {
+      "id": "petrovac-na-mlavi-moravska-2",
+      "name": "Apoteka Šeki-Tilia, ogranak Petrovac 2",
+      "city": "Petrovac na Mlavi",
+      "address": "Moravska 2",
+      "postalCode": "12300",
+      "phone": "012/328-090",
+      "workingHours": {
+        "mondayFriday": "07:00-21:00",
+        "saturday": "08:00-21:00",
+        "sunday": "08:00-14:00"
+      }
+    },
+    {
+      "id": "rudna-glava",
+      "name": "Apoteka Šeki-Tilia, ogranak Rudna Glava",
+      "city": "Rudna Glava",
+      "address": "Rudna Glava bb",
+      "postalCode": "19257",
+      "phone": "030/2-585-666",
+      "workingHours": null
+    },
+    {
+      "id": "donji-milanovac-2",
+      "name": "Apoteka Šeki-Tilia, ogranak Donji Milanovac 2",
+      "city": "Donji Milanovac",
+      "address": "Kralja Petra 1 bb",
+      "postalCode": "19220",
+      "phone": "030/590-168",
+      "workingHours": null
+    },
+    {
+      "id": "zlot",
+      "name": "Apoteka Šeki-Tilia, ogranak Zlot",
+      "city": "Zlot",
+      "address": "Prvomajska 1",
+      "postalCode": "19215",
+      "phone": "030/215-00-33",
+      "workingHours": null
+    },
+    {
+      "id": "pozarevac",
+      "name": "Apoteka Šeki-Tilia, ogranak Požarevac",
+      "city": "Požarevac",
+      "address": "Kosovska 29",
+      "postalCode": "12000",
+      "phone": "012/716-00-30",
+      "workingHours": {
+        "mondayFriday": "07:00-20:00",
+        "saturday": "07:00-20:00"
+      }
+    },
+    {
+      "id": "bor-dom-zdravlja",
+      "name": "Apoteka Šeki-Tilia, ogranak Bor",
+      "city": "Bor",
+      "address": "Nikole Kopernika 2, hol Doma zdravlja",
+      "postalCode": "19210",
+      "phone": "030/210-10-36",
+      "workingHours": {
+        "mondayFriday": "07:00-20:00",
+        "saturday": "07:00-16:00"
+      }
+    },
+    {
+      "id": "petrovac-na-mlavi-petra-dobrnjca-54",
+      "name": "Apoteka Šeki-Tilia, ogranak Petrovac 3",
+      "city": "Petrovac na Mlavi",
+      "address": "Petra Dobrnjca 54",
+      "postalCode": "12300",
+      "phone": "062/346-776",
+      "workingHours": {
+        "mondayFriday": "07:30-20:00",
+        "saturday": "07:30-14:00"
+      }
+    }
+  ],
   "locationPolicy": {
-    "expectedMinimum": 14,
-    "dataCollection": "postepeno",
+    "expectedMinimum": 12,
+    "dataCollection": "dostavljeno u dokumentu PODACI O OGRANCIMA.docx",
     "requireKnownLocationForLocalPost": true
   },
   "content": {

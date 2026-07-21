@@ -22,6 +22,16 @@ Preporučena raspodela za jedan mesec:
 
 Raspodela je početna smernica, ne obaveza: aktuelne akcije klijenta imaju prednost.
 
+## Mreža lokacija
+
+Mreža apoteka treba da bude lako dostupna, ali ne sme da optereti redovne objave.
+
+- Za opšte akcije, proizvode i savete koristi samo diskretnu poruku: „Dostupno u AU Šeki-Tilia apotekama.”
+- Kompletne podatke o jednoj apoteci koristi samo u lokalnoj objavi ili kada osoba treba da dođe do konkretnog ogranka.
+- Za stalni pregled mreže predlaži ručno objavljeni Story Highlight „Lokacije”, sa jednom do tri lokacije po Story-ju i samo potvrđenim adresama, telefonima i radnim vremenom.
+- Povremena objava „Gde se nalazimo?” može biti carousel ili serija Story-ja. Ne pretvaraj je u stalni footer redovnih objava.
+- U Reels-u koristi lokacijski završni kadar samo kada je lokacija relevantna za poruku. Ne prikazuj kompletnu listu ogranaka na kraju videa.
+
 ## Ulaz za jednu objavu
 
 Za svaku objavu dovoljno je poslati:
@@ -57,6 +67,7 @@ izvozi/GGGG-MM-DD-slug-objave/
 - Da li su cena, popust i datum akcije potvrđeni?
 - Da li su zdravstvene tvrdnje proverene ili uklonjene?
 - Da li je odabrana ispravna lokacija i njen kontakt?
+- Da li je lokacijski podatak relevantan za ovu objavu, bez nepotrebnog spiska svih ogranaka?
 - Da li je tekst na grafici čitljiv na telefonu?
 - Da li su logo, glavna poruka, ponuda, proizvod i CTA, kada postoje, jasno vidljivi i kontrastni u svakom formatu?
 - Da li caption sadrži jasan, nenametljiv poziv na akciju?

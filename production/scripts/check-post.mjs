@@ -1,5 +1,5 @@
-import { existsSync, readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { basename, join, resolve } from "node:path";
 
 const args = process.argv.slice(2);
 const postArgumentIndex = args.indexOf("--post");
@@ -11,29 +11,62 @@ if (!postArgument) {
 }
 
 const postDirectory = resolve(postArgument);
+const repositoryRoot = resolve(postDirectory, "../../../../");
 const errors = [];
 const warnings = [];
-const readJson = (name) => {
-  const path = resolve(postDirectory, name);
+const supportedFamilies = new Set(["product-atelier", "editorial-split", "minimal-offer", "product-card"]);
+const requiredRenderKeys = ["feed", "story", "reels-intro", "reels-offer", "reels-closing"];
+
+const readJson = (path, label) => {
   if (!existsSync(path)) {
-    errors.push(`Nedostaje ${name}.`);
+    errors.push(`Nedostaje ${label}.`);
     return null;
   }
   try {
     return JSON.parse(readFileSync(path, "utf8"));
   } catch {
-    errors.push(`${name} nije validan JSON.`);
+    errors.push(`${label} nije validan JSON.`);
     return null;
   }
 };
 
-const input = readJson("input.json");
-const videoProps = readJson("video-props.json");
+const input = readJson(resolve(postDirectory, "input.json"), "input.json");
+const videoProps = readJson(resolve(postDirectory, "video-props.json"), "video-props.json");
+const designDirection = readJson(resolve(postDirectory, "generated/design-direction.json"), "generated/design-direction.json");
 const reviewPath = resolve(postDirectory, "review.md");
 const review = existsSync(reviewPath) ? readFileSync(reviewPath, "utf8") : "";
-const visualDesignSkillPath = resolve(postDirectory, "../../../../skills/visual-design/SKILL.md");
-const captionPath = ["generated/caption.md", "final/caption.md"].map((file) => resolve(postDirectory, file)).find(existsSync);
+const visualDesignSkillPath = resolve(repositoryRoot, "skills/visual-design/SKILL.md");
+const captionPath = ["final/caption.md", "generated/caption.md"].map((file) => resolve(postDirectory, file)).find(existsSync);
 const caption = captionPath ? readFileSync(captionPath, "utf8") : "";
+
+const getDesignRecords = () => {
+  const records = [];
+  const history = readJson(resolve(repositoryRoot, "brand/design-history.json"), "brand/design-history.json");
+  if (Array.isArray(history?.records)) records.push(...history.records);
+
+  const productionsDirectory = resolve(repositoryRoot, "productions");
+  if (!existsSync(productionsDirectory)) return records;
+  for (const year of readdirSync(productionsDirectory, { withFileTypes: true })) {
+    if (!year.isDirectory()) continue;
+    const yearDirectory = join(productionsDirectory, year.name);
+    for (const month of readdirSync(yearDirectory, { withFileTypes: true })) {
+      if (!month.isDirectory()) continue;
+      const monthDirectory = join(yearDirectory, month.name);
+      for (const post of readdirSync(monthDirectory, { withFileTypes: true })) {
+        if (!post.isDirectory() || post.name === basename(postDirectory)) continue;
+        const directionPath = join(monthDirectory, post.name, "generated/design-direction.json");
+        if (!existsSync(directionPath)) continue;
+        try {
+          const direction = JSON.parse(readFileSync(directionPath, "utf8"));
+          if (direction?.signature) records.push({ id: post.name, signature: direction.signature });
+        } catch {
+          warnings.push(`Preskočen je neispravan design-direction.json u paketu ${post.name}.`);
+        }
+      }
+    }
+  }
+  return records;
+};
 
 if (input?.postType === null) errors.push("Nije odabran tip objave.");
 if (input?.product === null && input?.postType !== "lokacija") warnings.push("Nije unet proizvod ili tema objave.");
@@ -50,6 +83,9 @@ if (Array.isArray(input?.claims)) {
 for (const field of ["eyebrow", "headline", "supportingText", "offerLabel", "cta"]) {
   if (!videoProps?.[field]?.trim()) errors.push(`video-props.json: prazno polje ${field}.`);
 }
+if (!supportedFamilies.has(videoProps?.designVariant)) {
+  errors.push("video-props.json koristi nepodržanu designVariant vrednost.");
+}
 
 if (!caption) warnings.push("Caption još nije sačuvan u generated/caption.md ili final/caption.md.");
 if (!review.includes("Status: SPREMNO ZA LJUDSKU PROVERU")) errors.push("review.md nema status SPREMNO ZA LJUDSKU PROVERU.");
@@ -61,13 +97,53 @@ if (!review.includes("- [x] Logo, glavna poruka, ponuda, proizvod i CTA, kada po
   errors.push("Nedostaje potvrda provere vidljivosti i kontrasta obaveznih elemenata u svakom formatu.");
 }
 
-const textToCheck = [
-  JSON.stringify(input ?? {}),
-  JSON.stringify(videoProps ?? {}),
-  caption,
-  review,
-].join(" ").toLocaleLowerCase("sr-Latn-RS");
+if (!supportedFamilies.has(designDirection?.family)) errors.push("Nedostaje podržana dizajnerska familija u design-direction.json.");
+if (!designDirection?.signature?.trim()) errors.push("Nedostaje design signature u design-direction.json.");
+if (designDirection?.family && videoProps?.designVariant !== designDirection.family) {
+  errors.push("designVariant i familija u design-direction.json se ne podudaraju.");
+}
+if (!Array.isArray(designDirection?.referenceFiles) || designDirection.referenceFiles.length < 1) {
+  errors.push("Nedostaje referenca u design-direction.json.");
+} else {
+  for (const referenceFile of designDirection.referenceFiles) {
+    if (typeof referenceFile !== "string" || !existsSync(resolve(repositoryRoot, "brand/design-references", referenceFile))) {
+      errors.push(`Nepostojeća dizajnerska referenca: ${referenceFile}.`);
+    }
+  }
+}
+if (!Array.isArray(designDirection?.referenceTraits) || designDirection.referenceTraits.filter((trait) => typeof trait === "string" && trait.trim()).length < 2) {
+  errors.push("Upiši najmanje dve konkretne dizajnerske osobine iz reference.");
+}
+if (!designDirection?.distinctFromRecent?.trim()) errors.push("Nedostaje objašnjenje razlike u odnosu na poslednje objave.");
+if (designDirection?.logoSurface !== "cream-card") errors.push("Originalni znak logoa sme biti samo na cream-card podlozi.");
+if (designDirection?.typography?.family !== "AUSekiManrope") errors.push("Finalni renderer mora koristiti Manrope font bez zamene.");
+if (!Array.isArray(designDirection?.typography?.weights) || designDirection.typography.weights.length < 1) {
+  errors.push("Nedostaju korišćene težine fonta u design-direction.json.");
+}
 
+const recentRecords = getDesignRecords().filter((record) => record?.id !== basename(postDirectory)).sort((a, b) => String(a.id).localeCompare(String(b.id))).slice(-3);
+if (designDirection?.signature && recentRecords.some((record) => record.signature === designDirection.signature)) {
+  errors.push(`Design signature ponavlja jednu od poslednje tri objave: ${recentRecords.filter((record) => record.signature === designDirection.signature).map((record) => record.id).join(", ")}.`);
+}
+
+const finalDirectory = resolve(postDirectory, "final");
+for (const file of ["feed-1080x1350.png", "story-1080x1920.png", "reels-1080x1920.mp4", "caption.md"]) {
+  if (!existsSync(join(finalDirectory, file))) errors.push(`Nedostaje final/${file}.`);
+}
+if (!Array.isArray(designDirection?.validatedRenders) || requiredRenderKeys.some((key) => !designDirection.validatedRenders.some((render) => typeof render === "string" && render.includes(key)))) {
+  errors.push("U design-direction.json nedostaju evidentirani Feed, Story i Reels ključni kadrovi pregleda.");
+}
+
+const rendererPath = resolve(repositoryRoot, "video-renderer/src/Composition.tsx");
+const renderer = existsSync(rendererPath) ? readFileSync(rendererPath, "utf8") : "";
+const rendererCssPath = resolve(repositoryRoot, "video-renderer/src/index.css");
+const rendererCss = existsSync(rendererCssPath) ? readFileSync(rendererCssPath, "utf8") : "";
+if (!renderer.includes("AUSekiManrope") || !rendererCss.includes("font-family: \"AUSekiManrope\"") || !rendererCss.includes("xn7gYHE41ni1AdIRggexSg.woff2") || !rendererCss.includes("manrope-latin-ext.woff2") || renderer.includes("Arial")) {
+  errors.push("Renderer nema obavezno učitavanje punog Manrope fonta bez fallbacka.");
+}
+if (!renderer.includes("LogoOnCreamCard")) errors.push("Renderer nema obaveznu krem logo-karticu.");
+
+const publishableTextToCheck = [JSON.stringify(videoProps ?? {}), caption].join(" ").toLocaleLowerCase("sr-Latn-RS");
 const prohibitedPatterns = [
   { pattern: /\bantibiotik\w*/u, reason: "pominjanje antibiotika" },
   { pattern: /\blekov?i?\b/u, reason: "pominjanje leka" },
@@ -78,7 +154,7 @@ const prohibitedPatterns = [
 ];
 
 for (const { pattern, reason } of prohibitedPatterns) {
-  if (pattern.test(textToCheck)) errors.push(`Blokirano: ${reason}.`);
+  if (pattern.test(publishableTextToCheck)) errors.push(`Blokirano: ${reason}.`);
 }
 
 for (const warning of warnings) console.warn(`UPOZORENJE: ${warning}`);

@@ -32,7 +32,7 @@ Nikada ne predstavljamo generisanu osobu kao stvarnu zaposlenu apoteke.
 - **Tekst i praktične informacije:** Manrope, 400, 500 ili 600.
 - **Logo:** isključivo originalni vektorski fajl; ne rekreirati ga fontom.
 
-Jedna objava ima najviše dve težine fonta. Tekst na vizualu treba da bude kratak, čitljiv na telefonu i bez medicinskog žargona.
+Manrope je jedina tipografska porodica za ovaj brend. Ne koristiti generički podrazumevani par iz dizajn-skilla, serifni fallback, Arial ni drugi zamenski font na finalnim vizualima. Jedna objava ima najviše dve težine fonta. Tekst na vizualu treba da bude kratak, čitljiv na telefonu i bez medicinskog žargona.
 
 ## Logo
 
@@ -42,7 +42,7 @@ Originali se nalaze u `logos/`:
 - `logo2.svg` — horizontalna verzija;
 - `logo3.svg` — znak, bez naziva.
 
-Za avatar profila koristi se `logo3.svg`, na krem podlozi. Za feed se koristi znak ili puna verzija, zavisno od slobodnog prostora. Logo nikada ne sme biti rastegnut, obojen drugom bojom ili postavljen preko nečitljive fotografije.
+Za avatar profila koristi se `logo3.svg`, na krem podlozi. Za feed se koristi znak ili puna verzija, zavisno od slobodnog prostora. Znak `logo3.svg` mora imati krem podlogu koja jasno odvaja njegov limeta deo od okoline. Logo nikada ne sme biti rastegnut, obojen drugom bojom ili postavljen preko nečitljive fotografije, limeta polja ili druge nekontrolisane podloge.
 
 ## Vizuelni princip
 

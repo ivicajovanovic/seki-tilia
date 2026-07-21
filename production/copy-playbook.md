@@ -30,6 +30,12 @@ Meta u svojim aktuelnim smernicama naglašava da caption treba da doda kontekst 
 - Emoji nisu obavezni. Podrazumevano ih ne koristiti; ako se koriste, najviše jedan do dva u celoj objavi i nikada kao zamenu za informaciju.
 - Ne dodavati više od osam relevantnih hashtagova. U svakoj objavi mogu se ponoviti `#AUSekiTilia` i, kada je relevantno, potvrđeno mesto; ostali zavise od stvarne teme.
 
+## Lokacije bez vizuelnog opterećenja
+
+U opštoj objavi ne prepisuj kompletnu mrežu apoteka. Kada je relevantna dostupnost u mreži, koristi samo jednu završnu rečenicu: „Dostupno u AU Šeki-Tilia apotekama.”
+
+Adresu, telefon i radno vreme navedi samo kada je objava lokalna i samo za taj ogranak, prema `brand/brand-config.json`. Ako podatak nedostaje, izostavi ga. Za stalni pregled svih lokacija usmeri na Story Highlight „Lokacije”, kada je ručno postavljen.
+
 ## Pravilo protiv generičkog AI teksta
 
 Pre predaje, agent uklanja sve što može da zvuči kao prazna, univerzalna reklama. Posebno izbegava:

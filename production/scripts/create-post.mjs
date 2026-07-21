@@ -71,7 +71,18 @@ writeFileSync(join(postDirectory, "video-props.json"), JSON.stringify({
   offerLabel: "",
   cta: "",
   imageSrc: "",
-  locationLine: "AU Šeki-Tilia"
+  locationLine: "AU Šeki-Tilia",
+  designVariant: ""
+}, null, 2) + "\n");
+writeFileSync(join(postDirectory, "generated", "design-direction.json"), JSON.stringify({
+  family: null,
+  signature: null,
+  referenceFiles: [],
+  referenceTraits: [],
+  distinctFromRecent: null,
+  logoSurface: "cream-card",
+  typography: { family: "AUSekiManrope", weights: [] },
+  validatedRenders: []
 }, null, 2) + "\n");
 writeFileSync(join(postDirectory, "review.md"), "# Provera objave\n\nStatus: BLOKIRANO\n\n- [ ] Proizvod nije lek ni antibiotik / status je potvrđen.\n- [ ] Sve informacije o proizvodu potiču od klijenta, proizvođača ili stručne osobe.\n- [ ] Cena, popust i datum su potvrđeni ili nisu navedeni.\n- [ ] Lokacijski podaci su potvrđeni ili nisu navedeni.\n- [ ] Nema dijagnoze, terapijske preporuke ni obećanja rezultata.\n- [ ] Vizual ne predstavlja generisanu osobu kao stvarnog zaposlenog.\n- [ ] Vizuelni dizajn je izrađen i pregledan prema skills/visual-design/SKILL.md.\n- [ ] Logo, glavna poruka, ponuda, proizvod i CTA, kada postoje, jasno su vidljivi i kontrastni u svakom formatu.\n- [ ] Tekst je jezički i vizuelno pregledan.\n\nNapomene i nedostajući podaci:\n");
 
