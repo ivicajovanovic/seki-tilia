@@ -19,7 +19,7 @@ Komanda otvara folder u obliku:
 ```text
 productions/2026/08/001-2026-08-12-naziv-objave/
   source/       # originalni brief i fajlovi klijenta
-  generated/    # radne verzije, promptovi, props
+  generated/    # radne verzije, promptovi, props i design-direction.json
   final/        # materijali spremni za pregled i objavu
   brief.md
   input.json
@@ -31,7 +31,7 @@ Redni broj se računa unutar meseca. Originali u `source/` se ne menjaju niti pr
 
 ## Podaci koje čekamo od klijenta
 
-Pre lokalnih objava popuniti `brand/brand-config.json` podacima za svaku apoteku: oznaka lokacije, mesto, adresa, telefon i radno vreme sa eventualnim odstupanjima.
+Pre lokalnih objava proveriti `brand/brand-config.json` i koristiti samo potvrđene podatke za konkretnu apoteku. Ako radno vreme ili drugi podatak nedostaje, ne izmišljati ga niti ga prikazivati.
 
 Fotografije apoteka se lokalno čuvaju u `client-assets/locations/<id-lokacije>/`. Fotografije proizvoda, briefovi i finalni materijali za konkretnu objavu idu u njen `source/` folder. Ni jedna od tih datoteka se ne objavljuje na GitHub-u po podrazumevanom pravilu.
 
@@ -46,6 +46,28 @@ Ako direktno generisanje nije dostupno ili korisnik želi svoj lokalni generator
 ```
 
 Ako je dovoljno dobra fotografija proizvoda koju je klijent poslao, ne pravi se AI prompt.
+
+Uz svaku `imageSrc` vrednost obavezno upiši `imageBackground` u `video-props.json`: `transparent` za PNG sa providnom pozadinom, odnosno `opaque` za fotografiju ili neprovidnu sliku. Transparentni PNG se prikazuje slobodno na kompoziciji, bez dodatne pravougaone kartice, rama, okvira ili podloge, i mora biti dovoljno velik da nosi kadar. Podloga je dozvoljena samo za neprovidnu sliku kada je potrebna za kontrast.
+
+Sve radne datoteke objave ostaju u njenom paketu: originali u `source/`, radni renderi i pregledi u `generated/`, a samo materijal spreman za ručnu proveru u `final/`. Ne ostavljaj test rendere u `/tmp` niti u drugim folderima van `productions/`.
+
+## Obavezna vizuelna provera
+
+Pre dizajniranja i pre finalnog izvoza agent čita `skills/visual-design/SKILL.md`. Skill vodi art direkciju, kompoziciju, tipografiju, obradu fotografije i pregled rendera. Njegova provera dizajna se evidentira u `review.md` i blokira status spremnosti dok nije potvrđena.
+
+Skill se ne koristi za izmene copy-ja. Za caption, CTA, hashtagove i zdravstveno osetljive formulacije i dalje važe `production/copy-playbook.md` i `production/content-safety-rules.md`.
+
+Pre dizajna pročitaj i `brand/design-system.md`, a kada postoje reference i `brand/design-references/catalog.md`. U `generated/design-direction.json` zabeleži jednu familiju renderer-a, korišćenu referencu, najmanje dve dizajnerske osobine, jedinstvenu `signature` i razliku u odnosu na poslednje tri objave. Za logo je dozvoljena samo `cream-card` podloga, a za tipografiju rendererova Manrope porodica `AUSekiManrope` bez zamenskog fonta.
+
+Za akciju sa dominantnim pakovanjem može se izabrati `premium-product-stage`. Ona koristi internu, autorski odobrenu referencu `ovako mora biti.png` kao inspiraciju za veliku asimetričnu ponudu, produktnu scenu sa organskim oblikom/podijumom i petrol CTA završetak. Ne prepisuj jedan raspored iz reference. Za transparentni PNG proizvod ostaje slobodan preko scene, bez pravougaonog rama, kartice ili podloge. Ikone, benefit-redovi i zdravstvene tvrdnje nisu dekoracija: koriste se samo uz potvrđene činjenice za taj proizvod.
+
+Pre-flight blokira ponovljenu `signature` kombinaciju među poslednje tri evidentirane objave. Kada je objava spremna, `validatedRenders` mora navesti Feed, Story i tri ključna Reels kadra pregledana u punoj veličini i kao umanjeni prikaz telefona.
+
+Pravougaoni strukturni elementi u rendereru, uključujući panel, footer, karticu, proizvodnu podlogu, okvir i logo-karticu, moraju imati oštre uglove. Zaobljenje je rezervisano isključivo za pill-dugme/kratku ponudnu oznaku i kružni dekorativni oblik. Pre-flight proverava da renderer ne uvodi drugo zaobljenje.
+
+Za transparentni PNG finalna provera mora potvrditi da nema dodatni pravougaoni ram, karticu, okvir ni podlogu oko proizvoda, kao i da proizvod zauzima dominantnu vizuelnu zonu bez suvišne praznine.
+
+Za svaku grafičku i video objavu koristi se najmanje jedna semantička ikona iz `lucide-react`. Čista tekstualna objava je izuzetak. Ikona mora predstavljati proverenu informaciju ili navigaciju, a ne nepotvrđenu zdravstvenu korist.
 
 ## Renderovanje grafika i videa
 
@@ -64,7 +86,7 @@ cd video-renderer
 npm run dev
 ```
 
-Postojeća verzija ima jedan čist promo šablon koji se prilagođava akciji, novitetu, savetu ili informaciji o lokaciji kroz tekst i sliku. Sledeći šabloni se dodaju kada stvarni materijali pokažu šta se najčešće koristi.
+Podržane `designVariant` vrednosti su `product-atelier`, `editorial-split`, `minimal-offer`, `product-card` i `premium-product-stage`. Biraj ih prema briefu i dizajnerskoj istoriji, ne prema poslednjem korišćenom šablonu.
 
 ## Pre-flight provera
 

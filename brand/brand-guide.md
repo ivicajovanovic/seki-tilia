@@ -32,7 +32,7 @@ Nikada ne predstavljamo generisanu osobu kao stvarnu zaposlenu apoteke.
 - **Tekst i praktične informacije:** Manrope, 400, 500 ili 600.
 - **Logo:** isključivo originalni vektorski fajl; ne rekreirati ga fontom.
 
-Jedna objava ima najviše dve težine fonta. Tekst na vizualu treba da bude kratak, čitljiv na telefonu i bez medicinskog žargona.
+Manrope je jedina tipografska porodica za ovaj brend. Ne koristiti generički podrazumevani par iz dizajn-skilla, serifni fallback, Arial ni drugi zamenski font na finalnim vizualima. Jedna objava ima najviše dve težine fonta. Tekst na vizualu treba da bude kratak, čitljiv na telefonu i bez medicinskog žargona.
 
 ## Logo
 
@@ -42,7 +42,7 @@ Originali se nalaze u `logos/`:
 - `logo2.svg` — horizontalna verzija;
 - `logo3.svg` — znak, bez naziva.
 
-Za avatar profila koristi se `logo3.svg`, na krem podlozi. Za feed se koristi znak ili puna verzija, zavisno od slobodnog prostora. Logo nikada ne sme biti rastegnut, obojen drugom bojom ili postavljen preko nečitljive fotografije.
+Za avatar profila koristi se `logo3.svg`, na krem podlozi. Za feed se koristi znak ili puna verzija, zavisno od slobodnog prostora. Znak `logo3.svg` mora imati krem podlogu koja jasno odvaja njegov limeta deo od okoline. Logo nikada ne sme biti rastegnut, obojen drugom bojom ili postavljen preko nečitljive fotografije, limeta polja ili druge nekontrolisane podloge.
 
 ## Vizuelni princip
 
@@ -50,11 +50,25 @@ Objava treba da deluje čisto, savremeno i ljudski:
 
 - jedna glavna poruka i jedna dominantna fotografija ili ilustrativni element;
 - mnogo praznog prostora;
-- zaobljeni organski prozor ili blok uz fotografiju;
+- geometrijski čist prozor ili blok uz fotografiju, sa oštrim uglovima na pravougaonim površinama;
 - mali potpis logom, diskretno u donjem uglu;
 - najviše tri grupe sadržaja: naslov, proizvod/savet, poziv na akciju.
 
 Izbegavamo kolaže, agresivne akcijske poruke, previše ikona, medicinske simbole van znaka i „luksuzni” vizuelni ton.
+
+Pravougaoni paneli, kartice, podloge proizvoda, footeri i logo-kartice imaju oštre uglove. Zaobljenje je dozvoljeno samo za pill-dugme ili kratku CTA/ponudnu oznaku, kao i za namerno kružne dekorativne oblike. Ne koristiti zaobljene pravougaonike kao podrazumevani vizuelni motiv.
+
+Kada klijent dostavi proizvod kao transparentni PNG, proizvod se postavlja direktno na kompoziciju, bez spoljnog pravougaonog rama, kartice, okvira ili podloge. Dobija dominantnu, dovoljno veliku zonu u kadru i ne sme ostati sitan unutar velike praznine. Pravougaona podloga može da se koristi samo za neprovidnu fotografiju proizvoda kada je neophodna radi čitljivosti i ne sme se dodavati transparentnom PNG-u.
+
+Grafike i video kadrovi koriste najmanje jednu funkcionalnu profesionalnu ikonu iz Lucide biblioteke. Ikona označava stvarnu radnju ili informaciju, na primer lokaciju/dostupnost uz CTA. Čiste tekstualne objave su izuzetak. Medicinske ikone i benefit-ikonice nisu dozvoljene bez potvrđene tvrdnje koju tačno predstavljaju.
+
+## Premium produktna scena
+
+Interna autorska referenca `ovako mora biti.png` postavlja kvalitet za produktne akcije. Njena dizajnerska logika može da se koristi sa varijacijama: velika ponuda, dominantan proizvod, organska pozadina i podijum/senka koji daju dubinu, uz petrol završni blok sa jednim CTA-om.
+
+Proizvod u takvoj sceni ostaje slobodan glavni element. Organski oblik, podijum i senka grade prostor oko proizvoda, ali ga ne zatvaraju u pravougaonu karticu, okvir ili podlogu. Za transparentni PNG to pravilo je obavezno.
+
+Na grafiku se ne prenose automatski ikone, benefit-redovi ni zdravstvene tvrdnje iz prethodnih primera. Prikazuju se samo kada su konkretne formulacije za aktuelni proizvod potvrđene. U suprotnom prednost imaju velika ponuda, proizvod, jasan CTA i mirna, dovršena kompozicija.
 
 ## Sadržajne rubrike
 

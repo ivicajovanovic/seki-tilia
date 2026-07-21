@@ -63,6 +63,7 @@ Ručna objava na Instagramu i Facebooku
 | [HANDOFF.md](HANDOFF.md) | Kratko operativno preuzimanje sistema u novoj sesiji |
 | [AGENTS.md](AGENTS.md) | Obavezna pravila rada, organizacija fajlova i bezbednost |
 | [brand/brand-guide.md](brand/brand-guide.md) | Identitet brenda, paleta, logo, ton i pravila vizuala |
+| [brand/design-system.md](brand/design-system.md) | Familije kompozicija, logo podloga, tipografija i zaštita od monotonije |
 | [production/copy-playbook.md](production/copy-playbook.md) | Copy pravila, CTA, strukture i šabloni captiona |
 | [production/README.md](production/README.md) | Kreiranje paketa, render i validacija |
 
