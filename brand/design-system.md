@@ -28,7 +28,7 @@ Familije se ne smeju svoditi na promenu boje istog šablona. Menjaju se čitanje
 
 ### `premium-product-stage`: obavezna pravila
 
-`ovako mora biti.png` je autorski odobrena interna referenca. Može se koristiti kao direktna referenca za kvalitet i dizajnersku gramatiku, ali svaka nova objava mora biti nova kompozicija, a ne mehanička replika istog rasporeda.
+`ref-premium-product-stage.png` je autorski odobrena interna referenca. Može se koristiti kao direktna referenca za kvalitet i dizajnersku gramatiku, ali svaka nova objava mora biti nova kompozicija, a ne mehanička replika istog rasporeda.
 
 - Prvi utisak čine velika, čitljiva ponuda i proizvod kao dva jasno različita fokusa. Njihov odnos je asimetričan, ali optički uravnotežen.
 - Proizvod zauzima dominantnu vizuelnu zonu. Organski luk, krug ili elipsa, podijum i kontaktna senka mogu graditi scenu i dubinu, ali nisu individualni ram, kartica ni pravougaona podloga proizvoda.
@@ -40,21 +40,29 @@ Familije se ne smeju svoditi na promenu boje istog šablona. Menjaju se čitanje
 
 ## Reference i odluka za objavu
 
-Pre dizajna agent pregleda `brand/design-references/`. Za svaku objavu popunjava `generated/design-direction.json` sa:
+Pre dizajna agent pregleda isključivo `brand/design-references/ref-premium-product-stage.png` i `brand/design-references/ref-product-stage-footer.png`. Za svaku objavu popunjava `generated/design-direction.json` sa:
 
 - izabranom familijom i jedinstvenim `signature` zapisom;
 - najmanje jednom korišćenom referencom i dve konkretne dizajnerske osobine preuzete kao inspiracija;
 - kratkim opisom po čemu se objava razlikuje od poslednje tri;
 - potvrdom da je logo na `cream-card` površini i da se koristi rendererova Manrope porodica `AUSekiManrope`;
 - listom finalnih rendera pregledanih na punoj veličini i u umanjenom prikazu.
+- najmanje dve vrednosti `designInterventions`, opisom `freshInterventionNote`, `motionTreatment` kada postoji Reels i opisom `formatAdaptations` za svaki traženi format.
 
-Za familiju `premium-product-stage` može se u `referenceFiles` navesti tačno `ovako mora biti.png`; pre-flight je tada prepoznaje kao internu referencu iz korena repoa.
+U `referenceFiles` dozvoljene su samo vrednosti `ref-premium-product-stage.png` i `ref-product-stage-footer.png`. Za familiju `premium-product-stage` može se navesti `ref-premium-product-stage.png`.
 
-Reference služe za kompoziciju, ritam, odnos slike i teksta, obradu i kvalitet. `ovako mora biti.png` je izuzetak u smislu prava korišćenja: to je interno autorsko delo i njegova dizajnerska gramatika sme da se koristi. Ipak, ne preuzimaj automatski copy, proizvod, publiku, tvrdnje, cenu, rok, CTA ni bilo koji drugi podatak, osim ako su za konkretnu objavu potvrđeni.
+Reference služe za kompoziciju, ritam, odnos slike i teksta, obradu i kvalitet. `ref-premium-product-stage.png` je izuzetak u smislu prava korišćenja: to je interno autorsko delo i njegova dizajnerska gramatika sme da se koristi. Ipak, ne preuzimaj automatski copy, proizvod, publiku, tvrdnje, cenu, rok, CTA ni bilo koji drugi podatak, osim ako su za konkretnu objavu potvrđeni.
 
 ## Zaštita od monotonije
 
-Pre-flight poredi `signature` aktuelne objave sa tri poslednje evidentirane objave. Ako se ponovi, paket se blokira dok agent ne izabere stvarno drugačiju familiju ili kombinaciju modula. Isti proizvod može dobiti novu kompoziciju; novi proizvod ne sme automatski dobiti staru.
+Svaka nova objava mora zadržati brend identitet, ali uvesti stvarnu novu intervenciju u sadržaj, grafiku i video kada je prisutan. Novi proizvod, druga boja ili preformulisan isti tekst nisu dovoljni.
+
+- U `input.json` `contentApproach` bira sadržajni ugao: `offer-first`, `product-context`, `routine-moment`, `practical-guidance`, `seasonal-context`, `local-availability` ili `professional-prompt`. Ne ponavlja se među poslednje tri objave.
+- `designInterventions` u `generated/design-direction.json` bira najmanje dve ose promene: `reading-order`, `product-placement`, `offer-treatment`, `scene-depth`, `image-crop`, `type-composition`, `cta-footer`, `icon-role` ili `motion-rhythm`. Njihova kombinacija ne sme biti ista kao u poslednje tri objave.
+- `motionTreatment` je obavezan za Reels: `staged-reveal`, `offer-build`, `detail-cutaway`, `editorial-pan` ili `location-close`. Upisuje se identično u `generated/design-direction.json` i `video-props.json`, jer renderer njime menja ritam uvoda. Ne ponavlja se među poslednje tri Reels objave.
+- `formatAdaptations` objašnjava namernu razliku Feed-a, Story-ja i Reels-a. Format se ne sme dobiti pukim rastezanjem istog layouta ili istog teksta.
+
+Pre-flight poredi `signature`, sadržajni ugao, kombinaciju intervencija i Reels ritam aktuelne objave sa tri poslednje evidentirane objave. Ako se bilo koji obavezni obrazac ponovi, paket se blokira dok agent ne izabere stvarno drugačiji pristup. Isti proizvod može dobiti novu kompoziciju; novi proizvod ne sme automatski dobiti staru.
 
 ## Finalna vizuelna provera
 

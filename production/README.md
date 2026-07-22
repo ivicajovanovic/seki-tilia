@@ -1,5 +1,7 @@
 # Operativni vodič
 
+Pre bilo kog rada pročitaj `AGENT-OPERATING-MAP.md`. Ona daje redosled izvora istine, lokacije izlaza i pravilo protiv ponavljanja sadržaja, grafika i videa.
+
 ## Kreiranje nove objave
 
 Iz korena repoa:
@@ -53,15 +55,15 @@ Sve radne datoteke objave ostaju u njenom paketu: originali u `source/`, radni r
 
 ## Obavezna vizuelna provera
 
-Pre dizajniranja i pre finalnog izvoza agent čita `skills/visual-design/SKILL.md`. Skill vodi art direkciju, kompoziciju, tipografiju, obradu fotografije i pregled rendera. Njegova provera dizajna se evidentira u `review.md` i blokira status spremnosti dok nije potvrđena.
+Pre dizajniranja i pre finalnog izvoza agent čita `agent-skills-required/visual-design/SKILL.md`. To je obavezni lokalni skill za agente i vodi art direkciju, kompoziciju, tipografiju, obradu fotografije i pregled rendera. Njegova provera dizajna se evidentira u `review.md` i blokira status spremnosti dok nije potvrđena.
 
 Skill se ne koristi za izmene copy-ja. Za caption, CTA, hashtagove i zdravstveno osetljive formulacije i dalje važe `production/copy-playbook.md` i `production/content-safety-rules.md`.
 
-Pre dizajna pročitaj i `brand/design-system.md`, a kada postoje reference i `brand/design-references/catalog.md`. U `generated/design-direction.json` zabeleži jednu familiju renderer-a, korišćenu referencu, najmanje dve dizajnerske osobine, jedinstvenu `signature` i razliku u odnosu na poslednje tri objave. Za logo je dozvoljena samo `cream-card` podloga, a za tipografiju rendererova Manrope porodica `AUSekiManrope` bez zamenskog fonta.
+Pre dizajna pročitaj i `brand/design-system.md`, kao i `brand/design-references/catalog.md`. Kao reference su odobrene isključivo `ref-premium-product-stage.png` i `ref-product-stage-footer.png` iz `brand/design-references/`; ove stabilne ASCII identifikatore doslovno upiši u `generated/design-direction.json`. U njemu zabeleži jednu familiju renderer-a, korišćenu referencu, najmanje dve dizajnerske osobine, jedinstvenu `signature`, najmanje dve `designInterventions`, `freshInterventionNote`, `motionTreatment` za Reels i razliku u odnosu na poslednje tri objave. U `input.json` obavezno popuni `contentApproach` i `copyFreshnessNote`, a u `formatAdaptations` objasni stvarnu adaptaciju svakog traženog formata. Za Reels `motionTreatment` mora identično da se upiše i u `video-props.json`, jer renderer na njemu zasniva ritam uvoda. Za logo je dozvoljena samo `cream-card` podloga, a za tipografiju rendererova Manrope porodica `AUSekiManrope` bez zamenskog fonta.
 
-Za akciju sa dominantnim pakovanjem može se izabrati `premium-product-stage`. Ona koristi internu, autorski odobrenu referencu `ovako mora biti.png` kao inspiraciju za veliku asimetričnu ponudu, produktnu scenu sa organskim oblikom/podijumom i petrol CTA završetak. Ne prepisuj jedan raspored iz reference. Za transparentni PNG proizvod ostaje slobodan preko scene, bez pravougaonog rama, kartice ili podloge. Ikone, benefit-redovi i zdravstvene tvrdnje nisu dekoracija: koriste se samo uz potvrđene činjenice za taj proizvod.
+Za akciju sa dominantnim pakovanjem može se izabrati `premium-product-stage`. Ona koristi internu, autorski odobrenu referencu `ref-premium-product-stage.png` kao inspiraciju za veliku asimetričnu ponudu, produktnu scenu sa organskim oblikom/podijumom i petrol CTA završetak. Ne prepisuj jedan raspored iz reference. Za transparentni PNG proizvod ostaje slobodan preko scene, bez pravougaonog rama, kartice ili podloge. Ikone, benefit-redovi i zdravstvene tvrdnje nisu dekoracija: koriste se samo uz potvrđene činjenice za taj proizvod.
 
-Pre-flight blokira ponovljenu `signature` kombinaciju među poslednje tri evidentirane objave. Kada je objava spremna, `validatedRenders` mora navesti Feed, Story i tri ključna Reels kadra pregledana u punoj veličini i kao umanjeni prikaz telefona.
+Pre-flight blokira ponovljenu `signature` kombinaciju, `contentApproach`, kombinaciju `designInterventions` i `motionTreatment` među poslednje tri evidentirane objave. Kada je objava spremna, `validatedRenders` mora navesti Feed, Story i tri ključna Reels kadra pregledana u punoj veličini i kao umanjeni prikaz telefona.
 
 Pravougaoni strukturni elementi u rendereru, uključujući panel, footer, karticu, proizvodnu podlogu, okvir i logo-karticu, moraju imati oštre uglove. Zaobljenje je rezervisano isključivo za pill-dugme/kratku ponudnu oznaku i kružni dekorativni oblik. Pre-flight proverava da renderer ne uvodi drugo zaobljenje.
 

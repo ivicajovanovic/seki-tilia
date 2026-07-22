@@ -22,6 +22,10 @@ Preporučena raspodela za jedan mesec:
 
 Raspodela je početna smernica, ne obaveza: aktuelne akcije klijenta imaju prednost.
 
+## Kontinuitet bez ponavljanja
+
+Mesečni ritam gradi prepoznatljivost, ali nijedna uzastopna objava ne sme biti ista poruka ili isti vizuelni obrazac uz drugi proizvod. Za svaku novu objavu agent bira drugačiji `contentApproach`, najmanje dve `designInterventions` i, kada postoji Reels, drugačiji `motionTreatment` od poslednje tri objave. Ta pravila, dozvoljene vrednosti i pre-flight provera nalaze se u `brand/design-system.md` i `AGENT-OPERATING-MAP.md`.
+
 ## Mreža lokacija
 
 Mreža apoteka treba da bude lako dostupna, ali ne sme da optereti redovne objave.

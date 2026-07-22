@@ -48,6 +48,12 @@ Pre predaje, agent uklanja sve što može da zvuči kao prazna, univerzalna rekl
 
 Završni tekst mora da odgovori na tri pitanja: šta je konkretna informacija, zašto je korisna osobi koja prati profil i koji je jedan smislen sledeći korak.
 
+## Svež sadržajni ugao
+
+Za svaku novu objavu agent u `input.json` upisuje jedan `contentApproach` i u `copyFreshnessNote` konkretno objašnjava šta je novo u odnosu na poslednje tri objave. Dozvoljeni uglovi su: `offer-first`, `product-context`, `routine-moment`, `practical-guidance`, `seasonal-context`, `local-availability` i `professional-prompt`.
+
+Isti ugao se ne koristi u poslednje tri objave. Agent ne menja samo prideve, redosled rečenica ili hashtagove, već menja stvarnu vrednost za publiku: na primer od potvrđene ponude ka praktičnoj rutini, od noviteta ka sezonskom kontekstu ili od opšte dostupnosti ka potvrđenoj lokalnoj informaciji. U svim formatima ostaju iste potvrđene činjenice, ali Feed, Story i Reels ne smeju biti ista poruka samo skraćena ili rastegnuta.
+
 ## Struktura po formatu
 
 ### Feed (Instagram i Facebook)

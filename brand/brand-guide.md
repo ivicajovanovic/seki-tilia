@@ -64,7 +64,7 @@ Grafike i video kadrovi koriste najmanje jednu funkcionalnu profesionalnu ikonu 
 
 ## Premium produktna scena
 
-Interna autorska referenca `ovako mora biti.png` postavlja kvalitet za produktne akcije. Njena dizajnerska logika može da se koristi sa varijacijama: velika ponuda, dominantan proizvod, organska pozadina i podijum/senka koji daju dubinu, uz petrol završni blok sa jednim CTA-om.
+Interna autorska referenca `ref-premium-product-stage.png` postavlja kvalitet za produktne akcije. Njena dizajnerska logika može da se koristi sa varijacijama: velika ponuda, dominantan proizvod, organska pozadina i podijum/senka koji daju dubinu, uz petrol završni blok sa jednim CTA-om.
 
 Proizvod u takvoj sceni ostaje slobodan glavni element. Organski oblik, podijum i senka grade prostor oko proizvoda, ali ga ne zatvaraju u pravougaonu karticu, okvir ili podlogu. Za transparentni PNG to pravilo je obavezno.
 

@@ -16,6 +16,9 @@ const errors = [];
 const warnings = [];
 const supportedFamilies = new Set(["product-atelier", "editorial-split", "minimal-offer", "product-card", "premium-product-stage"]);
 const supportedImageBackgrounds = new Set(["transparent", "opaque"]);
+const supportedContentApproaches = new Set(["offer-first", "product-context", "routine-moment", "practical-guidance", "seasonal-context", "local-availability", "professional-prompt"]);
+const supportedDesignInterventions = new Set(["reading-order", "product-placement", "offer-treatment", "scene-depth", "image-crop", "type-composition", "cta-footer", "icon-role", "motion-rhythm"]);
+const supportedMotionTreatments = new Set(["staged-reveal", "offer-build", "detail-cutaway", "editorial-pan", "location-close"]);
 const requiredRenderKeys = ["feed", "story", "reels-intro", "reels-offer", "reels-closing"];
 
 const readJson = (path, label) => {
@@ -36,7 +39,7 @@ const videoProps = readJson(resolve(postDirectory, "video-props.json"), "video-p
 const designDirection = readJson(resolve(postDirectory, "generated/design-direction.json"), "generated/design-direction.json");
 const reviewPath = resolve(postDirectory, "review.md");
 const review = existsSync(reviewPath) ? readFileSync(reviewPath, "utf8") : "";
-const visualDesignSkillPath = resolve(repositoryRoot, "skills/visual-design/SKILL.md");
+const visualDesignSkillPath = resolve(repositoryRoot, "agent-skills-required/visual-design/SKILL.md");
 const captionPath = ["final/caption.md", "generated/caption.md"].map((file) => resolve(postDirectory, file)).find(existsSync);
 const caption = captionPath ? readFileSync(captionPath, "utf8") : "";
 
@@ -59,7 +62,15 @@ const getDesignRecords = () => {
         if (!existsSync(directionPath)) continue;
         try {
           const direction = JSON.parse(readFileSync(directionPath, "utf8"));
-          if (direction?.signature) records.push({ id: post.name, signature: direction.signature });
+          const postInputPath = join(monthDirectory, post.name, "input.json");
+          const postInput = existsSync(postInputPath) ? JSON.parse(readFileSync(postInputPath, "utf8")) : null;
+          if (direction?.signature) records.push({
+            id: post.name,
+            signature: direction.signature,
+            contentApproach: postInput?.contentApproach,
+            designInterventionKey: Array.isArray(direction?.designInterventions) ? [...direction.designInterventions].sort().join("|") : null,
+            motionTreatment: direction?.motionTreatment
+          });
         } catch {
           warnings.push(`Preskočen je neispravan design-direction.json u paketu ${post.name}.`);
         }
@@ -71,6 +82,8 @@ const getDesignRecords = () => {
 
 if (input?.postType === null) errors.push("Nije odabran tip objave.");
 if (input?.product === null && input?.postType !== "lokacija") warnings.push("Nije unet proizvod ili tema objave.");
+if (!supportedContentApproaches.has(input?.contentApproach)) errors.push("input.json mora imati podržan contentApproach za svež sadržajni ugao.");
+if (!input?.copyFreshnessNote?.trim()) errors.push("input.json nema copyFreshnessNote sa stvarnom razlikom u odnosu na poslednje tri objave.");
 if (input?.confirmedOffer && (input.confirmedOffer.price || input.confirmedOffer.discount) && !input.confirmedOffer.validUntil) {
   errors.push("Akcija ima cenu ili popust, ali nema potvrđen rok trajanja.");
 }
@@ -93,9 +106,12 @@ if (videoProps?.imageSrc?.trim() && !supportedImageBackgrounds.has(videoProps?.i
 
 if (!caption) warnings.push("Caption još nije sačuvan u generated/caption.md ili final/caption.md.");
 if (!review.includes("Status: SPREMNO ZA LJUDSKU PROVERU")) errors.push("review.md nema status SPREMNO ZA LJUDSKU PROVERU.");
-if (!existsSync(visualDesignSkillPath)) errors.push("Nedostaje obavezni skills/visual-design/SKILL.md.");
-if (!review.includes("- [x] Vizuelni dizajn je izrađen i pregledan prema skills/visual-design/SKILL.md.")) {
-  errors.push("Nedostaje potvrda obavezne vizuelne provere prema skills/visual-design/SKILL.md.");
+if (!existsSync(visualDesignSkillPath)) errors.push("Nedostaje obavezni agent-skills-required/visual-design/SKILL.md.");
+if (!review.includes("- [x] Vizuelni dizajn je izrađen i pregledan prema agent-skills-required/visual-design/SKILL.md.")) {
+  errors.push("Nedostaje potvrda obavezne vizuelne provere prema agent-skills-required/visual-design/SKILL.md.");
+}
+if (!review.includes("- [x] Sadržajni ugao, najmanje dve dizajnerske intervencije i Reels ritam, kada postoji, stvarno se razlikuju od poslednje tri objave.")) {
+  errors.push("Nedostaje potvrda stvarne varijacije sadržaja, dizajna i Reels ritma.");
 }
 if (!review.includes("- [x] Logo, glavna poruka, ponuda, proizvod i CTA, kada postoje, jasno su vidljivi i kontrastni u svakom formatu.")) {
   errors.push("Nedostaje potvrda provere vidljivosti i kontrasta obaveznih elemenata u svakom formatu.");
@@ -125,13 +141,14 @@ if (designDirection?.family && videoProps?.designVariant !== designDirection.fam
 if (!Array.isArray(designDirection?.referenceFiles) || designDirection.referenceFiles.length < 1) {
   errors.push("Nedostaje referenca u design-direction.json.");
 } else {
+  const approvedReferenceFiles = new Set(["ref-premium-product-stage.png", "ref-product-stage-footer.png"]);
   for (const referenceFile of designDirection.referenceFiles) {
-    const referencePath = typeof referenceFile !== "string"
-      ? null
-      : referenceFile === "ovako mora biti.png"
-        ? resolve(repositoryRoot, referenceFile)
-        : resolve(repositoryRoot, "brand/design-references", referenceFile);
-    if (!referencePath || !existsSync(referencePath)) {
+    const referencePath = typeof referenceFile === "string" && approvedReferenceFiles.has(referenceFile)
+      ? resolve(repositoryRoot, "brand/design-references", referenceFile)
+      : null;
+    if (!referencePath) {
+      errors.push(`Nedozvoljena dizajnerska referenca: ${referenceFile}. Dozvoljene su samo ref-premium-product-stage.png i ref-product-stage-footer.png.`);
+    } else if (!existsSync(referencePath)) {
       errors.push(`Nepostojeća dizajnerska referenca: ${referenceFile}.`);
     }
   }
@@ -140,6 +157,22 @@ if (!Array.isArray(designDirection?.referenceTraits) || designDirection.referenc
   errors.push("Upiši najmanje dve konkretne dizajnerske osobine iz reference.");
 }
 if (!designDirection?.distinctFromRecent?.trim()) errors.push("Nedostaje objašnjenje razlike u odnosu na poslednje objave.");
+const designInterventions = Array.isArray(designDirection?.designInterventions) ? designDirection.designInterventions : [];
+const uniqueDesignInterventions = [...new Set(designInterventions)];
+if (uniqueDesignInterventions.length < 2 || uniqueDesignInterventions.some((intervention) => !supportedDesignInterventions.has(intervention))) {
+  errors.push("Upiši najmanje dve podržane designInterventions vrednosti za stvarnu dizajnersku promenu.");
+}
+if (!designDirection?.freshInterventionNote?.trim()) errors.push("Nedostaje freshInterventionNote sa konkretnom novom dizajnerskom odlukom.");
+const requestedFormats = Array.isArray(input?.requestedFormats) ? input.requestedFormats : [];
+for (const format of requestedFormats.filter((format) => ["feed", "story", "reels"].includes(format))) {
+  if (!designDirection?.formatAdaptations?.[format]?.trim()) errors.push(`Nedostaje formatAdaptations.${format} za namernu adaptaciju formata.`);
+}
+if (requestedFormats.includes("reels") && !supportedMotionTreatments.has(designDirection?.motionTreatment)) {
+  errors.push("Reels zahteva podržan motionTreatment koji se razlikuje od prethodnih Reels objava.");
+}
+if (requestedFormats.includes("reels") && videoProps?.motionTreatment !== designDirection?.motionTreatment) {
+  errors.push("video-props.json motionTreatment mora da odgovara motionTreatment vrednosti iz design-direction.json.");
+}
 if (designDirection?.logoSurface !== "cream-card") errors.push("Originalni znak logoa sme biti samo na cream-card podlozi.");
 if (designDirection?.typography?.family !== "AUSekiManrope") errors.push("Finalni renderer mora koristiti Manrope font bez zamene.");
 if (!Array.isArray(designDirection?.typography?.weights) || designDirection.typography.weights.length < 1) {
@@ -149,6 +182,16 @@ if (!Array.isArray(designDirection?.typography?.weights) || designDirection.typo
 const recentRecords = getDesignRecords().filter((record) => record?.id !== basename(postDirectory)).sort((a, b) => String(a.id).localeCompare(String(b.id))).slice(-3);
 if (designDirection?.signature && recentRecords.some((record) => record.signature === designDirection.signature)) {
   errors.push(`Design signature ponavlja jednu od poslednje tri objave: ${recentRecords.filter((record) => record.signature === designDirection.signature).map((record) => record.id).join(", ")}.`);
+}
+if (input?.contentApproach && recentRecords.some((record) => record.contentApproach === input.contentApproach)) {
+  errors.push(`contentApproach ponavlja jednu od poslednje tri objave: ${recentRecords.filter((record) => record.contentApproach === input.contentApproach).map((record) => record.id).join(", ")}.`);
+}
+const designInterventionKey = [...uniqueDesignInterventions].sort().join("|");
+if (designInterventionKey && recentRecords.some((record) => record.designInterventionKey === designInterventionKey)) {
+  errors.push(`Kombinacija designInterventions ponavlja jednu od poslednje tri objave: ${recentRecords.filter((record) => record.designInterventionKey === designInterventionKey).map((record) => record.id).join(", ")}.`);
+}
+if (requestedFormats.includes("reels") && designDirection?.motionTreatment && recentRecords.some((record) => record.motionTreatment === designDirection.motionTreatment)) {
+  errors.push(`motionTreatment ponavlja jednu od poslednje tri Reels objave: ${recentRecords.filter((record) => record.motionTreatment === designDirection.motionTreatment).map((record) => record.id).join(", ")}.`);
 }
 
 const finalDirectory = resolve(postDirectory, "final");
@@ -180,6 +223,9 @@ if (!renderer.includes('case "premium-product-stage": return <PremiumProductStag
   errors.push("Renderer nema podržanu premium-product-stage familiju.");
 } else if (!premiumProductStageRenderer.includes('const isTransparentProduct = imageBackground === "transparent";') || !premiumProductStageRenderer.includes('backgroundColor: isTransparentProduct ? "transparent"') || !premiumProductStageRenderer.includes('overflow: isTransparentProduct ? "visible"')) {
   errors.push("premium-product-stage nema obavezan transparentni režim bez pravougaonog rama/podloge oko proizvoda.");
+}
+if (!renderer.includes("MotionTreatmentLayer") || !renderer.includes("motionTreatment")) {
+  errors.push("Renderer nema podržan motionTreatment za stvarnu varijaciju Reels ritma.");
 }
 const roundedRectangleLines = renderer
   .split("\n")

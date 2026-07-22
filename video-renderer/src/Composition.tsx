@@ -3,6 +3,7 @@ import { MapPin } from "lucide-react";
 import { AbsoluteFill, cancelRender, Composition, continueRender, delayRender, Easing, Img, interpolate, staticFile, Still, useCurrentFrame, useVideoConfig } from "remotion";
 
 type DesignVariant = "product-atelier" | "editorial-split" | "minimal-offer" | "product-card" | "premium-product-stage";
+type MotionTreatment = "staged-reveal" | "offer-build" | "detail-cutaway" | "editorial-pan" | "location-close";
 
 type VideoProps = {
   eyebrow: string;
@@ -14,6 +15,7 @@ type VideoProps = {
   imageBackground?: "transparent" | "opaque" | "unknown";
   locationLine?: string;
   designVariant?: DesignVariant;
+  motionTreatment?: MotionTreatment;
 };
 
 const colors = {
@@ -41,6 +43,20 @@ const ensureBrandFont = () => {
 };
 
 const easeOut = Easing.bezier(0.16, 1, 0.3, 1);
+
+const MotionTreatmentLayer: React.FC<{ children: React.ReactNode; treatment: MotionTreatment }> = ({ children, treatment }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const progress = interpolate(frame, [0, fps * 2.4], [0, 1], { easing: easeOut, extrapolateRight: "clamp" });
+  const transformByTreatment: Record<MotionTreatment, string> = {
+    "staged-reveal": "none",
+    "offer-build": `scale(${interpolate(progress, [0, 1], [0.965, 1])})`,
+    "detail-cutaway": `scale(${interpolate(progress, [0, 1], [1.05, 1])})`,
+    "editorial-pan": `translateX(${interpolate(progress, [0, 1], [-34, 0])}px)`,
+    "location-close": `translateY(${interpolate(progress, [0, 1], [26, 0])}px)`,
+  };
+  return <AbsoluteFill style={{ overflow: "hidden", transform: transformByTreatment[treatment], transformOrigin: "center" }}>{children}</AbsoluteFill>;
+};
 
 const LogoOnCreamCard: React.FC<{ size: number }> = ({ size }) => (
   <div
@@ -343,12 +359,12 @@ const Closing: React.FC<Pick<VideoProps, "offerLabel" | "cta">> = ({ offerLabel,
   );
 };
 
-export const SekiTiliaPromo: React.FC<VideoProps> = (props) => <AbsoluteFill><Variant {...props} animated /><Closing {...props} /></AbsoluteFill>;
+export const SekiTiliaPromo: React.FC<VideoProps> = (props) => <AbsoluteFill><MotionTreatmentLayer treatment={props.motionTreatment ?? "staged-reveal"}><Variant {...props} animated /></MotionTreatmentLayer><Closing {...props} /></AbsoluteFill>;
 export const SekiTiliaPost: React.FC<VideoProps> = (props) => <Variant {...props} />;
 
 export const MyComposition: React.FC = () => (
   <>
-    <Composition id="SekiTiliaPromo" component={SekiTiliaPromo} durationInFrames={360} fps={30} width={1080} height={1920} defaultProps={{ eyebrow: "Novitet u ponudi", headline: "Pažljivo izabrano za vašu rutinu.", supportingText: "Uskoro stižu konkretne informacije i fotografije proizvoda.", offerLabel: "Saznajte više u apoteci", cta: "Posetite najbližu AU Šeki-Tilia apoteku.", locationLine: "AU Šeki-Tilia", designVariant: "product-atelier" }} />
+    <Composition id="SekiTiliaPromo" component={SekiTiliaPromo} durationInFrames={360} fps={30} width={1080} height={1920} defaultProps={{ eyebrow: "Novitet u ponudi", headline: "Pažljivo izabrano za vašu rutinu.", supportingText: "Uskoro stižu konkretne informacije i fotografije proizvoda.", offerLabel: "Saznajte više u apoteci", cta: "Posetite najbližu AU Šeki-Tilia apoteku.", locationLine: "AU Šeki-Tilia", designVariant: "product-atelier", motionTreatment: "staged-reveal" }} />
     <Still id="SekiTiliaFeed" component={SekiTiliaPost} width={1080} height={1350} defaultProps={{ eyebrow: "Novitet u ponudi", headline: "Pažljivo izabrano za vašu rutinu.", supportingText: "Uskoro stižu konkretne informacije i fotografije proizvoda.", offerLabel: "Saznajte više u apoteci", cta: "Posetite AU Šeki-Tilia.", locationLine: "AU Šeki-Tilia", designVariant: "product-atelier" }} />
     <Still id="SekiTiliaStory" component={SekiTiliaPost} width={1080} height={1920} defaultProps={{ eyebrow: "Novitet u ponudi", headline: "Pažljivo izabrano za vašu rutinu.", supportingText: "Uskoro stižu konkretne informacije i fotografije proizvoda.", offerLabel: "Saznajte više u apoteci", cta: "Posetite AU Šeki-Tilia.", locationLine: "AU Šeki-Tilia", designVariant: "product-atelier" }} />
   </>

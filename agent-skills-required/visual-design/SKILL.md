@@ -87,6 +87,28 @@ When references are supplied, extract their reusable grammar:
 
 Use the principles that make the references effective. Do not copy another brand's logo, text, proprietary artwork, distinctive campaign device, or exact composition unless the user owns it or explicitly requests a close adaptation.
 
+### AU Šeki-Tilia: premium produktna scena
+
+Za AU Šeki-Tilia produktnu akciju, novitet ili promotivnu objavu sa dominantnim pakovanjem, vizuelni kvalitet i dizajnerska gramatika iz `brand/design-references/ref-premium-product-stage.png` i `brand/design-references/ref-product-stage-footer.png` predstavljaju obavezan prag izvedbe. To nije poziv na kopiranje: svaka objava mora imati novu kompoziciju i jedinstven `signature` zapis.
+
+Kada brief odgovara familiji `premium-product-stage`, gradi scenu namerno, a ne kao ravan šablon:
+
+- proizvod je veliki, glavni vizuelni element i optički je povezan sa scenom;
+- asimetrična, ali uravnotežena hijerarhija prvo vodi do potvrđene ponude ili naslova, zatim do proizvoda, pa do jednog CTA-a;
+- organska masa, podijum, kontaktna senka i kontrolisano premium osvetljenje stvaraju dubinu oko proizvoda, bez pravougaonog rama ili kartice oko transparentnog PNG-a;
+- krem, bež i petrol grade mirnu bazu, dok limeta služi kao štedljiv akcenat za potvrđenu ponudu, kratku oznaku ili CTA;
+- petrol završni blok može objediniti kratak CTA i neutralnu informaciju o dostupnosti, ali footer nije obavezan modul svake objave.
+
+Iz referenci se ne preuzimaju zdravstvene tvrdnje, benefit-ikonice, sastojci, proizvod, cena, rok, copy, položaj logoa ni zaobljeni footer. Za AU Šeki-Tilia logo ostaje originalan, na zasebnoj krem `cream-card` podlozi sa oštrim uglovima. Pravougaoni paneli, footeri, kartice i logo-kartica ostaju oštrih uglova. Kada ikona može jasno da unapredi razumevanje informacije ili navigaciju, njeno korišćenje je obavezno i koristi se odgovarajuća semantička Lucide ikona, na primer ikona lokacije uz potvrđenu dostupnost ili CTA. Ikona nikada nije nasumična dekoracija, a medicinska ili benefit-ikona traži potvrđenu tvrdnju koju tačno predstavlja.
+
+Ovaj sloj pojačava vizuelni standard reference, ali ne menja činjenice, obavezni Manrope font, pravila kontrasta, ograničenja za transparentni PNG niti bezbednosna pravila projekta. Kada postoji sukob, brend i potvrđene činjenice imaju prednost nad referencom.
+
+### AU Šeki-Tilia: kontinuirana varijacija
+
+Za kontinuiranu seriju objava ne ponavljaj istu grafiku uz novu boju, novi proizvod ili preformulisan naslov. Pre dizajna pregledaj poslednje tri evidencije i izaberi najmanje dve stvarne intervencije iz `brand/design-system.md`: redosled čitanja, položaj proizvoda, tretman ponude, dubina scene, kadar slike, tipografska kompozicija, CTA/footer, uloga ikone ili ritam videa.
+
+Za svaki traženi format zapiši namernu adaptaciju: Feed može graditi sporiju hijerarhiju, Story jednu brzu radnju, a Reels zaseban ritam otkrivanja. Ne rasteži isti layout između formata. Kada postoji Reels, promeni i dokumentuj `motionTreatment` u odnosu na prethodne tri Reels objave. Razlika mora ostati u okvirima palete, Manrope tipografije, krem logo-kartice, oštrih pravougaonih uglova i potvrđenih činjenica.
+
 ### 5. Choose one design architecture
 
 Choose the architecture that best serves the content. Do not combine patterns merely to appear creative.
