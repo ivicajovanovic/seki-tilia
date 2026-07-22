@@ -14,7 +14,7 @@ const postDirectory = resolve(postArgument);
 const repositoryRoot = resolve(postDirectory, "../../../../");
 const errors = [];
 const warnings = [];
-const supportedFamilies = new Set(["product-atelier", "editorial-split", "minimal-offer", "product-card", "premium-product-stage"]);
+const supportedFamilies = new Set(["product-atelier", "editorial-split", "minimal-offer", "product-card", "premium-product-stage", "offer-orbit", "type-stage", "gallery-shelf"]);
 const supportedImageBackgrounds = new Set(["transparent", "opaque"]);
 const supportedContentApproaches = new Set(["offer-first", "product-context", "routine-moment", "practical-guidance", "seasonal-context", "local-availability", "professional-prompt"]);
 const supportedDesignInterventions = new Set(["reading-order", "product-placement", "offer-treatment", "scene-depth", "image-crop", "type-composition", "cta-footer", "icon-role", "motion-rhythm"]);
@@ -223,6 +223,12 @@ if (!renderer.includes('case "premium-product-stage": return <PremiumProductStag
   errors.push("Renderer nema podržanu premium-product-stage familiju.");
 } else if (!premiumProductStageRenderer.includes('const isTransparentProduct = imageBackground === "transparent";') || !premiumProductStageRenderer.includes('backgroundColor: isTransparentProduct ? "transparent"') || !premiumProductStageRenderer.includes('overflow: isTransparentProduct ? "visible"')) {
   errors.push("premium-product-stage nema obavezan transparentni režim bez pravougaonog rama/podloge oko proizvoda.");
+}
+for (const family of ["offer-orbit", "type-stage", "gallery-shelf"]) {
+  const componentName = family.split("-").map((part) => part[0].toUpperCase() + part.slice(1)).join("");
+  if (!renderer.includes(`case "${family}": return <${componentName}`)) {
+    errors.push(`Renderer nema podržanu familiju ${family}.`);
+  }
 }
 if (!renderer.includes("MotionTreatmentLayer") || !renderer.includes("motionTreatment")) {
   errors.push("Renderer nema podržan motionTreatment za stvarnu varijaciju Reels ritma.");

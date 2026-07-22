@@ -2,7 +2,7 @@ import React from "react";
 import { MapPin } from "lucide-react";
 import { AbsoluteFill, cancelRender, Composition, continueRender, delayRender, Easing, Img, interpolate, staticFile, Still, useCurrentFrame, useVideoConfig } from "remotion";
 
-type DesignVariant = "product-atelier" | "editorial-split" | "minimal-offer" | "product-card" | "premium-product-stage";
+type DesignVariant = "product-atelier" | "editorial-split" | "minimal-offer" | "product-card" | "premium-product-stage" | "offer-orbit" | "type-stage" | "gallery-shelf";
 type MotionTreatment = "staged-reveal" | "offer-build" | "detail-cutaway" | "editorial-pan" | "location-close";
 
 type VideoProps = {
@@ -48,14 +48,9 @@ const MotionTreatmentLayer: React.FC<{ children: React.ReactNode; treatment: Mot
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const progress = interpolate(frame, [0, fps * 2.4], [0, 1], { easing: easeOut, extrapolateRight: "clamp" });
-  const transformByTreatment: Record<MotionTreatment, string> = {
-    "staged-reveal": "none",
-    "offer-build": `scale(${interpolate(progress, [0, 1], [0.965, 1])})`,
-    "detail-cutaway": `scale(${interpolate(progress, [0, 1], [1.05, 1])})`,
-    "editorial-pan": `translateX(${interpolate(progress, [0, 1], [-34, 0])}px)`,
-    "location-close": `translateY(${interpolate(progress, [0, 1], [26, 0])}px)`,
-  };
-  return <AbsoluteFill style={{ overflow: "hidden", transform: transformByTreatment[treatment], transformOrigin: "center" }}>{children}</AbsoluteFill>;
+  const scale = treatment === "offer-build" ? interpolate(progress, [0, 1], [0.965, 1]) : treatment === "detail-cutaway" ? interpolate(progress, [0, 1], [1.05, 1]) : 1;
+  const translate = treatment === "editorial-pan" ? `${interpolate(progress, [0, 1], [-34, 0])}px 0` : treatment === "location-close" ? `0 ${interpolate(progress, [0, 1], [26, 0])}px` : "0 0";
+  return <AbsoluteFill style={{ overflow: "hidden", scale, translate, transformOrigin: "center" }}>{children}</AbsoluteFill>;
 };
 
 const LogoOnCreamCard: React.FC<{ size: number }> = ({ size }) => (
@@ -334,6 +329,122 @@ const PremiumProductStage: React.FC<VideoProps & { animated?: boolean }> = ({ ey
   );
 };
 
+const OfferOrbit: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow, headline, supportingText, offerLabel, cta, imageSrc, imageBackground, locationLine, animated = false }) => {
+  const { height } = useVideoConfig();
+  const isStory = height > 1500;
+  const intro = useEntrance(animated, 0);
+  const product = useEntrance(animated, 0.55);
+  const detail = useEntrance(animated, 1.25);
+  const isTransparentProduct = imageBackground === "transparent";
+  const padding = isStory ? 80 : 62;
+
+  return (
+    <AbsoluteFill style={{ backgroundColor: colors.cream, color: colors.cream, fontFamily: brandFontFamily, overflow: "hidden" }}>
+      <div style={{ backgroundColor: colors.petrol, bottom: 0, left: 0, position: "absolute", top: 0, width: isStory ? "47%" : "49%" }} />
+      <div style={{ backgroundColor: colors.beige, borderRadius: "50%", height: isStory ? 810 : 600, position: "absolute", right: isStory ? -260 : -210, top: isStory ? 320 : 240, width: isStory ? 810 : 600 }} />
+      <div style={{ boxSizing: "border-box", display: "grid", gridTemplateColumns: isStory ? "47% 53%" : "49% 51%", height: "100%", padding, position: "relative" }}>
+        <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", paddingRight: isStory ? 34 : 24 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: isStory ? 24 : 16, opacity: intro }}>
+            <div style={{ fontSize: isStory ? 27 : 20, fontWeight: 800, letterSpacing: isStory ? 3.1 : 2.2, textTransform: "uppercase" }}>{eyebrow}</div>
+            <div style={{ fontSize: isStory ? 92 : 66, fontWeight: 800, letterSpacing: -4, lineHeight: 0.91 }}>{headline}</div>
+            <div style={{ color: colors.cream, fontSize: isStory ? 32 : 23, fontWeight: 600, lineHeight: 1.18, opacity: 0.92 }}>{supportingText}</div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: isStory ? 18 : 12, opacity: detail }}>
+            <OfferPill label={offerLabel} size={isStory ? 38 : 28} />
+            <div style={{ fontSize: isStory ? 32 : 23, fontWeight: 700, lineHeight: 1.15 }}>{cta}</div>
+            <LocationMarker label={locationLine} size={isStory ? 24 : 17} />
+          </div>
+        </div>
+        <div style={{ alignItems: "center", display: "flex", flexDirection: "column", justifyContent: "space-between", paddingLeft: isStory ? 14 : 8 }}>
+          <div style={{ alignSelf: "flex-end", opacity: intro }}><LogoOnCreamCard size={isStory ? 66 : 50} /></div>
+          <div style={{ alignItems: "center", backgroundColor: isTransparentProduct ? "transparent" : colors.cream, display: "flex", flex: 1, justifyContent: "center", overflow: isTransparentProduct ? "visible" : "hidden", position: "relative", width: "100%" }}>
+            <div style={{ border: `${isStory ? 42 : 30}px solid ${colors.lime}`, borderRadius: "50%", height: isStory ? 500 : 370, position: "absolute", right: isStory ? -80 : -58, top: isStory ? 150 : 96, width: isStory ? 500 : 370 }} />
+            <div style={{ backgroundColor: colors.beige, borderRadius: "50%", bottom: isStory ? 118 : 88, height: isStory ? 120 : 88, position: "absolute", width: isStory ? 470 : 350 }} />
+            <ProductImage imageSrc={imageSrc} style={{ filter: "drop-shadow(0 30px 25px rgba(15, 21, 25, 0.24))", height: isTransparentProduct ? "126%" : "78%", maxWidth: isTransparentProduct ? "132%" : "92%", opacity: product, position: "relative", scale: interpolate(product, [0, 1], [0.9, 1]), translate: `0 ${interpolate(product, [0, 1], [58, 0])}px` }} />
+          </div>
+        </div>
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+const TypeStage: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow, headline, supportingText, offerLabel, cta, imageSrc, imageBackground, locationLine, animated = false }) => {
+  const { height } = useVideoConfig();
+  const isStory = height > 1500;
+  const intro = useEntrance(animated, 0);
+  const product = useEntrance(animated, 0.7);
+  const footer = useEntrance(animated, 1.45);
+  const isTransparentProduct = imageBackground === "transparent";
+
+  return (
+    <AbsoluteFill style={{ backgroundColor: colors.cream, color: colors.petrol, fontFamily: brandFontFamily, overflow: "hidden" }}>
+      <div style={{ backgroundColor: colors.petrol, bottom: 0, height: isStory ? "22%" : "20%", left: 0, position: "absolute", right: 0 }} />
+      <div style={{ backgroundColor: colors.lime, borderRadius: "50%", height: isStory ? 280 : 210, left: isStory ? -115 : -80, position: "absolute", top: isStory ? -105 : -82, width: isStory ? 280 : 210 }} />
+      <div style={{ boxSizing: "border-box", display: "flex", flexDirection: "column", height: "100%", padding: isStory ? "92px 82px 74px" : "62px 70px 54px", position: "relative" }}>
+        <div style={{ alignItems: "flex-start", display: "flex", justifyContent: "space-between", opacity: intro }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: isStory ? 18 : 12, maxWidth: "78%" }}>
+            <div style={{ fontSize: isStory ? 27 : 21, fontWeight: 800, letterSpacing: isStory ? 3.2 : 2.4, textTransform: "uppercase" }}>{eyebrow}</div>
+            <div style={{ fontSize: isStory ? 114 : 84, fontWeight: 800, letterSpacing: -5, lineHeight: 0.88 }}>{headline}</div>
+          </div>
+          <LogoOnCreamCard size={isStory ? 66 : 50} />
+        </div>
+        <div style={{ display: "flex", flex: 1, flexDirection: "column", justifyContent: "center", minHeight: isStory ? 890 : 560, position: "relative" }}>
+          <div style={{ fontSize: isStory ? 36 : 26, fontWeight: 600, lineHeight: 1.18, maxWidth: "58%", opacity: intro }}>{supportingText}</div>
+          <div style={{ alignItems: "center", backgroundColor: isTransparentProduct ? "transparent" : colors.beige, bottom: isStory ? 8 : 0, display: "flex", height: isStory ? "67%" : "63%", justifyContent: "center", overflow: isTransparentProduct ? "visible" : "hidden", position: "absolute", right: 0, width: isStory ? "68%" : "64%" }}>
+            <div style={{ backgroundColor: colors.cream, borderRadius: "50%", bottom: isStory ? -60 : -48, height: isStory ? 210 : 160, position: "absolute", width: isStory ? 540 : 400 }} />
+            <ProductImage imageSrc={imageSrc} style={{ filter: "drop-shadow(0 30px 24px rgba(15, 21, 25, 0.22))", height: isTransparentProduct ? "142%" : "82%", maxWidth: isTransparentProduct ? "140%" : "92%", opacity: product, position: "relative", scale: interpolate(product, [0, 1], [0.9, 1]), translate: `0 ${interpolate(product, [0, 1], [62, 0])}px` }} />
+          </div>
+          <div style={{ alignSelf: "flex-start", marginTop: isStory ? 48 : 34, opacity: footer }}><OfferPill label={offerLabel} size={isStory ? 42 : 31} /></div>
+        </div>
+        <div style={{ alignItems: "center", color: colors.cream, display: "flex", justifyContent: "space-between", opacity: footer }}>
+          <div style={{ fontSize: isStory ? 34 : 25, fontWeight: 700, lineHeight: 1.14, maxWidth: "64%" }}>{cta}</div>
+          <LocationMarker label={locationLine} size={isStory ? 23 : 17} textAlign="right" />
+        </div>
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+const GalleryShelf: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow, headline, supportingText, offerLabel, cta, imageSrc, imageBackground, locationLine, animated = false }) => {
+  const { height } = useVideoConfig();
+  const isStory = height > 1500;
+  const intro = useEntrance(animated, 0);
+  const product = useEntrance(animated, 0.6);
+  const details = useEntrance(animated, 1.35);
+  const isTransparentProduct = imageBackground === "transparent";
+  const padding = isStory ? 82 : 64;
+
+  return (
+    <AbsoluteFill style={{ backgroundColor: colors.cream, color: colors.petrol, fontFamily: brandFontFamily, overflow: "hidden" }}>
+      <div style={{ backgroundColor: colors.petrol, bottom: 0, position: "absolute", right: 0, top: 0, width: isStory ? "41%" : "42%" }} />
+      <div style={{ backgroundColor: colors.beige, borderRadius: "50%", bottom: isStory ? 210 : 150, height: isStory ? 580 : 430, left: isStory ? -260 : -190, position: "absolute", width: isStory ? 580 : 430 }} />
+      <div style={{ boxSizing: "border-box", display: "grid", gridTemplateColumns: isStory ? "59% 41%" : "58% 42%", height: "100%", padding, position: "relative" }}>
+        <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", paddingRight: isStory ? 28 : 20 }}>
+          <div style={{ alignItems: "center", display: "flex", justifyContent: "space-between", opacity: intro }}>
+            <div style={{ fontSize: isStory ? 27 : 20, fontWeight: 800, letterSpacing: isStory ? 3.1 : 2.2, textTransform: "uppercase" }}>{eyebrow}</div>
+            <LogoOnCreamCard size={isStory ? 56 : 44} />
+          </div>
+          <div style={{ alignItems: "center", backgroundColor: isTransparentProduct ? "transparent" : colors.beige, display: "flex", flex: 1, justifyContent: "center", margin: isStory ? "58px 0 44px" : "40px 0 32px", overflow: isTransparentProduct ? "visible" : "hidden", position: "relative" }}>
+            <div style={{ backgroundColor: colors.beige, bottom: isStory ? "35%" : "31%", height: isStory ? 96 : 72, position: "absolute", width: "76%" }} />
+            <ProductImage imageSrc={imageSrc} style={{ filter: "drop-shadow(0 28px 24px rgba(15, 21, 25, 0.25))", height: isTransparentProduct ? "154%" : "82%", maxWidth: isTransparentProduct ? "none" : "90%", opacity: product, position: "relative", scale: interpolate(product, [0, 1], [0.9, 1]), translate: `0 ${interpolate(product, [0, 1], [54, 0])}px`, width: isTransparentProduct ? "126%" : undefined }} />
+          </div>
+        </div>
+        <div style={{ color: colors.cream, display: "flex", flexDirection: "column", justifyContent: "space-between", paddingLeft: isStory ? 28 : 20, paddingTop: isStory ? 142 : 98 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: isStory ? 22 : 15, opacity: intro }}>
+            <div style={{ color: colors.lime, fontSize: isStory ? 84 : 62, fontWeight: 800, letterSpacing: -4, lineHeight: 0.91 }}>{headline}</div>
+            <div style={{ fontSize: isStory ? 31 : 23, fontWeight: 600, lineHeight: 1.18 }}>{supportingText}</div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: isStory ? 18 : 12, opacity: details }}>
+            <OfferPill label={offerLabel} size={isStory ? 37 : 27} />
+            <div style={{ fontSize: isStory ? 31 : 23, fontWeight: 700, lineHeight: 1.15 }}>{cta}</div>
+            <LocationMarker label={locationLine} size={isStory ? 23 : 17} />
+          </div>
+        </div>
+      </div>
+    </AbsoluteFill>
+  );
+};
+
 const Variant: React.FC<VideoProps & { animated?: boolean }> = (props) => {
   ensureBrandFont();
   switch (props.designVariant ?? "product-atelier") {
@@ -341,6 +452,9 @@ const Variant: React.FC<VideoProps & { animated?: boolean }> = (props) => {
     case "minimal-offer": return <MinimalOffer {...props} />;
     case "product-card": return <ProductCard {...props} />;
     case "premium-product-stage": return <PremiumProductStage {...props} />;
+    case "offer-orbit": return <OfferOrbit {...props} />;
+    case "type-stage": return <TypeStage {...props} />;
+    case "gallery-shelf": return <GalleryShelf {...props} />;
     default: return <ProductAtelier {...props} />;
   }
 };

@@ -105,7 +105,7 @@ Ovaj sloj pojačava vizuelni standard reference, ali ne menja činjenice, obavez
 
 ### AU Šeki-Tilia: kontinuirana varijacija
 
-Za kontinuiranu seriju objava ne ponavljaj istu grafiku uz novu boju, novi proizvod ili preformulisan naslov. Pre dizajna pregledaj poslednje tri evidencije i izaberi najmanje dve stvarne intervencije iz `brand/design-system.md`: redosled čitanja, položaj proizvoda, tretman ponude, dubina scene, kadar slike, tipografska kompozicija, CTA/footer, uloga ikone ili ritam videa.
+Za kontinuiranu seriju objava ne ponavljaj istu grafiku uz novu boju, novi proizvod ili preformulisan naslov. Pre dizajna pregledaj poslednje tri evidencije i izaberi najmanje dve stvarne intervencije iz `brand/design-system.md`: redosled čitanja, položaj proizvoda, tretman ponude, dubina scene, kadar slike, tipografska kompozicija, CTA/footer, uloga ikone ili ritam videa. Renderer ima osam familija, uključujući `offer-orbit`, `type-stage` i `gallery-shelf`; njihova razlika mora biti vidljiva u stvarnoj kompoziciji, ne samo u nazivu props-a.
 
 Za svaki traženi format zapiši namernu adaptaciju: Feed može graditi sporiju hijerarhiju, Story jednu brzu radnju, a Reels zaseban ritam otkrivanja. Ne rasteži isti layout između formata. Kada postoji Reels, promeni i dokumentuj `motionTreatment` u odnosu na prethodne tri Reels objave. Razlika mora ostati u okvirima palete, Manrope tipografije, krem logo-kartice, oštrih pravougaonih uglova i potvrđenih činjenica.
 

@@ -23,6 +23,9 @@ Za akcije, novitete i proizvode postoje različite kompozicione familije. Izaber
 | `minimal-offer` | Tipografija i potvrđena ponuda nose kadar, uz dominantan proizvod bez pravougaone podloge kada je PNG transparentan. Za kratke akcije i novitete. | drugom minimalnom objavom sa istim CTA modulom |
 | `product-card` | Proizvod na krem kartici preko petrol polja samo kada je fotografija neprovidna; transparentni PNG izlazi iz kartičnog tretmana kao slobodan heroj. | istom kartičnom strukturom u naredne tri objave |
 | `premium-product-stage` | Velika asimetrična ponuda i dominantan proizvod u režiranoj sceni: organska pozadina, diskretan podijum/senka i petrol završni blok sa CTA-om. Transparentni PNG slobodno prelazi preko scene, bez pravougaonog rama, kartice ili podloge. Za potvrđene akcije i proizvode čije pakovanje treba da bude glavni nosilac kadra. | bilo kojom familijom sa istim odnosom "velika ponuda levo, proizvod desno, petrol footer" u naredne tri objave |
+| `offer-orbit` | Inverzni editorial odnos: petrol tekstualna kolona nosi ponudu, dok proizvod gradi svetlu orbitnu scenu sa kružnim akcentom. | `editorial-split` ili drugom objavom sa istim odnosom teksta i proizvoda |
+| `type-stage` | Veliki tipografski naslov postavlja ritam, a proizvod izlazi iz donje podijumske scene; CTA je kratak petrol završetak. | `minimal-offer` ili `premium-product-stage` sa sličnim redosledom čitanja |
+| `gallery-shelf` | Svetla produktna galerija levo i petrol informativni stub desno. Za novitet ili proizvod kada je naziv važniji od cene. | `offer-orbit` ili drugom kompozicijom sa tamnim desnim stubom |
 
 Familije se ne smeju svoditi na promenu boje istog šablona. Menjaju se čitanje kompozicije, odnos tipografije i proizvoda, položaj ponude i tretman praznog prostora. Brend margine, font, oštar ugao panela i logo-kartica, kao i ton, ostaju konzistentni.
 
