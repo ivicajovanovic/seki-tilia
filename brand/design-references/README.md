@@ -1,5 +1,5 @@
 # Vizuelne reference
 
-Trenutno su jedine odobrene reference `ref-premium-product-stage.png` i `ref-product-stage-footer.png`. To su kratka, ASCII imena koja agent koristi doslovno kao vrednosti `referenceFiles` u `generated/design-direction.json`.
+Odobrene reference su navedene u `references.json`. Trenutni stabilni ASCII identifikatori su `ref-premium-product-stage.png`, `ref-product-stage-footer.png`, `ref-editorial-offer-stage.png` i `ref-vertical-product-spotlight.png`; agent ih koristi doslovno kao vrednosti `referenceFiles` u `generated/design-direction.json`.
 
-Agent ih koristi za art direkciju, kompoziciju, hijerarhiju i obradu.
+Agent pregleda sve četiri za prag kvaliteta, a u `referenceFiles` upisuje samo stvarno korišćene reference. Koristi ih za art direkciju, kompoziciju, hijerarhiju i obradu, nikada za preuzimanje proizvoda, copy-ja, tvrdnji ili vizuelnih artefakata.

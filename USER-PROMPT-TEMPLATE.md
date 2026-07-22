@@ -29,7 +29,7 @@ Ograničenja i očekivanja:
 3. Sav tekst piši na pravilnom srpskom jeziku, latinicom.
 4. Za novu objavu napravi poseban production paket postojećom skriptom i doslovno sačuvaj ovaj brief u `brief.md`.
 5. Za copy koristi samo pravila iz `production/copy-playbook.md` i `production/content-safety-rules.md`.
-6. Za dizajn obavezno koristi `agent-skills-required/visual-design/SKILL.md`, `brand/design-system.md` i dve slike u `brand/design-references/` kao stilsku inspiraciju, nikada kao šablon za kopiranje.
+6. Za dizajn obavezno koristi `agent-skills-required/visual-design/SKILL.md`, `brand/design-system.md` i četiri odobrene slike iz `brand/design-references/references.json` kao stilsku inspiraciju, nikada kao šablon za kopiranje.
 7. Dizajn mora imati stvarnu svežu intervenciju u odnosu na poslednje tri objave. Variraj layout, hijerarhiju, tretman proizvoda, ponude, tipografije ili pokreta. Nemoj koristiti istu signature kombinaciju.
 8. Za grafiku i video koristi najmanje jednu smislenu Lucide ikonu tamo gde pomaže razumevanju. Ne koristi ikonu kao nasumičnu dekoraciju.
 9. Ako je proizvod transparentni PNG, mora biti slobodno postavljen i dominantan, bez pravougaonog rama, kartice ili podloge.

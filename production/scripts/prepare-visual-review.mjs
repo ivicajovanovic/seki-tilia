@@ -30,13 +30,23 @@ const propsPath = join(postDirectory, "video-props.json");
 const directionPath = join(generatedDirectory, "design-direction.json");
 const rendererPath = join(repositoryRoot, "video-renderer/src/Composition.tsx");
 const rendererCssPath = join(repositoryRoot, "video-renderer/src/index.css");
-const referenceA = join(repositoryRoot, "brand/design-references/ref-premium-product-stage.png");
-const referenceB = join(repositoryRoot, "brand/design-references/ref-product-stage-footer.png");
+const referenceManifestPath = join(repositoryRoot, "brand/design-references/references.json");
+if (!existsSync(referenceManifestPath)) {
+  console.error("Nedostaje brand/design-references/references.json.");
+  process.exit(1);
+}
+const referenceManifest = JSON.parse(readFileSync(referenceManifestPath, "utf8"));
+const referenceFiles = Array.isArray(referenceManifest?.approved) ? referenceManifest.approved : [];
+if (referenceFiles.length === 0 || referenceFiles.some((file) => typeof file !== "string" || !/^[a-z0-9][a-z0-9-]*\.png$/.test(file))) {
+  console.error("references.json mora sadržati neprazan niz bezbednih ASCII PNG identifikatora.");
+  process.exit(1);
+}
+const referencePaths = referenceFiles.map((file) => join(repositoryRoot, "brand/design-references", file));
 const comparisonPath = join(generatedDirectory, "reference-comparison.png");
 const formatPath = join(generatedDirectory, "format-comparison.png");
 const reviewPath = join(generatedDirectory, "quality-review.json");
 
-for (const path of [feedPath, storyPath, reelsIntroPath, reelsOfferPath, reelsClosingPath, reelsMp4Path, draftPath, inputPath, propsPath, directionPath, rendererPath, rendererCssPath, referenceA, referenceB]) {
+for (const path of [feedPath, storyPath, reelsIntroPath, reelsOfferPath, reelsClosingPath, reelsMp4Path, draftPath, inputPath, propsPath, directionPath, rendererPath, rendererCssPath, referenceManifestPath, ...referencePaths]) {
   if (!existsSync(path)) {
     console.error(`Nedostaje fajl potreban za vizuelni pregled: ${relative(repositoryRoot, path)}`);
     process.exit(1);
@@ -51,16 +61,13 @@ const runFfmpeg = (inputPaths, filter, outputPath) => {
   if (result.status !== 0) throw new Error(result.stderr.trim() || `ffmpeg nije napravio ${outputPath}`);
 };
 
-runFfmpeg(
-  [referenceA, referenceB, feedPath],
-  [
-    "[0:v]scale=432:540:force_original_aspect_ratio=decrease,pad=432:540:(ow-iw)/2:(oh-ih)/2:color=0xF7F5EC[a]",
-    "[1:v]scale=432:540:force_original_aspect_ratio=decrease,pad=432:540:(ow-iw)/2:(oh-ih)/2:color=0xF7F5EC[b]",
-    "[2:v]scale=432:540:force_original_aspect_ratio=decrease,pad=432:540:(ow-iw)/2:(oh-ih)/2:color=0xF7F5EC[c]",
-    "[a][b][c]hstack=inputs=3[out]",
-  ].join(";"),
-  comparisonPath,
-);
+const comparisonInputs = [...referencePaths, feedPath];
+const comparisonLabels = comparisonInputs.map((_, index) => `comparison${index}`);
+const comparisonFilter = [
+  ...comparisonInputs.map((_, index) => `[${index}:v]scale=360:450:force_original_aspect_ratio=decrease,pad=360:450:(ow-iw)/2:(oh-ih)/2:color=0xF7F5EC[${comparisonLabels[index]}]`),
+  `${comparisonLabels.map((label) => `[${label}]`).join("")}hstack=inputs=${comparisonInputs.length}[out]`,
+].join(";");
+runFfmpeg(comparisonInputs, comparisonFilter, comparisonPath);
 
 runFfmpeg(
   [feedPath, storyPath, reelsIntroPath, reelsOfferPath, reelsClosingPath],
@@ -91,8 +98,8 @@ const renderHashes = {
   designDirection: hash(directionPath),
   renderer: hash(rendererPath),
   rendererCss: hash(rendererCssPath),
-  referencePremium: hash(referenceA),
-  referenceFooter: hash(referenceB),
+  referenceManifest: hash(referenceManifestPath),
+  ...Object.fromEntries(referenceFiles.map((file, index) => [`reference:${file}`, hash(referencePaths[index])])),
 };
 const previous = existsSync(reviewPath) ? JSON.parse(readFileSync(reviewPath, "utf8")) : null;
 const unchanged = previous && Object.entries(renderHashes).every(([key, value]) => previous.renderHashes?.[key] === value);

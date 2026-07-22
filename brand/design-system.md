@@ -45,7 +45,7 @@ Familije se ne smeju svoditi na promenu boje istog šablona. Menjaju se čitanje
 
 ## Reference i odluka za objavu
 
-Pre dizajna agent pregleda isključivo `brand/design-references/ref-premium-product-stage.png` i `brand/design-references/ref-product-stage-footer.png`. Za svaku objavu popunjava `generated/design-direction.json` sa:
+Pre dizajna agent pregleda četiri reference navedene u `brand/design-references/references.json`. `ref-premium-product-stage.png` i `ref-product-stage-footer.png` definišu premium produktnu scenu i završetak; `ref-editorial-offer-stage.png` definiše editorial odnos poruke i proizvoda; `ref-vertical-product-spotlight.png` definiše vertikalnu skalu i slojevitu scenografiju. Za svaku objavu popunjava `generated/design-direction.json` sa:
 
 - izabranom familijom i jedinstvenim `signature` zapisom;
 - najmanje jednom korišćenom referencom i dve konkretne dizajnerske osobine preuzete kao inspiracija;
@@ -56,9 +56,9 @@ Pre dizajna agent pregleda isključivo `brand/design-references/ref-premium-prod
 - strukturisanim `formatPlan` vrednostima: različiti Feed i Story `layoutId`, redosled čitanja i anchor proizvoda, kao i Reels `shotPlan` sa najmanje tri scene;
 - `familyFit` potvrdom da familija odgovara proporciji proizvoda, stvarnoj snazi ponude i potrebnoj scenskoj dubini.
 
-U `referenceFiles` dozvoljene su samo vrednosti `ref-premium-product-stage.png` i `ref-product-stage-footer.png`. Za familiju `premium-product-stage` može se navesti `ref-premium-product-stage.png`.
+U `referenceFiles` dozvoljene su samo vrednosti iz `brand/design-references/references.json`, a navode se samo reference čije su osobine stvarno primenjene. Za familiju `premium-product-stage` može se navesti `ref-premium-product-stage.png`.
 
-Reference služe za kompoziciju, ritam, odnos slike i teksta, obradu i kvalitet. `ref-premium-product-stage.png` je izuzetak u smislu prava korišćenja: to je interno autorsko delo i njegova dizajnerska gramatika sme da se koristi. Ipak, ne preuzimaj automatski copy, proizvod, publiku, tvrdnje, cenu, rok, CTA ni bilo koji drugi podatak, osim ako su za konkretnu objavu potvrđeni.
+Reference služe za kompoziciju, ritam, odnos slike i teksta, obradu i kvalitet. `ref-premium-product-stage.png` je izuzetak u smislu prava korišćenja: to je interno autorsko delo i njegova dizajnerska gramatika sme da se koristi. Iz ostalih referenci ne preuzimaj vlasničke elemente, copy, proizvod, publiku, tvrdnje, cenu, rok, CTA, benefit-ikonice, kursor/UI artefakt, direktan logo tretman ni zaobljen strukturni footer. Sva pravila brenda ostaju iznad reference.
 
 ## Zaštita od monotonije
 

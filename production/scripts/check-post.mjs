@@ -104,11 +104,25 @@ const videoProps = readJson(resolve(postDirectory, "video-props.json"), "video-p
 const designDirection = readJson(resolve(postDirectory, "generated/design-direction.json"), "generated/design-direction.json");
 const assetReview = readJson(resolve(postDirectory, "generated/asset-review.json"), "generated/asset-review.json");
 const qualityReview = readJson(resolve(postDirectory, "generated/quality-review.json"), "generated/quality-review.json");
+const referenceManifestPath = resolve(repositoryRoot, "brand/design-references/references.json");
+const referenceManifest = readJson(referenceManifestPath, "brand/design-references/references.json");
+const approvedReferenceList = Array.isArray(referenceManifest?.approved) ? referenceManifest.approved : [];
+const approvedReferenceFiles = new Set(approvedReferenceList);
 const reviewPath = resolve(postDirectory, "review.md");
 const review = existsSync(reviewPath) ? readFileSync(reviewPath, "utf8") : "";
 const visualDesignSkillPath = resolve(repositoryRoot, "agent-skills-required/visual-design/SKILL.md");
 const captionPath = ["final/caption.md", "generated/caption.md"].map((file) => resolve(postDirectory, file)).find(existsSync);
 const caption = captionPath ? readFileSync(captionPath, "utf8") : "";
+
+if (approvedReferenceFiles.size === 0) errors.push("references.json mora sadržati najmanje jednu odobrenu referencu.");
+if (approvedReferenceFiles.size !== approvedReferenceList.length) errors.push("references.json ne sme sadržati duplirane identifikatore.");
+for (const referenceFile of approvedReferenceFiles) {
+  if (typeof referenceFile !== "string" || !/^[a-z0-9][a-z0-9-]*\.png$/.test(referenceFile)) {
+    errors.push(`Neispravan identifikator u references.json: ${referenceFile}.`);
+  } else if (!existsSync(resolve(repositoryRoot, "brand/design-references", referenceFile))) {
+    errors.push(`Manifest navodi nepostojeću referencu: ${referenceFile}.`);
+  }
+}
 
 const getDesignRecords = () => {
   const records = [];
@@ -205,13 +219,12 @@ if (designDirection?.family && videoProps?.designVariant !== designDirection.fam
 if (!Array.isArray(designDirection?.referenceFiles) || designDirection.referenceFiles.length < 1) {
   errors.push("Nedostaje referenca u design-direction.json.");
 } else {
-  const approvedReferenceFiles = new Set(["ref-premium-product-stage.png", "ref-product-stage-footer.png"]);
   for (const referenceFile of designDirection.referenceFiles) {
     const referencePath = typeof referenceFile === "string" && approvedReferenceFiles.has(referenceFile)
       ? resolve(repositoryRoot, "brand/design-references", referenceFile)
       : null;
     if (!referencePath) {
-      errors.push(`Nedozvoljena dizajnerska referenca: ${referenceFile}. Dozvoljene su samo ref-premium-product-stage.png i ref-product-stage-footer.png.`);
+      errors.push(`Nedozvoljena dizajnerska referenca: ${referenceFile}. Dozvoljene su vrednosti iz brand/design-references/references.json.`);
     } else if (!existsSync(referencePath)) {
       errors.push(`Nepostojeća dizajnerska referenca: ${referenceFile}.`);
     }
@@ -389,13 +402,17 @@ for (const [key, relativePath] of [
   ["input", "input.json"],
   ["videoProps", "video-props.json"],
   ["designDirection", "generated/design-direction.json"],
-  ["renderer", relative(repositoryRoot, rendererPath)],
-  ["rendererCss", relative(repositoryRoot, rendererCssPath)],
-  ["referencePremium", "brand/design-references/ref-premium-product-stage.png"],
-  ["referenceFooter", "brand/design-references/ref-product-stage-footer.png"],
 ]) {
-  const absolutePath = ["renderer", "rendererCss", "referencePremium", "referenceFooter"].includes(key) ? resolve(repositoryRoot, relativePath) : resolve(postDirectory, relativePath);
+  const absolutePath = resolve(postDirectory, relativePath);
   if (!existsSync(absolutePath) || qualityReview?.renderHashes?.[key] !== hashFile(absolutePath)) errors.push(`quality-review hash nije aktuelan za ${relativePath}.`);
+}
+for (const [key, absolutePath] of [
+  ["renderer", rendererPath],
+  ["rendererCss", rendererCssPath],
+  ["referenceManifest", referenceManifestPath],
+  ...[...approvedReferenceFiles].filter((file) => typeof file === "string").map((file) => [`reference:${file}`, resolve(repositoryRoot, "brand/design-references", file)]),
+]) {
+  if (!existsSync(absolutePath) || qualityReview?.renderHashes?.[key] !== hashFile(absolutePath)) errors.push(`quality-review hash nije aktuelan za ${relative(repositoryRoot, absolutePath)}.`);
 }
 
 const renderer = existsSync(rendererPath) ? readFileSync(rendererPath, "utf8") : "";

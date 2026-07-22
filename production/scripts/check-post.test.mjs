@@ -10,6 +10,8 @@ const fixtureRoot = join(repositoryRoot, "productions-test");
 const mediaCache = join(fixtureRoot, "media-cache");
 const checkerPath = join(repositoryRoot, "production/scripts/check-post.mjs");
 const hashFile = (path) => createHash("sha256").update(readFileSync(path)).digest("hex");
+const referenceManifestPath = join(repositoryRoot, "brand/design-references/references.json");
+const approvedReferenceFiles = JSON.parse(readFileSync(referenceManifestPath, "utf8")).approved;
 const createdJobRoots = [];
 
 after(() => {
@@ -94,7 +96,7 @@ const makeFixture = () => {
     family: "offer-orbit",
     authorId: "design-agent-primary",
     signature: `offer-orbit|test-${id}|editorial-empty-stage|petrol-footer`,
-    referenceFiles: ["ref-premium-product-stage.png", "ref-product-stage-footer.png"],
+    referenceFiles: ["ref-editorial-offer-stage.png"],
     referenceTraits: ["Asimetrična hijerarhija sa jasnim CTA završetkom.", "Kontrolisana scenska dubina i snažan mobilni fokus."],
     distinctFromRecent: "Test koristi tipografski fokus bez produktnog kolaža.",
     designInterventions: ["reading-order", "icon-role"],
@@ -152,8 +154,8 @@ const makeFixture = () => {
     designDirection: join(generated, "design-direction.json"),
     renderer: join(repositoryRoot, "video-renderer/src/Composition.tsx"),
     rendererCss: join(repositoryRoot, "video-renderer/src/index.css"),
-    referencePremium: join(repositoryRoot, "brand/design-references/ref-premium-product-stage.png"),
-    referenceFooter: join(repositoryRoot, "brand/design-references/ref-product-stage-footer.png"),
+    referenceManifest: referenceManifestPath,
+    ...Object.fromEntries(approvedReferenceFiles.map((file) => [`reference:${file}`, join(repositoryRoot, "brand/design-references", file)])),
   };
   const note = "Sirovi render potvrđuje kriterijum kroz jasno vidljivu i proverljivu razliku.";
   writeJson(join(generated, "quality-review.json"), {
@@ -164,7 +166,7 @@ const makeFixture = () => {
     criteria: Object.fromEntries(["compositionAndBalance", "hierarchyAndMobileImpact", "productIntegrationAndGrounding", "depthLightingAndFinish", "referenceLevelDistinctiveness", "formatAdaptation", "reelsDynamics"].map((key) => [key, { score: 4, note }])),
     weakestArea: "Dubina scene je namerno svedena, ali ostaje jasna na svim formatima.",
     revisionEvidence: { issueFound: "Prvi Feed draft nije imao dovoljno jasan tonski kontrast.", changeMade: "Finalni Feed dobio je jasniju svetlu osnovu.", before: "generated/feed-draft.png", after: "final/feed-1080x1350.png" },
-    independentReview: { performed: true, reviewerId: "visual-review-agent-independent", method: "Direktan pregled svih sirovih PNG i MP4 artefakata.", rawArtifactOnly: true, verdict: "meets-reference-bar", notes: "Pregledani su Feed, Story, tri Reels kadra i finalni MP4 naspram obe reference." },
+    independentReview: { performed: true, reviewerId: "visual-review-agent-independent", method: "Direktan pregled svih sirovih PNG i MP4 artefakata.", rawArtifactOnly: true, verdict: "meets-reference-bar", notes: "Pregledani su Feed, Story, tri Reels kadra i finalni MP4 naspram sve četiri reference." },
   });
 
   return { postDirectory, input, videoProps, direction, generated, final, qualityReviewPath: join(generated, "quality-review.json") };
@@ -235,6 +237,22 @@ const runBlocked = (postDirectory) => {
 test("potpuno validan golden paket prolazi", () => {
   const fixture = makeFixture();
   assert.match(runChecker(fixture.postDirectory), /PROVERA PROŠLA/);
+});
+
+test("visual review zaključava manifest i sve četiri reference", () => {
+  const fixture = makeFixture();
+  assert.equal(approvedReferenceFiles.length, 4);
+  execFileSync(process.execPath, [join(repositoryRoot, "production/scripts/prepare-visual-review.mjs"), "--post", fixture.postDirectory], { cwd: repositoryRoot, encoding: "utf8", stdio: "pipe" });
+  const review = JSON.parse(readFileSync(fixture.qualityReviewPath, "utf8"));
+  assert.equal(review.renderHashes.referenceManifest, hashFile(referenceManifestPath));
+  for (const file of approvedReferenceFiles) assert.equal(review.renderHashes[`reference:${file}`], hashFile(join(repositoryRoot, "brand/design-references", file)));
+});
+
+test("staro generičko ime reference nije dozvoljeno", () => {
+  const fixture = makeFixture();
+  fixture.direction.referenceFiles = ["primer3.png"];
+  writeJson(join(fixture.generated, "design-direction.json"), fixture.direction);
+  assert.match(runBlocked(fixture.postDirectory), /Nedozvoljena dizajnerska referenca: primer3\.png/);
 });
 
 test("slabija rezolucija sa dokumentovanim ograničenjem nije blokada", () => {

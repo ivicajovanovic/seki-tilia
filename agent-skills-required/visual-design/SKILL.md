@@ -91,7 +91,7 @@ Use the principles that make the references effective. Do not copy another brand
 
 ### AU Šeki-Tilia: premium produktna scena
 
-Za AU Šeki-Tilia produktnu akciju, novitet ili promotivnu objavu sa dominantnim pakovanjem, vizuelni kvalitet i dizajnerska gramatika iz `brand/design-references/ref-premium-product-stage.png` i `brand/design-references/ref-product-stage-footer.png` predstavljaju obavezan prag izvedbe. To nije poziv na kopiranje: svaka objava mora imati novu kompoziciju i jedinstven `signature` zapis.
+Za AU Šeki-Tilia produktnu akciju, novitet ili promotivnu objavu sa dominantnim pakovanjem, pregledaj četiri odobrene reference iz `brand/design-references/references.json`. `ref-premium-product-stage.png` i `ref-product-stage-footer.png` postavljaju prag premium produktne scene i završetka, `ref-editorial-offer-stage.png` pokazuje editorial odnos velike poruke i proizvoda, a `ref-vertical-product-spotlight.png` vertikalnu skalu i slojevitu scenografiju. U `referenceFiles` navedi samo slike čije si osobine stvarno primenio. To nije poziv na kopiranje: svaka objava mora imati novu kompoziciju i jedinstven `signature` zapis.
 
 Kada brief odgovara familiji `premium-product-stage`, gradi scenu namerno, a ne kao ravan šablon:
 
@@ -101,7 +101,7 @@ Kada brief odgovara familiji `premium-product-stage`, gradi scenu namerno, a ne 
 - krem, bež i petrol grade mirnu bazu, dok limeta služi kao štedljiv akcenat za potvrđenu ponudu, kratku oznaku ili CTA;
 - petrol završni blok može objediniti kratak CTA i neutralnu informaciju o dostupnosti, ali footer nije obavezan modul svake objave.
 
-Iz referenci se ne preuzimaju zdravstvene tvrdnje, benefit-ikonice, sastojci, proizvod, cena, rok, copy, položaj logoa ni zaobljeni footer. Za AU Šeki-Tilia logo ostaje originalan, na zasebnoj krem `cream-card` podlozi sa oštrim uglovima. Pravougaoni paneli, footeri, kartice i logo-kartica ostaju oštrih uglova. Kada ikona može jasno da unapredi razumevanje informacije ili navigaciju, njeno korišćenje je obavezno i koristi se odgovarajuća semantička Lucide ikona, na primer ikona lokacije uz potvrđenu dostupnost ili CTA. Ikona nikada nije nasumična dekoracija, a medicinska ili benefit-ikona traži potvrđenu tvrdnju koju tačno predstavlja.
+Iz referenci se ne preuzimaju zdravstvene tvrdnje, benefit-ikonice, sastojci, proizvod, cena, rok, copy, položaj logoa, kursor/UI artefakt ni zaobljen strukturni footer. Za AU Šeki-Tilia logo ostaje originalan, na zasebnoj krem `cream-card` podlozi sa oštrim uglovima. Pravougaoni paneli, footeri, kartice i logo-kartica ostaju oštrih uglova. Kada ikona može jasno da unapredi razumevanje informacije ili navigaciju, njeno korišćenje je obavezno i koristi se odgovarajuća semantička Lucide ikona, na primer ikona lokacije uz potvrđenu dostupnost ili CTA. Ikona nikada nije nasumična dekoracija, a medicinska ili benefit-ikona traži potvrđenu tvrdnju koju tačno predstavlja.
 
 Ovaj sloj pojačava vizuelni standard reference, ali ne menja činjenice, obavezni Manrope font, pravila kontrasta, ograničenja za transparentni PNG niti bezbednosna pravila projekta. Kada postoji sukob, brend i potvrđene činjenice imaju prednost nad referencom.
 
