@@ -25,7 +25,7 @@ Kada se dokumenti razlikuju, prednost imaju najnovije korisnikovo uputstvo, zati
 3. Doslovno sačuvaj korisnikov brief u `brief.md`, a originale bez izmene u `source/`.
 4. Popuni `input.json`: potvrđene činjenice, izvore, format, `contentApproach` i `copyFreshnessNote`.
 5. Za lokalnu objavu proveri `brand/brand-config.json`; za sve zdravstvene i produktne tvrdnje proveri izvor ili ih izostavi.
-6. Za produktni vizual pokreni `inspect-assets.mjs`, otvori svetli/tamni pregled i odobri samo čist, dovoljno velik asset vezan hashom za pripremljenu kopiju.
+6. Za produktni vizual pokreni `inspect-assets.mjs` i otvori svetli/tamni pregled. Umereno slabiji klijentov asset odobri kao `approved-with-limitations`, dokumentuj `qualityLimitations` i prilagodi kompoziciju; blokiraj samo kritične defekte iz `blockingDefects`. Svaka korišćena pripremljena kopija mora biti vezana hashom.
 7. Pregledaj obe reference i poslednje tri evidentirane objave. Izaberi familiju tek nakon `familyFit` provere i popuni `generated/design-direction.json`, uključujući dve stvarne intervencije, strukturisani `formatPlan`, formatne adaptacije i Reels ritam.
 8. Napiši sadržaj prema `production/copy-playbook.md`, a tekst za grafiku i `video-props.json` prema potvrđenim činjenicama. Akcija zahteva mehaniku, vrednost, rok i izvor. Kada postoji Reels, `motionTreatment` mora doslovno odgovarati vrednosti u `design-direction.json`.
 9. Napravi prvi draft i sprovedi najmanje jednu stvarnu vizuelnu korekciju. Za korisnu informaciju ili navigaciju koristi odgovarajuću Lucide ikonu, ne dekorativnu.

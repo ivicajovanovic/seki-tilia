@@ -58,7 +58,7 @@ Izbegavamo kolaže, agresivne akcijske poruke, previše ikona, medicinske simbol
 
 Pravougaoni paneli, kartice, podloge proizvoda, footeri i logo-kartice imaju oštre uglove. Zaobljenje je dozvoljeno samo za pill-dugme ili kratku CTA/ponudnu oznaku, kao i za namerno kružne dekorativne oblike. Ne koristiti zaobljene pravougaonike kao podrazumevani vizuelni motiv.
 
-Kada klijent dostavi proizvod kao transparentni PNG, proizvod se postavlja direktno na kompoziciju, bez spoljnog pravougaonog rama, kartice, okvira ili podloge. Dobija dominantnu, dovoljno veliku zonu u kadru i ne sme ostati sitan unutar velike praznine. Pravougaona podloga može da se koristi samo za neprovidnu fotografiju proizvoda kada je neophodna radi čitljivosti i ne sme se dodavati transparentnom PNG-u.
+Kada klijent dostavi proizvod kao transparentni PNG, proizvod se postavlja direktno na kompoziciju, bez spoljnog pravougaonog rama, kartice, okvira ili podloge. Dobija dominantnu zonu u kadru i ne sme ostati sitan unutar velike praznine. Ako je izvor slabije rezolucije, dominacija se gradi položajem, kontrastom i scenom umesto forsiranim uvećanjem koje razara sliku. Pravougaona podloga može da se koristi samo za neprovidnu fotografiju proizvoda kada je neophodna radi čitljivosti i ne sme se dodavati transparentnom PNG-u.
 
 Grafike i video kadrovi koriste najmanje jednu funkcionalnu profesionalnu ikonu iz Lucide biblioteke. Ikona označava stvarnu radnju ili informaciju, na primer lokaciju/dostupnost uz CTA. Čiste tekstualne objave su izuzetak. Medicinske ikone i benefit-ikonice nisu dozvoljene bez potvrđene tvrdnje koju tačno predstavljaju.
 

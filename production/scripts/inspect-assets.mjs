@@ -133,6 +133,15 @@ for (const sourceAsset of input.sourceAssets ?? []) {
   const effectiveHeight = evaluated.alphaBounds?.height ?? evaluated.height;
   const plannedHeroSize = effectiveWidth / effectiveHeight > 1.12 ? { width: 820, height: 660 } : effectiveWidth / effectiveHeight < 0.82 ? { width: 600, height: 980 } : { width: 760, height: 760 };
   const maxUpscaleFactor = Math.max(plannedHeroSize.width / effectiveWidth, plannedHeroSize.height / effectiveHeight);
+  const resolutionAssessment = maxUpscaleFactor <= 1 ? "native" : maxUpscaleFactor <= 1.5 ? "adaptable" : "constrained";
+  const emptyManualChecks = {
+    inspectedOnLightAndDark: false,
+    noCursorOrUiArtifacts: false,
+    cleanCutoutEdges: false,
+    packagingUndistorted: false,
+    productIdentityVerifiable: false,
+    labelLegibleAtRenderSize: false,
+  };
 
   assets.push({
     sourcePath: relative(postDirectory, sourcePath),
@@ -146,25 +155,15 @@ for (const sourceAsset of input.sourceAssets ?? []) {
     automatedChecks: {
       heroResolution: maxUpscaleFactor <= 1.15,
       maxUpscaleFactor: Number(maxUpscaleFactor.toFixed(3)),
+      resolutionAssessment,
       plannedHeroSize,
       transparencyAvailable: evaluated.hasAlpha,
       meaningfulTransparency: evaluated.hasAlpha && evaluated.transparentRatio >= 0.005,
       visiblePixelsClearOfCanvasEdge: !evaluated.visiblePixelsTouchEdge,
     },
-    manualChecks: reviewUnchanged ? previous?.manualChecks ?? {
-      inspectedOnLightAndDark: false,
-      noCursorOrUiArtifacts: false,
-      cleanCutoutEdges: false,
-      packagingUndistorted: false,
-      labelLegibleAtRenderSize: false,
-    } : {
-      inspectedOnLightAndDark: false,
-      noCursorOrUiArtifacts: false,
-      cleanCutoutEdges: false,
-      packagingUndistorted: false,
-      labelLegibleAtRenderSize: false,
-    },
-    visibleDefects: reviewUnchanged ? previous?.visibleDefects ?? [] : [],
+    manualChecks: reviewUnchanged ? { ...emptyManualChecks, ...previous?.manualChecks } : emptyManualChecks,
+    blockingDefects: reviewUnchanged ? previous?.blockingDefects ?? [] : [],
+    qualityLimitations: reviewUnchanged ? previous?.qualityLimitations ?? [] : [],
     corrections: reviewUnchanged ? previous?.corrections ?? [] : [],
     status: reviewUnchanged ? previous?.status ?? "pending" : "pending",
   });
@@ -172,7 +171,7 @@ for (const sourceAsset of input.sourceAssets ?? []) {
 
 writeFileSync(reviewPath, `${JSON.stringify({ version: 1, generatedAt: new Date().toISOString(), assets }, null, 2)}\n`);
 console.log(`Sačuvan asset pregled: ${relative(repositoryRoot, reviewPath)}`);
-if (assets.some((asset) => !asset.automatedChecks.heroResolution)) {
-  console.log("BLOKADA: najmanje jedan produktni vizual zahteva više od 15% povećanja u najvećem planiranom hero prikazu.");
+if (assets.some((asset) => asset.automatedChecks.resolutionAssessment !== "native")) {
+  console.log("UPOZORENJE: najmanje jedan produktni vizual zahteva povećanje. To nije automatska blokada; dokumentuj ograničenje i prilagodi veličinu, kadar, familiju i završnu obradu bez izmišljanja detalja proizvoda.");
 }
-console.log("Otvori svaki asset-inspection PNG, popuni manualChecks, visibleDefects, corrections, preparedAssetPath i status, zatim ponovo pokreni skriptu.");
+console.log("Otvori svaki asset-inspection PNG, popuni manualChecks, blockingDefects, qualityLimitations, corrections, preparedAssetPath i status, zatim ponovo pokreni skriptu.");

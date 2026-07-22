@@ -10,7 +10,7 @@ Ovaj dokument pretvara brend vodič i vizuelne reference u operativna pravila za
 - Paleta ostaje petrol, krem, limeta, bež i ugalj. Jedan vizual koristi najviše jedan dominantan akcenat i ne pretvara limetu u pozadinu za logo.
 - Obavezni elementi ostaju čitljivi na punoj veličini i u približno 25% prikazu telefona: logo, glavna poruka, ponuda, proizvod i CTA kada postoje.
 - Pravougaoni paneli, kartice, proizvodne podloge, footeri, okviri i logo-kartica imaju oštre uglove. Zaobljenje je dozvoljeno samo za pill-dugme/kratku ponudnu oznaku (`borderRadius: 999`) ili čiste kružne dekorativne oblike (`borderRadius: 50%`).
-- Uz `imageSrc` je obavezno upisati `imageBackground` kao `transparent` ili `opaque`. Transparentni PNG proizvoda se prikazuje bez dodatnog pravougaonog rama, kartice, okvira ili podloge i dobija dominantnu rezervisanu zonu kompozicije. Za neprovidnu sliku kontrolisana podloga ostaje dozvoljena kada je potrebna za kontrast.
+- Uz `imageSrc` je obavezno upisati `imageBackground` kao `transparent` ili `opaque`. Transparentni PNG proizvoda se prikazuje bez dodatnog pravougaonog rama, kartice, okvira ili podloge i dobija dominantnu rezervisanu zonu kompozicije. Ako je klijentov izvor slabiji, dominacija se postiže položajem, kontrastom i scenom, bez destruktivnog uvećanja. Za neprovidnu sliku kontrolisana podloga ostaje dozvoljena kada je potrebna za kontrast.
 
 ## Dizajnerske familije
 
@@ -83,6 +83,8 @@ Pre statusa `SPREMNO ZA LJUDSKU PROVERU` agent mora:
 4. proveriti da je Manrope stvarno učitan tokom rendera; ako ne može da se učita, render mora ostati blokiran umesto da pređe na zamenski font;
 5. upisati konkretna imena rendera u `design-direction.json` i `review.md`.
 6. proveriti da nijedan pravougaoni panel, kartica, footer, proizvodna podloga ili logo-kartica nema zaobljene uglove; pill CTA/ponudna oznaka i kružni dekorativni oblici su jedini izuzeci.
-7. ako je `imageBackground: transparent`, proveriti da proizvod nema dodatni pravougaoni ram, karticu, okvir ni podlogu, i da je dovoljno velik da bude glavni vizuelni element, bez nezavršenog praznog prostora.
+7. ako je `imageBackground: transparent`, proveriti da proizvod nema dodatni pravougaoni ram, karticu, okvir ni podlogu i da je glavni vizuelni element. Kod slabijeg izvora ne forsirati veličinu preko tačke vidljivog raspada; koristiti kompozicionu dominaciju i dokumentovati ograničenje.
 8. ako je familija `premium-product-stage`, proveriti da organska scena, podijum/senka i footer stvaraju namernu hijerarhiju, da proizvod nije mali ili vizuelno odvojen od scene, i da svaki prikazani benefit ima potvrđen izvor.
 9. pokrenuti `prepare-visual-review.mjs`, oceniti svih sedam kriterijuma sa najmanje 4/5, evidentirati stvarnu reviziju drafta i dobiti nezavisan verdict `meets-reference-bar`. Nezavisni reviewer koristi drugačiji `reviewerId` od `authorId` i pregleda Feed, Story, tri Reels kadra i finalni MP4 direktno. Hash dokazi zaključavaju rendere, ulazne JSON fajlove, renderer, CSS i reference; svaka kasnija izmena poništava prolaz.
+
+Ocena završne obrade meri kvalitet dizajnerskih odluka u okviru realno dostupnog klijentovog materijala. Dokumentovana izvorna mekoća, kompresija ili niža rezolucija ne obaraju automatski kriterijum ispod 4/5 ako agent nije dodatno degradirao sliku, nije falsifikovao detalje i izabrao je kadar i scenu koji ograničenje profesionalno kontrolišu.

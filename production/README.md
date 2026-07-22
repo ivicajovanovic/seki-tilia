@@ -50,11 +50,11 @@ Ako direktno generisanje nije dostupno ili korisnik želi svoj lokalni generator
 
 Ako je dovoljno dobra fotografija proizvoda koju je klijent poslao, ne pravi se AI prompt.
 
-Uz svaku `imageSrc` vrednost obavezno upiši `imageBackground` u `video-props.json`: `transparent` za PNG sa providnom pozadinom, odnosno `opaque` za fotografiju ili neprovidnu sliku. Transparentni PNG se prikazuje slobodno na kompoziciji, bez dodatne pravougaone kartice, rama, okvira ili podloge, i mora biti dovoljno velik da nosi kadar. Podloga je dozvoljena samo za neprovidnu sliku kada je potrebna za kontrast.
+Uz svaku `imageSrc` vrednost obavezno upiši `imageBackground` u `video-props.json`: `transparent` za PNG sa providnom pozadinom, odnosno `opaque` za fotografiju ili neprovidnu sliku. Transparentni PNG se prikazuje slobodno na kompoziciji, bez dodatne pravougaone kartice, rama, okvira ili podloge, i mora vizuelno da nosi kadar. Kod slabijeg izvora koristi položaj, kontrast i scenu umesto preteranog uvećanja. Podloga je dozvoljena samo za neprovidnu sliku kada je potrebna za kontrast.
 
 Sve radne datoteke objave ostaju u njenom paketu: originali u `source/`, radni renderi i pregledi u `generated/`, a samo materijal spreman za ručnu proveru u `final/`. Ne ostavljaj test rendere u `/tmp` niti u drugim folderima van `productions/`.
 
-Pre upotrebe produktne slike pokreni `node production/scripts/inspect-assets.mjs --post productions/.../<id>`. Skripta računa dimenzije, alfa granice, transparentnost, potreban faktor povećanja i SHA-256, a zatim pravi svetli/tamni pregled. Otvori pregled i popuni `generated/asset-review.json`. Kursor, UI/screenshot trag, nečista ivica, deformacija, nečitljiva etiketa ili povećanje preko 15% blokiraju asset. Renderer koristi samo pripremljenu kopiju čiji hash odgovara odobrenom zapisu.
+Pre upotrebe produktne slike pokreni `node production/scripts/inspect-assets.mjs --post productions/.../<id>`. Skripta računa dimenzije, alfa granice, transparentnost, potreban faktor povećanja i SHA-256, a zatim pravi svetli/tamni pregled. Otvori pregled i popuni `generated/asset-review.json`. Slabija rezolucija, kompresija, mekoća ili nečitljiv sitan tekst na ambalaži evidentiraju se u `qualityLimitations` i koriste status `approved-with-limitations`; sami po sebi ne blokiraju produkciju. Tada izaberi kadar, veličinu proizvoda i scenu koji ne naglašavaju nedostatke, uz maksimalno bezbedno poboljšanje bez izmišljanja detalja. `blockingDefects` je rezervisan za kursor/UI trag, pogrešan proizvod, ozbiljnu deformaciju, obmanjujuću obradu, neupotrebljivu alfa ivicu ili neprepoznatljiv proizvod. Renderer koristi samo pripremljenu kopiju čiji hash odgovara odobrenom zapisu.
 
 ## Obavezna vizuelna provera
 

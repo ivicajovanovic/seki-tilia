@@ -33,10 +33,11 @@ Ograničenja i očekivanja:
 7. Dizajn mora imati stvarnu svežu intervenciju u odnosu na poslednje tri objave. Variraj layout, hijerarhiju, tretman proizvoda, ponude, tipografije ili pokreta. Nemoj koristiti istu signature kombinaciju.
 8. Za grafiku i video koristi najmanje jednu smislenu Lucide ikonu tamo gde pomaže razumevanju. Ne koristi ikonu kao nasumičnu dekoraciju.
 9. Ako je proizvod transparentni PNG, mora biti slobodno postavljen i dominantan, bez pravougaonog rama, kartice ili podloge.
-10. Za vizuale koristi postojeće podržane renderer familije. Izaberi familiju koja se stvarno razlikuje od skorašnjih objava i dokumentuj odluku u `generated/design-direction.json`.
-11. Proveri finalne rendere u punoj veličini i kao umanjeni prikaz telefona. Posebno proveri kontrast logoa, poruke, proizvoda, ponude, CTA-a i ikona.
-12. Ne označavaj materijal spremnim dok `review.md` i obavezne provere nisu popunjeni. Finalne datoteke čuvaj isključivo u `final/`.
-13. Ne objavljuj sadržaj na društvenim mrežama i ne menjaj postojeće objave.
+10. Ako je klijentova slika umereno slabijeg kvaliteta, ipak radi sa njom. Dokumentuj ograničenje i prilagodi kadar i kompoziciju; ne tretiraj samu nižu rezoluciju, kompresiju ili mekoću kao blokadu.
+11. Za vizuale koristi postojeće podržane renderer familije. Izaberi familiju koja se stvarno razlikuje od skorašnjih objava i dokumentuj odluku u `generated/design-direction.json`.
+12. Proveri finalne rendere u punoj veličini i kao umanjeni prikaz telefona. Posebno proveri kontrast logoa, poruke, proizvoda, ponude, CTA-a i ikona.
+13. Ne označavaj materijal spremnim dok `review.md` i obavezne provere nisu popunjeni. Finalne datoteke čuvaj isključivo u `final/`.
+14. Ne objavljuj sadržaj na društvenim mrežama i ne menjaj postojeće objave.
 
 Na kraju mi isporuči:
 - kratak pregled odluka,

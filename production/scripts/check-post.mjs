@@ -23,6 +23,8 @@ const supportedDesignInterventions = new Set(["reading-order", "product-placemen
 const supportedMotionTreatments = new Set(["staged-reveal", "offer-build", "detail-cutaway", "editorial-pan", "location-close"]);
 const supportedProductShapes = new Set(["wide", "compact", "tall"]);
 const supportedOfferKinds = new Set(["deadline", "price", "discount", "bundle", "gift", "none"]);
+const approvedAssetStatuses = new Set(["approved", "approved-with-limitations"]);
+const requiredAssetManualChecks = ["inspectedOnLightAndDark", "noCursorOrUiArtifacts", "cleanCutoutEdges", "packagingUndistorted", "productIdentityVerifiable"];
 const requiredValidatedRenders = [
   "final/feed-1080x1350.png",
   "final/story-1080x1920.png",
@@ -334,12 +336,15 @@ for (const sourceAsset of sourceImageAssets) {
     continue;
   }
   if (audit.sourceHash !== hashFile(sourcePath)) errors.push(`Asset review hash više ne odgovara izvornom fajlu: ${sourceAsset}.`);
-  if (audit.status !== "approved") errors.push(`Asset nije odobren za render: ${sourceAsset}.`);
-  if (!audit.automatedChecks?.heroResolution) errors.push(`Asset zahteva više od 15% povećanja u hero prikazu: ${sourceAsset}.`);
+  if (!approvedAssetStatuses.has(audit.status)) errors.push(`Asset nije odobren za render: ${sourceAsset}.`);
+  if (!audit.automatedChecks?.heroResolution) warnings.push(`Asset ${sourceAsset} zahteva povećanje od približno ${audit.automatedChecks?.maxUpscaleFactor ?? "nepoznatog"}x. Prilagodi kompoziciju i dokumentuj ograničenje; sama rezolucija nije blokada.`);
   if (audit.usage === "hero-product" && videoProps?.imageBackground === "transparent" && (!audit.automatedChecks?.transparencyAvailable || !audit.automatedChecks?.meaningfulTransparency)) errors.push(`Transparentni asset nema potvrđen alfa sadržaj: ${sourceAsset}.`);
   if (audit.usage === "hero-product" && videoProps?.imageBackground === "transparent" && !audit.automatedChecks?.visiblePixelsClearOfCanvasEdge) errors.push(`Vidljivi pikseli transparentnog asseta dodiruju ivicu platna: ${sourceAsset}.`);
-  if (!audit.manualChecks || Object.values(audit.manualChecks).some((value) => value !== true)) errors.push(`Nisu završene sve ručne provere asseta: ${sourceAsset}.`);
-  if (!Array.isArray(audit.visibleDefects) || audit.visibleDefects.length > 0) errors.push(`Asset ima otvorene vizuelne defekte: ${sourceAsset}.`);
+  if (!audit.manualChecks || requiredAssetManualChecks.some((key) => audit.manualChecks[key] !== true)) errors.push(`Nisu završene sve kritične ručne provere asseta: ${sourceAsset}.`);
+  if (audit.manualChecks?.labelLegibleAtRenderSize !== true) warnings.push(`Sitna etiketa na assetu možda nije potpuno čitljiva u renderu: ${sourceAsset}. To nije blokada ako su proizvod i ključna poruka pouzdano prepoznatljivi.`);
+  if (!Array.isArray(audit.blockingDefects) || audit.blockingDefects.length > 0) errors.push(`Asset ima otvorene blokirajuće defekte: ${sourceAsset}.`);
+  if (!Array.isArray(audit.qualityLimitations)) errors.push(`Asset mora imati niz qualityLimitations: ${sourceAsset}.`);
+  if (Array.isArray(audit.qualityLimitations) && audit.qualityLimitations.length > 0 && audit.status !== "approved-with-limitations") errors.push(`Asset sa dokumentovanim ograničenjima mora imati status approved-with-limitations: ${sourceAsset}.`);
   if (!audit.preparedAssetPath || !audit.preparedAssetHash) {
     errors.push(`Asset nema odobrenu pripremljenu verziju: ${sourceAsset}.`);
   } else {

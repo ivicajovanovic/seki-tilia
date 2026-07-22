@@ -10,8 +10,12 @@ const fixtureRoot = join(repositoryRoot, "productions-test");
 const mediaCache = join(fixtureRoot, "media-cache");
 const checkerPath = join(repositoryRoot, "production/scripts/check-post.mjs");
 const hashFile = (path) => createHash("sha256").update(readFileSync(path)).digest("hex");
+const createdJobRoots = [];
 
-after(() => rmSync(fixtureRoot, { recursive: true, force: true }));
+after(() => {
+  rmSync(fixtureRoot, { recursive: true, force: true });
+  for (const path of createdJobRoots) rmSync(path, { recursive: true, force: true });
+});
 
 const run = (command, args) => {
   const result = spawnSync(command, args, { encoding: "utf8" });
@@ -163,7 +167,59 @@ const makeFixture = () => {
     independentReview: { performed: true, reviewerId: "visual-review-agent-independent", method: "Direktan pregled svih sirovih PNG i MP4 artefakata.", rawArtifactOnly: true, verdict: "meets-reference-bar", notes: "Pregledani su Feed, Story, tri Reels kadra i finalni MP4 naspram obe reference." },
   });
 
-  return { postDirectory, input, videoProps, direction, generated, final };
+  return { postDirectory, input, videoProps, direction, generated, final, qualityReviewPath: join(generated, "quality-review.json") };
+};
+
+const refreshLockedInputHashes = (fixture) => {
+  const review = JSON.parse(readFileSync(fixture.qualityReviewPath, "utf8"));
+  review.renderHashes.input = hashFile(join(fixture.postDirectory, "input.json"));
+  review.renderHashes.videoProps = hashFile(join(fixture.postDirectory, "video-props.json"));
+  review.renderHashes.designDirection = hashFile(join(fixture.generated, "design-direction.json"));
+  writeJson(fixture.qualityReviewPath, review);
+};
+
+const addLimitedResolutionAsset = (fixture) => {
+  const sourceDirectory = join(fixture.postDirectory, "source");
+  const preparedDirectory = join(fixture.generated, "assets");
+  const jobRoot = join(repositoryRoot, "video-renderer/public/jobs", basename(fixture.postDirectory));
+  const sourcePath = join(sourceDirectory, "product.png");
+  const preparedPath = join(preparedDirectory, "product.png");
+  const jobPath = join(jobRoot, "product.png");
+  mkdirSync(sourceDirectory, { recursive: true });
+  mkdirSync(preparedDirectory, { recursive: true });
+  mkdirSync(jobRoot, { recursive: true });
+  createdJobRoots.push(jobRoot);
+  run("ffmpeg", ["-v", "error", "-y", "-f", "lavfi", "-i", "color=c=black@0.0:s=400x300,format=rgba,drawbox=x=20:y=20:w=360:h=260:color=orange@1:t=fill", "-frames:v", "1", "-update", "1", sourcePath]);
+  copyFileSync(sourcePath, preparedPath);
+  copyFileSync(preparedPath, jobPath);
+
+  fixture.input.sourceAssets = ["source/product.png"];
+  fixture.videoProps.imageSrc = `/jobs/${basename(fixture.postDirectory)}/product.png`;
+  fixture.videoProps.imageBackground = "transparent";
+  fixture.videoProps.productShape = "wide";
+  fixture.direction.familyFit.productShape = "wide";
+  writeJson(join(fixture.postDirectory, "input.json"), fixture.input);
+  writeJson(join(fixture.postDirectory, "video-props.json"), fixture.videoProps);
+  writeJson(join(fixture.generated, "design-direction.json"), fixture.direction);
+  writeJson(join(fixture.generated, "asset-review.json"), {
+    version: 1,
+    assets: [{
+      sourcePath: "source/product.png",
+      usage: "hero-product",
+      sourceHash: hashFile(sourcePath),
+      sourceMetadata: { width: 400, height: 300, alphaBounds: { x: 20, y: 20, width: 360, height: 260 } },
+      preparedAssetPath: "generated/assets/product.png",
+      preparedAssetHash: hashFile(preparedPath),
+      preparedMetadata: { width: 400, height: 300, alphaBounds: { x: 20, y: 20, width: 360, height: 260 } },
+      automatedChecks: { heroResolution: false, maxUpscaleFactor: 2.3, resolutionAssessment: "constrained", transparencyAvailable: true, meaningfulTransparency: true, visiblePixelsClearOfCanvasEdge: true },
+      manualChecks: { inspectedOnLightAndDark: true, noCursorOrUiArtifacts: true, cleanCutoutEdges: true, packagingUndistorted: true, productIdentityVerifiable: true, labelLegibleAtRenderSize: false },
+      blockingDefects: [],
+      qualityLimitations: ["Klijentov izvor je niže rezolucije i sitan tekst nije potpuno čitljiv."],
+      corrections: ["Kompozicija ograničava uvećanje i gradi dominaciju kontrastom."],
+      status: "approved-with-limitations",
+    }],
+  });
+  refreshLockedInputHashes(fixture);
 };
 
 const runChecker = (postDirectory) => execFileSync(process.execPath, [checkerPath, "--post", postDirectory], { cwd: repositoryRoot, encoding: "utf8", stdio: "pipe" });
@@ -178,6 +234,12 @@ const runBlocked = (postDirectory) => {
 
 test("potpuno validan golden paket prolazi", () => {
   const fixture = makeFixture();
+  assert.match(runChecker(fixture.postDirectory), /PROVERA PROŠLA/);
+});
+
+test("slabija rezolucija sa dokumentovanim ograničenjem nije blokada", () => {
+  const fixture = makeFixture();
+  addLimitedResolutionAsset(fixture);
   assert.match(runChecker(fixture.postDirectory), /PROVERA PROŠLA/);
 });
 

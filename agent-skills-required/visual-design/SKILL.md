@@ -47,7 +47,7 @@ Review all available material before designing:
 
 Do not ask for information already present in the conversation, files, website, or supplied assets.
 
-Za AU Šeki-Tilia produktni vizual, pre kompozicije pokreni `production/scripts/inspect-assets.mjs` nad paketom i otvori svaki generisani svetli/tamni asset pregled. Blokiraj asset sa kursorom ili drugim UI tragom, screenshot artefaktom, prljavom alfa ivicom, deformisanim pakovanjem, nečitljivom etiketom ili potrebnim povećanjem većim od 15%. Original ostaje u `source/`; renderer koristi samo hashom odobrenu pripremljenu kopiju. Ne uklanjaj generativno defekt koji prekriva etiketu, ambalažu ili providni prozor proizvoda, jer bi to izmislilo proizvodni detalj. Traži čist izvor.
+Za AU Šeki-Tilia produktni vizual, pre kompozicije pokreni `production/scripts/inspect-assets.mjs` nad paketom i otvori svaki generisani svetli/tamni asset pregled. Umereno slabija rezolucija, kompresija, mekoća ili nečitljivost sitnog teksta nisu automatska blokada kada je proizvod pouzdano prepoznatljiv. Upiši ih u `qualityLimitations`, koristi `approved-with-limitations` i prilagodi kadar, familiju, veličinu i završnu obradu realnom kapacitetu slike. Proizvod može ostati dominantan kroz položaj, kontrast i scenu, bez preteranog povećanja. Blokiraj samo kursor ili drugi UI/screenshot trag, pogrešan proizvod, ozbiljnu deformaciju, obmanjujuću obradu, neupotrebljivu alfa ivicu ili nemogućnost pouzdane identifikacije; takve nalaze upiši u `blockingDefects`. Original ostaje u `source/`; renderer koristi samo hashom odobrenu pripremljenu kopiju. Ne uklanjaj generativno defekt koji prekriva etiketu, ambalažu ili providni prozor proizvoda, jer bi to izmislilo proizvodni detalj. Traži čist izvor ili koristi bezbedan kadar koji taj detalj ne falsifikuje.
 
 ### 2. Create a fact ledger
 
@@ -326,7 +326,7 @@ Inspect the rendered output, not just the source or prompt. Revise until all app
 - [ ] Logo, primary message, offer, product, and CTA, when present, are clearly visible and contrast with their direct backgrounds in every exported format.
 - [ ] Critical content stays inside safe margins and survives likely feed crops.
 - [ ] Text does not sit over uncontrolled visual noise.
-- [ ] Images are sharp enough and do not show generation or compositing defects.
+- [ ] Supplied images are used at the best credible quality their source permits; documented client-side softness or compression is not treated as an agent failure by itself.
 - [ ] No element is accidentally clipped, duplicated, stretched, or misaligned.
 - [ ] The exported file uses the requested ratio, dimensions, and format.
 
