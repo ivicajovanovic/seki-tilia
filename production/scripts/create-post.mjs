@@ -45,7 +45,7 @@ if (existsSync(postDirectory)) {
   process.exit(1);
 }
 
-for (const directory of [postDirectory, join(postDirectory, "source"), join(postDirectory, "generated"), join(postDirectory, "final")]) {
+for (const directory of [postDirectory, join(postDirectory, "source"), join(postDirectory, "generated"), join(postDirectory, "generated", "assets"), join(postDirectory, "final")]) {
   mkdirSync(directory, { recursive: true });
 }
 
@@ -60,7 +60,16 @@ writeFileSync(join(postDirectory, "input.json"), JSON.stringify({
   copyFreshnessNote: null,
   clientFacts: [],
   claims: [],
-  confirmedOffer: { price: null, discount: null, validUntil: null },
+  confirmedOffer: {
+    mechanic: null,
+    value: null,
+    regularPrice: null,
+    promoPrice: null,
+    validFrom: null,
+    validUntil: null,
+    source: null
+  },
+  blockingMissingFacts: [],
   locationId: null,
   sourceAssets: [],
   requestedFormats: ["feed", "story", "reels"],
@@ -71,15 +80,18 @@ writeFileSync(join(postDirectory, "video-props.json"), JSON.stringify({
   headline: "",
   supportingText: "",
   offerLabel: "",
+  offerKind: "none",
   cta: "",
   imageSrc: "",
   imageBackground: "unknown",
+  productShape: "unknown",
   locationLine: "AU Šeki-Tilia",
   designVariant: "",
   motionTreatment: ""
 }, null, 2) + "\n");
 writeFileSync(join(postDirectory, "generated", "design-direction.json"), JSON.stringify({
   family: null,
+  authorId: null,
   signature: null,
   referenceFiles: [],
   referenceTraits: [],
@@ -88,10 +100,32 @@ writeFileSync(join(postDirectory, "generated", "design-direction.json"), JSON.st
   freshInterventionNote: null,
   motionTreatment: null,
   formatAdaptations: { feed: null, story: null, reels: null },
+  formatPlan: {
+    feed: { readingOrder: null, productAnchor: null, layoutId: null },
+    story: { readingOrder: null, productAnchor: null, layoutId: null },
+    reels: { shotPlan: [], layoutId: null }
+  },
+  familyFit: {
+    productShape: null,
+    supportsOfferStrength: false,
+    supportsSceneDepth: false,
+    rationale: null
+  },
   logoSurface: "cream-card",
   typography: { family: "AUSekiManrope", weights: [] },
   validatedRenders: []
 }, null, 2) + "\n");
-writeFileSync(join(postDirectory, "review.md"), "# Provera objave\n\nStatus: BLOKIRANO\n\n- [ ] Proizvod nije lek ni antibiotik / status je potvrđen.\n- [ ] Sve informacije o proizvodu potiču od klijenta, proizvođača ili stručne osobe.\n- [ ] Cena, popust i datum su potvrđeni ili nisu navedeni.\n- [ ] Lokacijski podaci su potvrđeni ili nisu navedeni.\n- [ ] Nema dijagnoze, terapijske preporuke ni obećanja rezultata.\n- [ ] Vizual ne predstavlja generisanu osobu kao stvarnog zaposlenog.\n- [ ] Vizuelni dizajn je izrađen i pregledan prema agent-skills-required/visual-design/SKILL.md.\n- [ ] Sadržajni ugao, najmanje dve dizajnerske intervencije i Reels ritam, kada postoji, stvarno se razlikuju od poslednje tri objave.\n- [ ] Logo, glavna poruka, ponuda, proizvod i CTA, kada postoje, jasno su vidljivi i kontrastni u svakom formatu.\n- [ ] Korišćena je najmanje jedna semantička Lucide ikona na svakoj grafici i video kadru, osim kod čiste tekstualne objave.\n- [ ] Pravougaoni paneli, kartice, footeri, proizvodne podloge, okviri i logo-kartica imaju oštre uglove. Zaobljenje je korišćeno samo za pill-dugme/ponudnu oznaku ili kružni dekorativni oblik.\n- [ ] Transparentni PNG proizvoda, kada je korišćen, nema dodatni pravougaoni ram, karticu, okvir ni podlogu, a proizvod je dovoljno velik da nosi kadar bez suvišne praznine.\n- [ ] Produktna scena ima dominantan proizvod i namerni vizuelni kontekst, bez nedovršenog praznog prostora. Kada je proizvod transparentni PNG, nema dodatni pravougaoni ram, karticu, okvir ni podlogu.\n- [ ] Tekst je jezički i vizuelno pregledan.\n\nNapomene i nedostajući podaci:\n");
+writeFileSync(join(postDirectory, "generated", "asset-review.json"), JSON.stringify({ version: 1, generatedAt: null, assets: [] }, null, 2) + "\n");
+writeFileSync(join(postDirectory, "generated", "quality-review.json"), JSON.stringify({
+  version: 1,
+  status: "pending",
+  evidence: { referenceComparison: null, formatComparison: null },
+  renderHashes: {},
+  criteria: {},
+  weakestArea: null,
+  revisionEvidence: { issueFound: null, changeMade: null, before: null, after: null },
+  independentReview: { performed: false, reviewerId: null, method: null, rawArtifactOnly: false, verdict: null, notes: null }
+}, null, 2) + "\n");
+writeFileSync(join(postDirectory, "review.md"), "# Provera objave\n\nStatus: BLOKIRANO\n\nStrukturisani izvori istine za vizuelni prolaz su `generated/asset-review.json` i `generated/quality-review.json`. Ovaj dokument je ljudski sažetak i ne može samostalno otključati paket.\n\n- [ ] Proizvod nije lek ni antibiotik / status je potvrđen.\n- [ ] Sve informacije o proizvodu potiču od klijenta, proizvođača ili stručne osobe.\n- [ ] Mehanika akcije, vrednost, izvor i rok su potvrđeni kada je post tipa akcija.\n- [ ] Lokacijski podaci su potvrđeni ili nisu navedeni.\n- [ ] Nema dijagnoze, terapijske preporuke ni obećanja rezultata.\n- [ ] Vizual ne predstavlja generisanu osobu kao stvarnog zaposlenog.\n- [ ] Asset pregled je vezan hashom za korišćeni fajl i nema otvorene defekte.\n- [ ] Vizuelni kvalitet ima najmanje 4/5 po svakom kriterijumu u quality-review.json.\n- [ ] Dokumentovana je najmanje jedna stvarna revizija između drafta i finala.\n- [ ] Nezavisni vizuelni pregled potvrđuje da je dostignut prag referenci.\n- [ ] Tekst je jezički i vizuelno pregledan.\n\nNapomene i nedostajući podaci:\n");
 
 console.log(`Kreiran paket objave: ${postDirectory}`);

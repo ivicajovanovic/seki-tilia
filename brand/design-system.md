@@ -23,11 +23,13 @@ Za akcije, novitete i proizvode postoje različite kompozicione familije. Izaber
 | `minimal-offer` | Tipografija i potvrđena ponuda nose kadar, uz dominantan proizvod bez pravougaone podloge kada je PNG transparentan. Za kratke akcije i novitete. | drugom minimalnom objavom sa istim CTA modulom |
 | `product-card` | Proizvod na krem kartici preko petrol polja samo kada je fotografija neprovidna; transparentni PNG izlazi iz kartičnog tretmana kao slobodan heroj. | istom kartičnom strukturom u naredne tri objave |
 | `premium-product-stage` | Velika asimetrična ponuda i dominantan proizvod u režiranoj sceni: organska pozadina, diskretan podijum/senka i petrol završni blok sa CTA-om. Transparentni PNG slobodno prelazi preko scene, bez pravougaonog rama, kartice ili podloge. Za potvrđene akcije i proizvode čije pakovanje treba da bude glavni nosilac kadra. | bilo kojom familijom sa istim odnosom "velika ponuda levo, proizvod desno, petrol footer" u naredne tri objave |
-| `offer-orbit` | Inverzni editorial odnos: petrol tekstualna kolona nosi ponudu, dok proizvod gradi svetlu orbitnu scenu sa kružnim akcentom. | `editorial-split` ili drugom objavom sa istim odnosom teksta i proizvoda |
+| `offer-orbit` | Orbitni akcenat i uzemljena produktna scena. Feed koristi asimetričan tekst/proizvod odnos i petrol CTA završetak, Story vertikalni stack, a Reels zaseban hook, hero i closing. | `editorial-split` ili drugom objavom sa istim odnosom teksta i proizvoda |
 | `type-stage` | Veliki tipografski naslov postavlja ritam, a proizvod izlazi iz donje podijumske scene; CTA je kratak petrol završetak. | `minimal-offer` ili `premium-product-stage` sa sličnim redosledom čitanja |
 | `gallery-shelf` | Svetla produktna galerija levo i petrol informativni stub desno. Za novitet ili proizvod kada je naziv važniji od cene. | `offer-orbit` ili drugom kompozicijom sa tamnim desnim stubom |
 
 Familije se ne smeju svoditi na promenu boje istog šablona. Menjaju se čitanje kompozicije, odnos tipografije i proizvoda, položaj ponude i tretman praznog prostora. Brend margine, font, oštar ugao panela i logo-kartica, kao i ton, ostaju konzistentni.
+
+`offer-orbit` koristi zajednički baseline proizvoda, podijuma i kontaktne senke. Feed ima odnos tekstualnog polja i široke produktne scene, Story vertikalni stack sa naslovom, scenom i zasebnim petrol CTA završetkom, a Reels najmanje tri vremenski različite scene. `productShape` (`wide`, `compact`, `tall`) bira geometriju proizvoda; jedan procenat veličine nije dozvoljen za sve oblike.
 
 ### `premium-product-stage`: obavezna pravila
 
@@ -50,7 +52,9 @@ Pre dizajna agent pregleda isključivo `brand/design-references/ref-premium-prod
 - kratkim opisom po čemu se objava razlikuje od poslednje tri;
 - potvrdom da je logo na `cream-card` površini i da se koristi rendererova Manrope porodica `AUSekiManrope`;
 - listom finalnih rendera pregledanih na punoj veličini i u umanjenom prikazu.
-- najmanje dve vrednosti `designInterventions`, opisom `freshInterventionNote`, `motionTreatment` kada postoji Reels i opisom `formatAdaptations` za svaki traženi format.
+- stabilan identitet autora u `authorId`, najmanje dve vrednosti `designInterventions`, opis `freshInterventionNote`, `motionTreatment` kada postoji Reels i opis `formatAdaptations` za svaki traženi format.
+- strukturisanim `formatPlan` vrednostima: različiti Feed i Story `layoutId`, redosled čitanja i anchor proizvoda, kao i Reels `shotPlan` sa najmanje tri scene;
+- `familyFit` potvrdom da familija odgovara proporciji proizvoda, stvarnoj snazi ponude i potrebnoj scenskoj dubini.
 
 U `referenceFiles` dozvoljene su samo vrednosti `ref-premium-product-stage.png` i `ref-product-stage-footer.png`. Za familiju `premium-product-stage` može se navesti `ref-premium-product-stage.png`.
 
@@ -67,6 +71,8 @@ Svaka nova objava mora zadržati brend identitet, ali uvesti stvarnu novu interv
 
 Pre-flight poredi `signature`, sadržajni ugao, kombinaciju intervencija i Reels ritam aktuelne objave sa tri poslednje evidentirane objave. Ako se bilo koji obavezni obrazac ponovi, paket se blokira dok agent ne izabere stvarno drugačiji pristup. Isti proizvod može dobiti novu kompoziciju; novi proizvod ne sme automatski dobiti staru.
 
+Istorijska različitost se proverava tek posle `familyFit` provere. Nova, ali nekompatibilna familija je blokada. Kompatibilna familija može ponovo da se koristi samo uz novu signature kombinaciju i stvarno drugačiji layout.
+
 ## Finalna vizuelna provera
 
 Pre statusa `SPREMNO ZA LJUDSKU PROVERU` agent mora:
@@ -79,3 +85,4 @@ Pre statusa `SPREMNO ZA LJUDSKU PROVERU` agent mora:
 6. proveriti da nijedan pravougaoni panel, kartica, footer, proizvodna podloga ili logo-kartica nema zaobljene uglove; pill CTA/ponudna oznaka i kružni dekorativni oblici su jedini izuzeci.
 7. ako je `imageBackground: transparent`, proveriti da proizvod nema dodatni pravougaoni ram, karticu, okvir ni podlogu, i da je dovoljno velik da bude glavni vizuelni element, bez nezavršenog praznog prostora.
 8. ako je familija `premium-product-stage`, proveriti da organska scena, podijum/senka i footer stvaraju namernu hijerarhiju, da proizvod nije mali ili vizuelno odvojen od scene, i da svaki prikazani benefit ima potvrđen izvor.
+9. pokrenuti `prepare-visual-review.mjs`, oceniti svih sedam kriterijuma sa najmanje 4/5, evidentirati stvarnu reviziju drafta i dobiti nezavisan verdict `meets-reference-bar`. Nezavisni reviewer koristi drugačiji `reviewerId` od `authorId` i pregleda Feed, Story, tri Reels kadra i finalni MP4 direktno. Hash dokazi zaključavaju rendere, ulazne JSON fajlove, renderer, CSS i reference; svaka kasnija izmena poništava prolaz.

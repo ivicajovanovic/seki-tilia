@@ -9,6 +9,7 @@ Agent ne sme označiti materijal kao spreman ako je prisutno bilo šta od slede�
 - dijagnoza, preporuka terapije ili doziranja;
 - tvrdnja o lečenju, izlečenju, garantovanom ili trenutnom rezultatu;
 - nepotvrđena cena, procenat popusta, rok akcije, adresa, telefon ili radno vreme;
+- objava označena kao akcija bez potvrđene mehanike, prikazive vrednosti, roka i izvora;
 - osoba generisana veštačkom inteligencijom predstavljena kao stvarna zaposlena;
 - zdravstvena tvrdnja bez izvora ili stručne provere.
 

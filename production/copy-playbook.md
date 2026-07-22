@@ -98,6 +98,8 @@ Tekst u uglastim zagradama agent popunjava isključivo potvrđenim podacima. Ako
 
 ### 1. Akcija na dozvoljen proizvod
 
+Ovaj format koristi se samo kada su potvrđeni mehanika akcije, prikaziva vrednost, rok i izvor. Sam rok ili reč „akcija” nisu dovoljni. Ako mehanika nedostaje, paket ostaje blokiran ili korisnik eksplicitno menja nameru u neutralnu objavu dostupnosti.
+
 ```text
 [Naziv/kategorija] je sada dostupan uz [potvrđen popust ili cenu].
 

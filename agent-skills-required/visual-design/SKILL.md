@@ -47,6 +47,8 @@ Review all available material before designing:
 
 Do not ask for information already present in the conversation, files, website, or supplied assets.
 
+Za AU Šeki-Tilia produktni vizual, pre kompozicije pokreni `production/scripts/inspect-assets.mjs` nad paketom i otvori svaki generisani svetli/tamni asset pregled. Blokiraj asset sa kursorom ili drugim UI tragom, screenshot artefaktom, prljavom alfa ivicom, deformisanim pakovanjem, nečitljivom etiketom ili potrebnim povećanjem većim od 15%. Original ostaje u `source/`; renderer koristi samo hashom odobrenu pripremljenu kopiju. Ne uklanjaj generativno defekt koji prekriva etiketu, ambalažu ili providni prozor proizvoda, jer bi to izmislilo proizvodni detalj. Traži čist izvor.
+
 ### 2. Create a fact ledger
 
 Privately separate input into:
@@ -106,6 +108,8 @@ Ovaj sloj pojačava vizuelni standard reference, ali ne menja činjenice, obavez
 ### AU Šeki-Tilia: kontinuirana varijacija
 
 Za kontinuiranu seriju objava ne ponavljaj istu grafiku uz novu boju, novi proizvod ili preformulisan naslov. Pre dizajna pregledaj poslednje tri evidencije i izaberi najmanje dve stvarne intervencije iz `brand/design-system.md`: redosled čitanja, položaj proizvoda, tretman ponude, dubina scene, kadar slike, tipografska kompozicija, CTA/footer, uloga ikone ili ritam videa. Renderer ima osam familija, uključujući `offer-orbit`, `type-stage` i `gallery-shelf`; njihova razlika mora biti vidljiva u stvarnoj kompoziciji, ne samo u nazivu props-a.
+
+Kvalitet ima prednost nad novošću. Ne biraj novu familiju samo da bi prošla istorijsku proveru. Najpre popuni `familyFit` prema obliku proizvoda, snazi potvrđene ponude i potrebnoj dubini scene. Ako nova familija nije kompatibilna, koristi kompatibilnu familiju sa novim redosledom, kadrom ili scenografijom i jedinstvenom signature kombinacijom.
 
 Za svaki traženi format zapiši namernu adaptaciju: Feed može graditi sporiju hijerarhiju, Story jednu brzu radnju, a Reels zaseban ritam otkrivanja. Ne rasteži isti layout između formata. Kada postoji Reels, promeni i dokumentuj `motionTreatment` u odnosu na prethodne tri Reels objave. Razlika mora ostati u okvirima palete, Manrope tipografije, krem logo-kartice, oštrih pravougaonih uglova i potvrđenih činjenica.
 
@@ -335,6 +339,8 @@ Inspect the rendered output, not just the source or prompt. Revise until all app
 - [ ] Decorative elements do not compete with conversion-critical information.
 
 Do not present the output as final while any critical check fails.
+
+Za AU Šeki-Tilia posle prvog drafta napravi najmanje jednu stvarnu korekciju i pokreni `production/scripts/prepare-visual-review.mjs`. Pregledaj `reference-comparison.png`, `format-comparison.png`, Feed, Story, sva tri Reels ključna kadra i finalni MP4, pa u `quality-review.json` oceni kompoziciju, mobilnu hijerarhiju, integraciju i uzemljenje proizvoda, dubinu i završnu obradu, upečatljivost prema referencama, formatnu adaptaciju i Reels dinamiku. Svaki kriterijum mora imati najmanje 4/5 i konkretan dokaz. Draft i final moraju imati različite hasheve. Drugi agent sa drugačijim `reviewerId` od dizajnerovog `authorId` radi nezavisni pregled direktno nad sirovim artefaktima; bez drugog agenta paket ostaje blokiran. Posle generisanja hash dokaza ne menjaj input, props, design-direction, renderer, CSS, reference ni rendere bez ponovnog pregleda. Checkbox u `review.md` nije dokaz kvaliteta.
 
 ## High-trust and regulated categories
 

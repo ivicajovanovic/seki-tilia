@@ -45,6 +45,7 @@ Tip: akcija | novitet | savet | lokacija | sezonsko
 Proizvod/brend:
 Informacije od klijenta:
 Cena / popust / rok akcije:
+Mehanika akcije i izvor potvrde:
 Lokacija (ako je relevantno): sve | 1 | 2 | 3
 Fotografije: putanje ili fajlovi
 Željeni formati: feed | story | reels
@@ -68,7 +69,7 @@ izvozi/GGGG-MM-DD-slug-objave/
 ## Kontrolna lista pre objave
 
 - Da li je proizvod dozvoljen za promociju?
-- Da li su cena, popust i datum akcije potvrđeni?
+- Da li su mehanika, prikaziva vrednost, rok i izvor akcije potvrđeni?
 - Da li su zdravstvene tvrdnje proverene ili uklonjene?
 - Da li je odabrana ispravna lokacija i njen kontakt?
 - Da li je lokacijski podatak relevantan za ovu objavu, bez nepotrebnog spiska svih ogranaka?

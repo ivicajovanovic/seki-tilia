@@ -1,9 +1,11 @@
 import React from "react";
 import { MapPin } from "lucide-react";
-import { AbsoluteFill, cancelRender, Composition, continueRender, delayRender, Easing, Img, interpolate, staticFile, Still, useCurrentFrame, useVideoConfig } from "remotion";
+import { AbsoluteFill, cancelRender, Composition, continueRender, delayRender, Easing, Img, interpolate, Sequence, staticFile, Still, useCurrentFrame, useVideoConfig } from "remotion";
 
 type DesignVariant = "product-atelier" | "editorial-split" | "minimal-offer" | "product-card" | "premium-product-stage" | "offer-orbit" | "type-stage" | "gallery-shelf";
 type MotionTreatment = "staged-reveal" | "offer-build" | "detail-cutaway" | "editorial-pan" | "location-close";
+type ProductShape = "wide" | "compact" | "tall" | "unknown";
+type OfferKind = "deadline" | "price" | "discount" | "bundle" | "gift" | "none";
 
 type VideoProps = {
   eyebrow: string;
@@ -13,6 +15,8 @@ type VideoProps = {
   cta: string;
   imageSrc?: string;
   imageBackground?: "transparent" | "opaque" | "unknown";
+  productShape?: ProductShape;
+  offerKind?: OfferKind;
   locationLine?: string;
   designVariant?: DesignVariant;
   motionTreatment?: MotionTreatment;
@@ -43,15 +47,6 @@ const ensureBrandFont = () => {
 };
 
 const easeOut = Easing.bezier(0.16, 1, 0.3, 1);
-
-const MotionTreatmentLayer: React.FC<{ children: React.ReactNode; treatment: MotionTreatment }> = ({ children, treatment }) => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-  const progress = interpolate(frame, [0, fps * 2.4], [0, 1], { easing: easeOut, extrapolateRight: "clamp" });
-  const scale = treatment === "offer-build" ? interpolate(progress, [0, 1], [0.965, 1]) : treatment === "detail-cutaway" ? interpolate(progress, [0, 1], [1.05, 1]) : 1;
-  const translate = treatment === "editorial-pan" ? `${interpolate(progress, [0, 1], [-34, 0])}px 0` : treatment === "location-close" ? `0 ${interpolate(progress, [0, 1], [26, 0])}px` : "0 0";
-  return <AbsoluteFill style={{ overflow: "hidden", scale, translate, transformOrigin: "center" }}>{children}</AbsoluteFill>;
-};
 
 const LogoOnCreamCard: React.FC<{ size: number }> = ({ size }) => (
   <div
@@ -85,6 +80,50 @@ const ProductImage: React.FC<{ imageSrc?: string; style?: React.CSSProperties }>
   const resolvedImageSrc = imageSrc?.startsWith("/") ? staticFile(imageSrc.slice(1)) : imageSrc;
   if (!resolvedImageSrc) return null;
   return <Img src={resolvedImageSrc} style={{ objectFit: "contain", ...style }} />;
+};
+
+const ProductScene: React.FC<{
+  animated?: boolean;
+  imageBackground?: VideoProps["imageBackground"];
+  imageSrc?: string;
+  productShape?: ProductShape;
+  story: boolean;
+}> = ({ animated = false, imageBackground, imageSrc, productShape = "compact", story }) => {
+  const product = useEntrance(animated, 0.45, 0.7);
+  const isTransparentProduct = imageBackground === "transparent";
+  const shape = productShape === "unknown" ? "compact" : productShape;
+  const productSize: React.CSSProperties = shape === "wide"
+    ? { maxHeight: story ? "66%" : "68%", width: story ? "116%" : "123%" }
+    : shape === "tall"
+      ? { height: story ? "86%" : "90%", maxWidth: story ? "68%" : "72%" }
+      : { height: story ? "76%" : "79%", maxWidth: story ? "88%" : "94%" };
+  const baseline = story ? 170 : 124;
+  const podiumWidth = shape === "wide" ? (story ? 700 : 455) : shape === "tall" ? (story ? 430 : 285) : (story ? 570 : 375);
+
+  return (
+    <div data-qa="product-stage" style={{ height: "100%", overflow: "visible", position: "relative", width: "100%" }}>
+      <div data-qa="organic-backdrop" style={{ backgroundColor: colors.beige, borderRadius: "50%", height: story ? 730 : 500, opacity: 0.68, position: "absolute", right: story ? -230 : -160, top: story ? 54 : 36, width: story ? 730 : 500 }} />
+      <div data-qa="orbit-accent" style={{ border: `${story ? 26 : 18}px solid ${colors.lime}`, borderRadius: "50%", height: story ? 470 : 320, opacity: 0.82, position: "absolute", right: story ? 48 : 18, top: story ? 104 : 68, width: story ? 470 : 320 }} />
+      <div style={{ background: "linear-gradient(90deg, #A99D91 0%, #C6BBB0 48%, #A3978B 100%)", bottom: story ? 80 : 52, height: story ? 78 : 52, left: "50%", position: "absolute", translate: "-50% 0", width: podiumWidth }} />
+      <div data-qa="podium" style={{ background: "linear-gradient(180deg, #D5CCC3 0%, #B0A397 100%)", borderRadius: "50%", bottom: story ? 126 : 82, height: story ? 88 : 60, left: "50%", position: "absolute", translate: "-50% 0", width: podiumWidth }} />
+      <div data-qa="contact-shadow" style={{ backgroundColor: "rgba(15, 21, 25, 0.38)", borderRadius: "50%", bottom: story ? 162 : 116, filter: `blur(${story ? 8 : 5}px)`, height: story ? 24 : 16, left: "50%", opacity: 0.8, position: "absolute", translate: "-50% 0", width: podiumWidth * 0.52 }} />
+      <div data-qa="product" style={{ alignItems: "flex-end", backgroundColor: isTransparentProduct ? "transparent" : colors.cream, bottom: baseline, display: "flex", height: story ? "78%" : "80%", justifyContent: "center", left: "50%", overflow: isTransparentProduct ? "visible" : "hidden", position: "absolute", translate: "-50% 0", width: story ? "88%" : "92%" }}>
+        <ProductImage
+          imageSrc={imageSrc}
+          style={{
+            ...productSize,
+            filter: "drop-shadow(0 24px 20px rgba(15, 21, 25, 0.20))",
+            objectPosition: "center bottom",
+            opacity: product,
+            position: "relative",
+            scale: interpolate(product, [0, 1], [0.91, 1]),
+            translate: `0 ${interpolate(product, [0, 1], [story ? 72 : 48, 0])}px`,
+            zIndex: 2,
+          }}
+        />
+      </div>
+    </div>
+  );
 };
 
 const OfferPill: React.FC<{ label: string; dark?: boolean; size: number }> = ({ label, dark = false, size }) => (
@@ -329,39 +368,59 @@ const PremiumProductStage: React.FC<VideoProps & { animated?: boolean }> = ({ ey
   );
 };
 
-const OfferOrbit: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow, headline, supportingText, offerLabel, cta, imageSrc, imageBackground, locationLine, animated = false }) => {
+const OfferOrbit: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow, headline, supportingText, offerLabel, offerKind = "none", cta, imageSrc, imageBackground, productShape, locationLine, animated = false }) => {
   const { height } = useVideoConfig();
   const isStory = height > 1500;
   const intro = useEntrance(animated, 0);
-  const product = useEntrance(animated, 0.55);
   const detail = useEntrance(animated, 1.25);
-  const isTransparentProduct = imageBackground === "transparent";
-  const padding = isStory ? 80 : 62;
-
-  return (
-    <AbsoluteFill style={{ backgroundColor: colors.cream, color: colors.cream, fontFamily: brandFontFamily, overflow: "hidden" }}>
-      <div style={{ backgroundColor: colors.petrol, bottom: 0, left: 0, position: "absolute", top: 0, width: isStory ? "47%" : "49%" }} />
-      <div style={{ backgroundColor: colors.beige, borderRadius: "50%", height: isStory ? 810 : 600, position: "absolute", right: isStory ? -260 : -210, top: isStory ? 320 : 240, width: isStory ? 810 : 600 }} />
-      <div style={{ boxSizing: "border-box", display: "grid", gridTemplateColumns: isStory ? "47% 53%" : "49% 51%", height: "100%", padding, position: "relative" }}>
-        <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", paddingRight: isStory ? 34 : 24 }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: isStory ? 24 : 16, opacity: intro }}>
-            <div style={{ fontSize: isStory ? 27 : 20, fontWeight: 800, letterSpacing: isStory ? 3.1 : 2.2, textTransform: "uppercase" }}>{eyebrow}</div>
-            <div style={{ fontSize: isStory ? 92 : 66, fontWeight: 800, letterSpacing: -4, lineHeight: 0.91 }}>{headline}</div>
-            <div style={{ color: colors.cream, fontSize: isStory ? 32 : 23, fontWeight: 600, lineHeight: 1.18, opacity: 0.92 }}>{supportingText}</div>
+  if (isStory) {
+    return (
+      <AbsoluteFill data-qa="offer-orbit-story-stack" style={{ backgroundColor: colors.cream, color: colors.petrol, fontFamily: brandFontFamily, overflow: "hidden" }}>
+        <div style={{ boxSizing: "border-box", display: "flex", flexDirection: "column", height: "100%", padding: "80px 80px 0", position: "relative" }}>
+          <div style={{ alignItems: "center", display: "flex", justifyContent: "space-between", opacity: intro }}>
+            <div data-qa="eyebrow" style={{ fontSize: 32, fontWeight: 800, letterSpacing: 3.4, textTransform: "uppercase" }}>{eyebrow}</div>
+            <LogoOnCreamCard size={68} />
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: isStory ? 18 : 12, opacity: detail }}>
-            <OfferPill label={offerLabel} size={isStory ? 38 : 28} />
-            <div style={{ fontSize: isStory ? 32 : 23, fontWeight: 700, lineHeight: 1.15 }}>{cta}</div>
-            <LocationMarker label={locationLine} size={isStory ? 24 : 17} />
+          <div style={{ display: "flex", flexDirection: "column", gap: 20, marginTop: 54, opacity: intro, width: "88%" }}>
+            <div data-qa="headline" style={{ fontSize: 104, fontWeight: 800, letterSpacing: -5, lineHeight: 0.9, whiteSpace: "pre-line" }}>{headline}</div>
+            <div style={{ fontSize: 44, fontWeight: 600, lineHeight: 1.16 }}>{supportingText}</div>
+          </div>
+          <div style={{ flex: 1, minHeight: 820, position: "relative" }}>
+            <ProductScene animated={animated} imageBackground={imageBackground} imageSrc={imageSrc} productShape={productShape} story />
+          </div>
+          <div data-qa="cta-footer" style={{ backgroundColor: colors.petrol, color: colors.cream, display: "flex", flexDirection: "column", gap: 22, marginLeft: -80, marginRight: -80, minHeight: 350, opacity: detail, padding: "58px 80px 64px" }}>
+            {offerKind !== "none" && <OfferPill label={offerLabel} size={offerKind === "deadline" ? 36 : 44} />}
+            <div style={{ fontSize: 46, fontWeight: 800, lineHeight: 1.12 }}>{cta}</div>
+            <LocationMarker label={locationLine} size={32} />
           </div>
         </div>
-        <div style={{ alignItems: "center", display: "flex", flexDirection: "column", justifyContent: "space-between", paddingLeft: isStory ? 14 : 8 }}>
-          <div style={{ alignSelf: "flex-end", opacity: intro }}><LogoOnCreamCard size={isStory ? 66 : 50} /></div>
-          <div style={{ alignItems: "center", backgroundColor: isTransparentProduct ? "transparent" : colors.cream, display: "flex", flex: 1, justifyContent: "center", overflow: isTransparentProduct ? "visible" : "hidden", position: "relative", width: "100%" }}>
-            <div style={{ border: `${isStory ? 42 : 30}px solid ${colors.lime}`, borderRadius: "50%", height: isStory ? 500 : 370, position: "absolute", right: isStory ? -80 : -58, top: isStory ? 150 : 96, width: isStory ? 500 : 370 }} />
-            <div style={{ backgroundColor: colors.beige, borderRadius: "50%", bottom: isStory ? 118 : 88, height: isStory ? 120 : 88, position: "absolute", width: isStory ? 470 : 350 }} />
-            <ProductImage imageSrc={imageSrc} style={{ filter: "drop-shadow(0 30px 25px rgba(15, 21, 25, 0.24))", height: isTransparentProduct ? "126%" : "78%", maxWidth: isTransparentProduct ? "132%" : "92%", opacity: product, position: "relative", scale: interpolate(product, [0, 1], [0.9, 1]), translate: `0 ${interpolate(product, [0, 1], [58, 0])}px` }} />
+      </AbsoluteFill>
+    );
+  }
+
+  return (
+    <AbsoluteFill data-qa="offer-orbit-feed-stage" style={{ backgroundColor: colors.cream, color: colors.petrol, fontFamily: brandFontFamily, overflow: "hidden" }}>
+      <div style={{ boxSizing: "border-box", display: "flex", flexDirection: "column", height: "100%", padding: "58px 66px 0", position: "relative" }}>
+        <div style={{ alignItems: "center", display: "flex", justifyContent: "space-between", opacity: intro }}>
+          <div data-qa="eyebrow" style={{ fontSize: 23, fontWeight: 800, letterSpacing: 2.6, textTransform: "uppercase" }}>{eyebrow}</div>
+          <LogoOnCreamCard size={52} />
+        </div>
+        <div style={{ display: "grid", flex: 1, gridTemplateColumns: "38% 62%", minHeight: 0 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 22, justifyContent: "center", paddingBottom: 128, paddingRight: 16, zIndex: 3 }}>
+            <div data-qa="headline" style={{ fontSize: 72, fontWeight: 800, letterSpacing: -4, lineHeight: 0.91, opacity: intro, whiteSpace: "pre-line" }}>{headline}</div>
+            <div style={{ fontSize: 29, fontWeight: 600, lineHeight: 1.18, opacity: intro }}>{supportingText}</div>
+            {offerKind !== "none" && <div style={{ opacity: detail }}><OfferPill label={offerLabel} size={offerKind === "deadline" ? 26 : 32} /></div>}
           </div>
+          <div style={{ marginBottom: 54, marginRight: -36, minWidth: 0, position: "relative" }}>
+            <ProductScene animated={animated} imageBackground={imageBackground} imageSrc={imageSrc} productShape={productShape} story={false} />
+          </div>
+        </div>
+        <div data-qa="cta-footer" style={{ alignItems: "center", backgroundColor: colors.petrol, color: colors.cream, display: "flex", justifyContent: "space-between", marginLeft: -66, marginRight: -66, minHeight: 214, opacity: detail, padding: "42px 66px 46px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <div style={{ fontSize: 34, fontWeight: 800, lineHeight: 1.12 }}>{cta}</div>
+            <LocationMarker label={locationLine} size={23} />
+          </div>
+          <div style={{ backgroundColor: colors.lime, height: 4, width: 154 }} />
         </div>
       </div>
     </AbsoluteFill>
@@ -459,27 +518,69 @@ const Variant: React.FC<VideoProps & { animated?: boolean }> = (props) => {
   }
 };
 
-const Closing: React.FC<Pick<VideoProps, "offerLabel" | "cta">> = ({ offerLabel, cta }) => {
+const PromoHook: React.FC<VideoProps> = ({ eyebrow, headline, offerLabel, motionTreatment = "staged-reveal" }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const opacity = interpolate(frame, [fps * 8.4, fps * 8.9], [0, 1], { easing: easeOut, extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const opacity = interpolate(frame, [0, fps * 0.45, fps * 2.15, fps * 2.5], [0, 1, 1, 0], { easing: easeOut, extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const lead = motionTreatment === "offer-build" ? offerLabel : motionTreatment === "location-close" ? "DOSTUPNO U APOTEKAMA" : eyebrow;
+  const horizontalEntrance = motionTreatment === "editorial-pan" || motionTreatment === "detail-cutaway";
+  const titleTranslate = interpolate(frame, [0, fps * 0.7], [70, 0], { easing: easeOut, extrapolateRight: "clamp" });
   return (
-    <AbsoluteFill style={{ alignItems: "center", backgroundColor: colors.petrol, color: colors.cream, display: "flex", flexDirection: "column", fontFamily: brandFontFamily, gap: 28, inset: 0, justifyContent: "center", opacity, padding: 96, position: "absolute", textAlign: "center", zIndex: 20 }}>
-      <LogoOnCreamCard size={118} />
-      <div style={{ fontSize: 74, fontWeight: 800, letterSpacing: -3 }}>AU Šeki-Tilia</div>
-      <div style={{ color: colors.lime, fontSize: 50, fontWeight: 800 }}>{offerLabel}</div>
-      <div style={{ alignItems: "center", display: "flex", fontSize: 38, fontWeight: 600, gap: 14, lineHeight: 1.2 }}><MapPin color={colors.lime} size={42} strokeWidth={2.35} />{cta}</div>
+    <AbsoluteFill data-qa="reels-hook" style={{ backgroundColor: colors.petrol, color: colors.cream, fontFamily: brandFontFamily, opacity, overflow: "hidden", padding: "132px 84px" }}>
+      <div style={{ backgroundColor: colors.lime, borderRadius: "50%", height: 620, position: "absolute", right: -330, top: -280, width: 620 }} />
+      <div style={{ alignItems: "center", display: "flex", justifyContent: "space-between", position: "relative" }}>
+        <div style={{ color: colors.lime, fontSize: 34, fontWeight: 800, letterSpacing: 3.4 }}>{lead}</div>
+        <LogoOnCreamCard size={70} />
+      </div>
+      <div style={{ bottom: 480, fontSize: 126, fontWeight: 800, left: 84, letterSpacing: -7, lineHeight: 0.88, maxWidth: 850, position: "absolute", translate: horizontalEntrance ? `${titleTranslate}px 0` : `0 ${titleTranslate}px`, whiteSpace: "pre-line" }}>{headline}</div>
+      <div style={{ backgroundColor: colors.lime, bottom: 398, height: 8, left: 84, position: "absolute", width: interpolate(frame, [0, fps * 1.1], [0, 360], { easing: easeOut, extrapolateRight: "clamp" }) }} />
     </AbsoluteFill>
   );
 };
 
-export const SekiTiliaPromo: React.FC<VideoProps> = (props) => <AbsoluteFill><MotionTreatmentLayer treatment={props.motionTreatment ?? "staged-reveal"}><Variant {...props} animated /></MotionTreatmentLayer><Closing {...props} /></AbsoluteFill>;
+const Closing: React.FC<Pick<VideoProps, "cta" | "imageSrc" | "locationLine" | "offerLabel" | "productShape">> = ({ offerLabel, cta, imageSrc, locationLine, productShape }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const opacity = interpolate(frame, [0, fps * 0.5], [0, 1], { easing: easeOut, extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  return (
+    <AbsoluteFill data-qa="reels-closing" style={{ backgroundColor: colors.petrol, color: colors.cream, fontFamily: brandFontFamily, opacity, overflow: "hidden", padding: "120px 88px" }}>
+      <div style={{ backgroundColor: colors.beige, borderRadius: "50%", bottom: -120, height: 900, opacity: 0.82, position: "absolute", right: -290, width: 900 }} />
+      {imageSrc && <ProductImage imageSrc={imageSrc} style={{ bottom: productShape === "tall" ? 120 : 250, filter: "drop-shadow(0 24px 18px rgba(15, 21, 25, 0.24))", height: productShape === "tall" ? 720 : undefined, maxWidth: productShape === "tall" ? 460 : 620, position: "absolute", right: productShape === "tall" ? 12 : 18, width: productShape === "tall" ? undefined : 620 }} />}
+      <div style={{ display: "flex", flexDirection: "column", gap: 34, maxWidth: 720, position: "relative" }}>
+        <LogoOnCreamCard size={110} />
+        <div style={{ fontSize: 78, fontWeight: 800, letterSpacing: -3 }}>AU Šeki-Tilia</div>
+        <div style={{ color: colors.lime, fontSize: 52, fontWeight: 800 }}>{offerLabel}</div>
+        <div style={{ fontSize: 48, fontWeight: 700, lineHeight: 1.14 }}>{cta}</div>
+        <LocationMarker label={locationLine} size={34} />
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+const motionPlans: Record<MotionTreatment, { hookDuration: number; heroFrom: number; heroDuration: number; closingFrom: number; closingDuration: number }> = {
+  "staged-reveal": { hookDuration: 84, heroFrom: 68, heroDuration: 222, closingFrom: 270, closingDuration: 90 },
+  "offer-build": { hookDuration: 76, heroFrom: 60, heroDuration: 218, closingFrom: 258, closingDuration: 102 },
+  "detail-cutaway": { hookDuration: 64, heroFrom: 52, heroDuration: 236, closingFrom: 268, closingDuration: 92 },
+  "editorial-pan": { hookDuration: 90, heroFrom: 72, heroDuration: 204, closingFrom: 258, closingDuration: 102 },
+  "location-close": { hookDuration: 60, heroFrom: 48, heroDuration: 210, closingFrom: 238, closingDuration: 122 },
+};
+
+export const SekiTiliaPromo: React.FC<VideoProps> = (props) => {
+  const plan = motionPlans[props.motionTreatment ?? "staged-reveal"];
+  return (
+    <AbsoluteFill>
+      <Sequence durationInFrames={plan.hookDuration} premountFor={30}><PromoHook {...props} /></Sequence>
+      <Sequence from={plan.heroFrom} durationInFrames={plan.heroDuration} premountFor={30}><Variant {...props} animated /></Sequence>
+      <Sequence from={plan.closingFrom} durationInFrames={plan.closingDuration} premountFor={30}><Closing {...props} /></Sequence>
+    </AbsoluteFill>
+  );
+};
 export const SekiTiliaPost: React.FC<VideoProps> = (props) => <Variant {...props} />;
 
 export const MyComposition: React.FC = () => (
   <>
-    <Composition id="SekiTiliaPromo" component={SekiTiliaPromo} durationInFrames={360} fps={30} width={1080} height={1920} defaultProps={{ eyebrow: "Novitet u ponudi", headline: "Pažljivo izabrano za vašu rutinu.", supportingText: "Uskoro stižu konkretne informacije i fotografije proizvoda.", offerLabel: "Saznajte više u apoteci", cta: "Posetite najbližu AU Šeki-Tilia apoteku.", locationLine: "AU Šeki-Tilia", designVariant: "product-atelier", motionTreatment: "staged-reveal" }} />
-    <Still id="SekiTiliaFeed" component={SekiTiliaPost} width={1080} height={1350} defaultProps={{ eyebrow: "Novitet u ponudi", headline: "Pažljivo izabrano za vašu rutinu.", supportingText: "Uskoro stižu konkretne informacije i fotografije proizvoda.", offerLabel: "Saznajte više u apoteci", cta: "Posetite AU Šeki-Tilia.", locationLine: "AU Šeki-Tilia", designVariant: "product-atelier" }} />
-    <Still id="SekiTiliaStory" component={SekiTiliaPost} width={1080} height={1920} defaultProps={{ eyebrow: "Novitet u ponudi", headline: "Pažljivo izabrano za vašu rutinu.", supportingText: "Uskoro stižu konkretne informacije i fotografije proizvoda.", offerLabel: "Saznajte više u apoteci", cta: "Posetite AU Šeki-Tilia.", locationLine: "AU Šeki-Tilia", designVariant: "product-atelier" }} />
+    <Composition id="SekiTiliaPromo" component={SekiTiliaPromo} durationInFrames={360} fps={30} width={1080} height={1920} defaultProps={{ eyebrow: "Novitet u ponudi", headline: "Pažljivo izabrano za vašu rutinu.", supportingText: "Uskoro stižu konkretne informacije i fotografije proizvoda.", offerLabel: "Saznajte više u apoteci", offerKind: "none", cta: "Posetite najbližu AU Šeki-Tilia apoteku.", locationLine: "AU Šeki-Tilia", productShape: "compact", designVariant: "product-atelier", motionTreatment: "staged-reveal" }} />
+    <Still id="SekiTiliaFeed" component={SekiTiliaPost} width={1080} height={1350} defaultProps={{ eyebrow: "Novitet u ponudi", headline: "Pažljivo izabrano za vašu rutinu.", supportingText: "Uskoro stižu konkretne informacije i fotografije proizvoda.", offerLabel: "Saznajte više u apoteci", offerKind: "none", cta: "Posetite AU Šeki-Tilia.", locationLine: "AU Šeki-Tilia", productShape: "compact", designVariant: "product-atelier" }} />
+    <Still id="SekiTiliaStory" component={SekiTiliaPost} width={1080} height={1920} defaultProps={{ eyebrow: "Novitet u ponudi", headline: "Pažljivo izabrano za vašu rutinu.", supportingText: "Uskoro stižu konkretne informacije i fotografije proizvoda.", offerLabel: "Saznajte više u apoteci", offerKind: "none", cta: "Posetite AU Šeki-Tilia.", locationLine: "AU Šeki-Tilia", productShape: "compact", designVariant: "product-atelier" }} />
   </>
 );
