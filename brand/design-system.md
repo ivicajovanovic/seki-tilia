@@ -10,7 +10,10 @@ Ovaj dokument pretvara brend vodič i vizuelne reference u operativna pravila za
 - Paleta ostaje petrol, krem, limeta, bež i ugalj. Jedan vizual koristi najviše jedan dominantan akcenat i ne pretvara limetu u pozadinu za logo.
 - Obavezni elementi ostaju čitljivi na punoj veličini i u približno 25% prikazu telefona: logo, glavna poruka, ponuda, proizvod i CTA kada postoje.
 - Pravougaoni paneli, kartice, proizvodne podloge, footeri, okviri i logo-kartica imaju oštre uglove. Zaobljenje je dozvoljeno samo za pill-dugme/kratku ponudnu oznaku (`borderRadius: 999`) ili čiste kružne dekorativne oblike (`borderRadius: 50%`).
-- Uz `imageSrc` je obavezno upisati `imageBackground` kao `transparent` ili `opaque`. Transparentni PNG proizvoda se prikazuje bez dodatnog pravougaonog rama, kartice, okvira ili podloge i dobija dominantnu rezervisanu zonu kompozicije. Ako je klijentov izvor slabiji, dominacija se postiže položajem, kontrastom i scenom, bez destruktivnog uvećanja. Za neprovidnu sliku kontrolisana podloga ostaje dozvoljena kada je potrebna za kontrast.
+- Uz `imageSrc` u `video-props.json` podržani su opcioni parametari:
+  - **`imageBackground`**: `"transparent" | "opaque" | "unknown"`.
+  - **`footerStyle`**: `"brand-full" | "cta-only" | "minimal"` (stil brendiranog footera sa logom i Lucide ikonom).
+- Transparentni PNG proizvoda se prikazuje bez dodatnog pravougaonog rama, kartice, okvira ili podloge i dobija dominantnu rezervisanu zonu kompozicije. Ako je klijentov izvor slabiji, dominacija se postiže položajem, kontrastom i scenom, bez destruktivnog uvećanja. Za neprovidnu sliku kontrolisana podloga ostaje dozvoljena kada je potrebna za kontrast.
 
 ## Dizajnerske familije
 

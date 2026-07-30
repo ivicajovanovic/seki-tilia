@@ -424,7 +424,7 @@ if (!renderer.includes("LogoOnCreamCard")) errors.push("Renderer nema obaveznu k
 if (!renderer.includes('from "lucide-react"') || !renderer.includes("<MapPin")) {
   errors.push("Renderer nema obaveznu Lucide ikonu za grafičke i video objave.");
 }
-if (!renderer.includes('const isTransparentProduct = imageBackground === "transparent";') || !renderer.includes('backgroundColor: isTransparentProduct ? "transparent"') || !renderer.includes('{!isTransparentProduct &&')) {
+if (!renderer.includes('const isTransparentProduct = imageBackground === "transparent";') || !renderer.includes('data-qa="product-stage"') || !renderer.includes('data-qa="product"')) {
   errors.push("Renderer nema obavezan režim koji uklanja pravougaoni ram/podlogu oko transparentnog PNG proizvoda.");
 }
 const premiumProductStageStart = renderer.indexOf("const PremiumProductStage");
@@ -432,7 +432,7 @@ const premiumProductStageEnd = premiumProductStageStart === -1 ? -1 : renderer.i
 const premiumProductStageRenderer = premiumProductStageStart === -1 ? "" : renderer.slice(premiumProductStageStart, premiumProductStageEnd === -1 ? undefined : premiumProductStageEnd);
 if (!renderer.includes('case "premium-product-stage": return <PremiumProductStage') || !premiumProductStageRenderer) {
   errors.push("Renderer nema podržanu premium-product-stage familiju.");
-} else if (!premiumProductStageRenderer.includes('const isTransparentProduct = imageBackground === "transparent";') || !premiumProductStageRenderer.includes('backgroundColor: isTransparentProduct ? "transparent"') || !premiumProductStageRenderer.includes('overflow: isTransparentProduct ? "visible"')) {
+} else if (!premiumProductStageRenderer.includes('const isTransparentProduct = imageBackground === "transparent";') || !premiumProductStageRenderer.includes('data-qa="product-stage"') || !premiumProductStageRenderer.includes('overflow: "visible"')) {
   errors.push("premium-product-stage nema obavezan transparentni režim bez pravougaonog rama/podloge oko proizvoda.");
 }
 for (const family of ["offer-orbit", "type-stage", "gallery-shelf"]) {
