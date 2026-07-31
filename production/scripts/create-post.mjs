@@ -75,6 +75,16 @@ writeFileSync(join(postDirectory, "input.json"), JSON.stringify({
   requestedFormats: ["feed", "story", "reels"],
   requiresProfessionalReview: true
 }, null, 2) + "\n");
+const availableAudioTracks = [
+  "mp3/clear-path.mp3",
+  "mp3/clear-path-ambient.mp3",
+  "mp3/open-sky-drift.mp3",
+  "mp3/open-sky-drift-chill.mp3",
+  "mp3/paper-sun-parade.mp3",
+  "mp3/paper-sun-parade-upbeat.mp3"
+];
+const selectedAudioTrack = availableAudioTracks[Math.floor(Math.random() * availableAudioTracks.length)];
+
 writeFileSync(join(postDirectory, "video-props.json"), JSON.stringify({
   eyebrow: "",
   headline: "",
@@ -87,7 +97,9 @@ writeFileSync(join(postDirectory, "video-props.json"), JSON.stringify({
   productShape: "unknown",
   locationLine: "AU Šeki-Tilia",
   designVariant: "",
-  motionTreatment: ""
+  motionTreatment: "",
+  audioTrack: selectedAudioTrack,
+  audioVolume: 0.8
 }, null, 2) + "\n");
 writeFileSync(join(postDirectory, "generated", "design-direction.json"), JSON.stringify({
   family: null,

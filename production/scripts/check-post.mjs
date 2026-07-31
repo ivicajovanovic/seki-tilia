@@ -21,6 +21,20 @@ const supportedImageBackgrounds = new Set(["transparent", "opaque"]);
 const supportedContentApproaches = new Set(["offer-first", "product-context", "routine-moment", "practical-guidance", "seasonal-context", "local-availability", "professional-prompt"]);
 const supportedDesignInterventions = new Set(["reading-order", "product-placement", "offer-treatment", "scene-depth", "image-crop", "type-composition", "cta-footer", "icon-role", "motion-rhythm"]);
 const supportedMotionTreatments = new Set(["staged-reveal", "offer-build", "detail-cutaway", "editorial-pan", "location-close"]);
+const supportedAudioTracks = new Set([
+  "mp3/clear-path.mp3",
+  "mp3/clear-path-ambient.mp3",
+  "mp3/open-sky-drift.mp3",
+  "mp3/open-sky-drift-chill.mp3",
+  "mp3/paper-sun-parade.mp3",
+  "mp3/paper-sun-parade-upbeat.mp3",
+  "clear-path.mp3",
+  "clear-path-ambient.mp3",
+  "open-sky-drift.mp3",
+  "open-sky-drift-chill.mp3",
+  "paper-sun-parade.mp3",
+  "paper-sun-parade-upbeat.mp3"
+]);
 const supportedProductShapes = new Set(["wide", "compact", "tall"]);
 const supportedOfferKinds = new Set(["deadline", "price", "discount", "bundle", "gift", "none"]);
 const approvedAssetStatuses = new Set(["approved", "approved-with-limitations"]);
@@ -274,6 +288,11 @@ if (requestedFormats.includes("reels") && !supportedMotionTreatments.has(designD
 }
 if (requestedFormats.includes("reels") && videoProps?.motionTreatment !== designDirection?.motionTreatment) {
   errors.push("video-props.json motionTreatment mora da odgovara motionTreatment vrednosti iz design-direction.json.");
+}
+if (requestedFormats.includes("reels")) {
+  if (!videoProps?.audioTrack?.trim() || !supportedAudioTracks.has(videoProps.audioTrack.trim())) {
+    errors.push("video-props.json mora navesti važeći audioTrack iz public/mp3/ za Reels video.");
+  }
 }
 if (designDirection?.logoSurface !== "none") errors.push("Originalni znak logoa se koristi bez pravougaone podloge.");
 if (designDirection?.palettePlan !== undefined) {

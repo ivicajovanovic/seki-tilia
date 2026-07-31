@@ -91,6 +91,8 @@ const makeFixture = () => {
     locationLine: "AU Šeki-Tilia",
     designVariant: "offer-orbit",
     motionTreatment: "offer-build",
+    audioTrack: "mp3/paper-sun-parade.mp3",
+    audioVolume: 0.8,
   };
   const direction = {
     family: "offer-orbit",

@@ -1,6 +1,6 @@
 import React from "react";
 import { Activity, CheckCircle2, HeartHandshake, MapPin, ShieldCheck, Sparkles } from "lucide-react";
-import { AbsoluteFill, cancelRender, Composition, continueRender, delayRender, Easing, Img, interpolate, Sequence, spring, staticFile, Still, useCurrentFrame, useVideoConfig } from "remotion";
+import { AbsoluteFill, Audio as RemotionAudio, cancelRender, Composition, continueRender, delayRender, Easing, Img, interpolate, Sequence, spring, staticFile, Still, useCurrentFrame, useVideoConfig } from "remotion";
 
 type DesignVariant = "product-atelier" | "editorial-split" | "minimal-offer" | "product-card" | "premium-product-stage" | "offer-orbit" | "type-stage" | "gallery-shelf";
 type MotionTreatment = "staged-reveal" | "offer-build" | "detail-cutaway" | "editorial-pan" | "location-close";
@@ -28,6 +28,8 @@ type VideoProps = {
   motionTreatment?: MotionTreatment;
   footerStyle?: FooterStyle;
   benefits?: BenefitItem[];
+  audioTrack?: string;
+  audioVolume?: number;
 };
 
 const colors = {
@@ -806,8 +808,13 @@ const motionPlans: Record<MotionTreatment, { hookDuration: number; heroFrom: num
 
 export const SekiTiliaPromo: React.FC<VideoProps> = (props) => {
   const plan = motionPlans[props.motionTreatment ?? "staged-reveal"];
+  const rawTrack = props.audioTrack?.trim() || "paper-sun-parade.mp3";
+  const audioSrc = rawTrack.startsWith("mp3/") ? rawTrack : `mp3/${rawTrack}`;
+  const volume = props.audioVolume ?? 0.8;
+
   return (
     <AbsoluteFill>
+      <RemotionAudio src={staticFile(audioSrc)} volume={volume} />
       <Sequence durationInFrames={plan.hookDuration} premountFor={30}><PromoHook {...props} /></Sequence>
       <Sequence from={plan.heroFrom} durationInFrames={plan.heroDuration} premountFor={30}><HeroScene {...props} durationInFrames={plan.heroDuration} /></Sequence>
       <Sequence from={plan.closingFrom} durationInFrames={plan.closingDuration} premountFor={30}><Closing {...props} /></Sequence>

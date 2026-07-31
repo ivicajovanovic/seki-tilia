@@ -1,0 +1,31 @@
+{
+  "eyebrow": "SEZONSKI SAVET • DOK TRAJU ZALIHE",
+  "headline": "MULTIVITAMIN\nAKCIJA",
+  "supportingText": "Natures Aid Multi-Vitamins & Minerals Complete (90 tableta). Jedna tableta dnevno za imunitet i energiju.",
+  "offerLabel": "DOK TRAJU ZALIHE",
+  "offerKind": "discount",
+  "cta": "DOK TRAJU ZALIHE",
+  "imageSrc": "/jobs/002-2026-07-31-multivitamin-akcija/multivitamin-prepared.png",
+  "imageBackground": "transparent",
+  "productShape": "tall",
+  "locationLine": "U svim AU Šeki-Tilia apotekama",
+  "designVariant": "offer-orbit",
+  "motionTreatment": "detail-cutaway",
+  "footerStyle": "brand-full",
+  "audioTrack": "mp3/paper-sun-parade.mp3",
+  "audioVolume": 0.8,
+  "benefits": [
+    {
+      "icon": "shield",
+      "label": "IMUNITET"
+    },
+    {
+      "icon": "activity",
+      "label": "ENERGIJA"
+    },
+    {
+      "icon": "sparkles",
+      "label": "KOSTI & KOGNICIJA"
+    }
+  ]
+}

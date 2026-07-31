@@ -1,0 +1,79 @@
+{
+  "family": "offer-orbit",
+  "authorId": "agent-designer",
+  "signature": "offer-orbit|logoSurface:none|imageBackground:transparent|offerKind:discount",
+  "referenceFiles": [
+    "ref-premium-product-stage.png",
+    "ref-vertical-product-spotlight.png"
+  ],
+  "referenceTraits": [
+    "asimetrična ponuda uz heroj produktnu scenu na podijumu",
+    "vertikalna skala proizvoda i slojevita scenografija"
+  ],
+  "distinctFromRecent": "U odnosu na prethodnu objavu (EnteroBiotik 1+1, premium-product-stage), koristi se familija offer-orbit sa novim tretmanom ponude (discount), novim sadržajnim uglom (seasonal-context), novim dizajnerskim intervencijama (offer-treatment, scene-depth, motion-rhythm) i novom dinamikom videa (detail-cutaway).",
+  "designInterventions": [
+    "offer-treatment",
+    "scene-depth",
+    "motion-rhythm"
+  ],
+  "freshInterventionNote": "Tretman ponude je prebačen na vremensko ograničenje 'dok traju zalihe', uz vertikalno naglašenu produktnu scenu i građenje ponude u videu.",
+  "motionTreatment": "detail-cutaway",
+  "formatAdaptations": {
+    "feed": "Feed koristi asimetrični kompozicioni odnos naslova, benefit modula i uzemljene produktne scene na vektorskom podijumu.",
+    "story": "Story prilagođava raspored u vertikalni stack sa istaknutim naslovom, proizvodom u fokusu i petrol CTA footerom.",
+    "reels": "Reels koristi trodelnu dinamiku detail-cutaway sa hook-om na ponudi, prikazom pakovanja i završnim lokacijskim pozivom."
+  },
+  "formatPlan": {
+    "feed": {
+      "readingOrder": "eyebrow -> headline -> offerLabel -> supportingText -> product -> cta",
+      "productAnchor": "right-hero-stage",
+      "layoutId": "offer-orbit-feed-stage"
+    },
+    "story": {
+      "readingOrder": "eyebrow -> headline -> product -> supportingText -> offerLabel -> cta",
+      "productAnchor": "center-hero-stage",
+      "layoutId": "offer-orbit-story-stack"
+    },
+    "reels": {
+      "shotPlan": [
+        "0-3s: PromoHook sa naglaskom na ponudi dok traju zalihe",
+        "3-9s: Glavni kadar Natures Aid multivitaminskog pakovanja na podijumu",
+        "9-12s: Završni kadari sa CTA i lokacijskom porukom"
+      ],
+      "layoutId": "offer-orbit-three-scene-reel"
+    }
+  },
+  "familyFit": {
+    "productShape": "tall",
+    "supportsOfferStrength": true,
+    "supportsSceneDepth": true,
+    "rationale": "Visoka bočica Natures Aid multivitamina savršeno stoji na podijumu i vertikalnoj sceni, a offer-orbit ističe sezonsku akciju i ponudu dok traju zalihe."
+  },
+  "logoSurface": "none",
+  "palettePlan": {
+    "background": "icy-tundra",
+    "surface": "deer-run",
+    "textForeground": "royal-neptune",
+    "textBackground": "icy-tundra",
+    "accent": "livid-lime",
+    "logoBackground": "royal-neptune",
+    "rationale": "Krem baza (icy-tundra) i warm-surface podijum daju vrhunsku čitljivost petrol teksta (royal-neptune) i visoku uočljivost limeta akcenta (livid-lime) za ponudu i CTA."
+  },
+  "typography": {
+    "family": "AUSekiManrope",
+    "weights": [
+      400,
+      500,
+      600,
+      700,
+      800
+    ]
+  },
+  "validatedRenders": [
+    "final/feed-1080x1350.png",
+    "final/story-1080x1920.png",
+    "generated/reels-intro.png",
+    "generated/reels-offer.png",
+    "generated/reels-closing.png"
+  ]
+}
