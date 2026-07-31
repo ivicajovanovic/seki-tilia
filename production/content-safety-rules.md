@@ -38,6 +38,11 @@ Status: SPREMNO ZA LJUDSKU PROVERU | BLOKIRANO
 - [ ] Nema dijagnoze, terapijske preporuke ni obećanja rezultata.
 - [ ] Vizual ne predstavlja generisanu osobu kao stvarnog zaposlenog.
 - [ ] Logo, glavna poruka, ponuda, proizvod i CTA, kada postoje, jasno su vidljivi i kontrastni u svakom formatu.
+- [ ] Slika proizvoda (bočica, kutija, pakovanje) ne prekriva tekst, naslov ni ponudne oznake.
+- [ ] Futer ne zaklanja ikone, tekst ni druge sadržajne elemente u bilo kom formatu.
+- [ ] Tranzicije u videu (Reels) su čiste, bez preklapanja elemenata ili teksta u 8. i 9. sekundi.
+- [ ] Proizvod stoji pravilno i uzemljeno na postolju/podijumu.
+- [ ] Video (Reels) ima neprekidnu vizuelnu dinamičnost u svakom sekundu: fazni ulazak elemenata i mikro-animaciju tokom zadržavanja.
 - [ ] Tekst je jezički i vizuelno pregledan.
 
 Napomene i nedostajući podaci:

@@ -324,6 +324,11 @@ Inspect the rendered output, not just the source or prompt. Revise until all app
 
 - [ ] Headline and essential details remain readable at approximately 25% preview size.
 - [ ] Logo, primary message, offer, product, and CTA, when present, are clearly visible and contrast with their direct backgrounds in every exported format.
+- [ ] Product image (bottle, box, packaging) MUST NEVER overlap any text, headline, eyebrow, subheadline, offer pill, or icons in any format.
+- [ ] Product MUST stand correctly and grounded on the podium/stage without floating.
+- [ ] Footer MUST NEVER cover or obstruct any icons, text, or buttons in Story or Feed formats.
+- [ ] Video sequence transitions MUST BE clean without element collisions or text bleeding between scenes (e.g. at 8-9s handoffs, HeroScene exit fade-out must be complete).
+- [ ] Video animations (Reels) MUST maintain continuous visual motion throughout every second: staggered element reveals (eyebrow -> headline -> offer pill -> product stage -> benefit icons -> footer) plus continuous holding micro-animations (gentle bottle floating, accent pulse, gradient drift) so no frame remains static.
 - [ ] Critical content stays inside safe margins and survives likely feed crops.
 - [ ] Text does not sit over uncontrolled visual noise.
 - [ ] Supplied images are used at the best credible quality their source permits; documented client-side softness or compression is not treated as an agent failure by itself.

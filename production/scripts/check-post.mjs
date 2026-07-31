@@ -445,12 +445,15 @@ if (!renderer.includes('from "lucide-react"') || !renderer.includes("<MapPin")) 
 if (!renderer.includes('const isTransparentProduct = imageBackground === "transparent";') || !renderer.includes('data-qa="product-stage"') || !renderer.includes('data-qa="product"')) {
   errors.push("Renderer nema obavezan režim koji uklanja pravougaoni ram/podlogu oko transparentnog PNG proizvoda.");
 }
+if (!renderer.includes("bottomPadding") || !renderer.includes("overflow: \"hidden\"")) {
+  errors.push("Renderer mora osigurati dno kontejnera tako da futer ne prekriva ikone ili tekst, i da slika proizvoda ne prelazi preko teksta.");
+}
 const premiumProductStageStart = renderer.indexOf("const PremiumProductStage");
 const premiumProductStageEnd = premiumProductStageStart === -1 ? -1 : renderer.indexOf("const SekiTiliaPost", premiumProductStageStart);
 const premiumProductStageRenderer = premiumProductStageStart === -1 ? "" : renderer.slice(premiumProductStageStart, premiumProductStageEnd === -1 ? undefined : premiumProductStageEnd);
 if (!renderer.includes('case "premium-product-stage": return <PremiumProductStage') || !premiumProductStageRenderer) {
   errors.push("Renderer nema podržanu premium-product-stage familiju.");
-} else if (!premiumProductStageRenderer.includes('const isTransparentProduct = imageBackground === "transparent";') || !premiumProductStageRenderer.includes('data-qa="product-stage"') || !premiumProductStageRenderer.includes('overflow: "visible"')) {
+} else if (!premiumProductStageRenderer.includes('const isTransparentProduct = imageBackground === "transparent";') || !premiumProductStageRenderer.includes('data-qa="product-stage"')) {
   errors.push("premium-product-stage nema obavezan transparentni režim bez pravougaonog rama/podloge oko proizvoda.");
 }
 for (const family of ["offer-orbit", "type-stage", "gallery-shelf"]) {
@@ -459,8 +462,8 @@ for (const family of ["offer-orbit", "type-stage", "gallery-shelf"]) {
     errors.push(`Renderer nema podržanu familiju ${family}.`);
   }
 }
-if (!renderer.includes("<Sequence") || !renderer.includes("PromoHook") || !renderer.includes('data-qa="reels-hook"') || !renderer.includes('data-qa="reels-closing"') || !renderer.includes("motionTreatment")) {
-  errors.push("Renderer nema stvarni višescenski Reels tok sa hook, hero i closing scenama.");
+if (!renderer.includes("<Sequence") || !renderer.includes("PromoHook") || !renderer.includes('data-qa="reels-hook"') || !renderer.includes('data-qa="reels-closing"') || !renderer.includes("motionTreatment") || !renderer.includes("HeroScene")) {
+  errors.push("Renderer nema stvarni višescenski Reels tok sa čisim HeroScene tranzicijama (bez preklapanja u 8. i 9. sekundi).");
 }
 if (/\b(?:drop-shadow|box-shadow|shadow|blur)\b/i.test(renderer)) errors.push("Renderer ne sme koristiti senke ili blur.");
 for (const qaRole of ["product-stage", "product", "podium", "headline", "cta-footer"]) {
