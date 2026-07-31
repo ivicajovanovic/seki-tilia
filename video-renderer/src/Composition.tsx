@@ -1,6 +1,6 @@
 import React from "react";
 import { Activity, CheckCircle2, HeartHandshake, MapPin, ShieldCheck, Sparkles } from "lucide-react";
-import { AbsoluteFill, cancelRender, Composition, continueRender, delayRender, Easing, Img, interpolate, Sequence, staticFile, Still, useCurrentFrame, useVideoConfig } from "remotion";
+import { AbsoluteFill, cancelRender, Composition, continueRender, delayRender, Easing, Img, interpolate, Sequence, spring, staticFile, Still, useCurrentFrame, useVideoConfig } from "remotion";
 
 type DesignVariant = "product-atelier" | "editorial-split" | "minimal-offer" | "product-card" | "premium-product-stage" | "offer-orbit" | "type-stage" | "gallery-shelf";
 type MotionTreatment = "staged-reveal" | "offer-build" | "detail-cutaway" | "editorial-pan" | "location-close";
@@ -69,7 +69,6 @@ const CleanStageArch: React.FC<{ story: boolean }> = ({ story }) => {
   const h = story ? 1920 : 1350;
   return (
     <svg viewBox={`0 0 ${w} ${h}`} style={{ height: "100%", left: 0, position: "absolute", top: 0, width: "100%", zIndex: 1 }} preserveAspectRatio="none">
-      {/* A single cubic curve avoids a visible join or corner in the stage silhouette. */}
       <path
         d={story
           ? `M${w * 0.39},0 C${w * 0.39},${h * 0.46} ${w * 0.58},${h * 0.72} ${w},${h * 0.78} L${w},0 Z`
@@ -83,15 +82,12 @@ const CleanStageArch: React.FC<{ story: boolean }> = ({ story }) => {
 
 /** Clean 3D vector podium — a shared baseline for the product, without shadows */
 const CleanPodium: React.FC<{ story: boolean; width?: number; bottom?: number; treatment?: "standard" | "hero" }> = ({ story, width: podiumW, bottom: podiumBottom, treatment = "standard" }) => {
-  const pw = podiumW ?? (story ? 580 : 440);
-  // The front body deliberately continues behind the footer. The visible top plane
-  // remains high enough to read as the physical support for the product.
-  const pb = podiumBottom ?? (story ? -92 : -74);
+  const pw = podiumW ?? (story ? 640 : 480);
+  // Lowered podium baseline to keep top plane support grounded near footer line
+  const pb = podiumBottom ?? (story ? -155 : -140);
   const isHero = treatment === "hero";
-  const ph = isHero ? (story ? 310 : 230) : (story ? 190 : 138);
-  const topH = isHero ? (story ? 152 : 114) : (story ? 126 : 92);
-  // The support plane stays fixed while only the front body continues farther down.
-  // This makes the podium visibly pass behind the footer instead of ending in space.
+  const ph = isHero ? (story ? 280 : 210) : (story ? 180 : 130);
+  const topH = isHero ? (story ? 140 : 106) : (story ? 116 : 86);
   const frontExtension = story ? 250 : 190;
 
   return (
@@ -104,7 +100,7 @@ const CleanPodium: React.FC<{ story: boolean; width?: number; bottom?: number; t
   );
 };
 
-/** Benefit Icons Row — Clean circular vector icons with text labels (supports 3-column grid or vertical list) */
+/** Benefit Icons Row — Clean circular vector icons with text labels */
 const BenefitIconsRow: React.FC<{ benefits?: BenefitItem[]; layout?: "grid" | "list"; story: boolean }> = ({ benefits, layout = "grid", story }) => {
   const list = benefits?.filter((item) => item.label.trim()) ?? [];
   if (list.length === 0) return null;
@@ -216,16 +212,16 @@ const DotPattern: React.FC<{ story: boolean; cols?: number; rows?: number; color
 
 const LogoMark: React.FC<{ size: number }> = ({ size }) => <Img src={staticFile("assets/logo-mark.svg")} style={{ height: size, width: size }} />;
 
-const useEntrance = (animated: boolean, fromSeconds: number, durationSeconds = 0.55) => {
+/** Physics-based spring entrance helper */
+const useSpringEntrance = (animated: boolean, delayFrames: number, config = { damping: 14, stiffness: 85, mass: 0.8 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  return animated
-    ? interpolate(frame, [fromSeconds * fps, (fromSeconds + durationSeconds) * fps], [0, 1], {
-        easing: easeOut,
-        extrapolateLeft: "clamp",
-        extrapolateRight: "clamp",
-      })
-    : 1;
+  if (!animated) return 1;
+  return spring({
+    frame: Math.max(0, frame - delayFrames),
+    fps,
+    config,
+  });
 };
 
 const ProductImage: React.FC<{ imageSrc?: string; style?: React.CSSProperties }> = ({ imageSrc, style }) => {
@@ -289,14 +285,14 @@ const LocationMarker: React.FC<{ label?: string; onLight?: boolean; size: number
 const PremiumProductStage: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow, headline, supportingText, offerLabel, cta, imageSrc, imageBackground, productShape, locationLine, footerStyle = "brand-full", benefits, animated = false }) => {
   const { height } = useVideoConfig();
   const isStory = height > 1500;
-  const intro = useEntrance(animated, 0);
-  const product = useEntrance(animated, 0.65);
-  const footer = useEntrance(animated, 1.45);
+  const intro = useSpringEntrance(animated, 0, { damping: 16, stiffness: 90, mass: 0.8 });
+  const product = useSpringEntrance(animated, 10, { damping: 13, stiffness: 80, mass: 0.8 });
+  const footer = useSpringEntrance(animated, 22, { damping: 18, stiffness: 70, mass: 0.8 });
   const isTransparentProduct = imageBackground === "transparent";
   const isWideProduct = productShape === "wide";
   const padding = isStory ? 74 : 62;
   const stageHeight = isStory ? 1220 : 760;
-  const podiumW = isStory ? 640 : 490;
+  const podiumW = isStory ? 720 : 540;
 
   return (
     <AbsoluteFill style={{ backgroundColor: colors.cream, color: colors.petrol, fontFamily: brandFontFamily, overflow: "hidden" }}>
@@ -317,7 +313,7 @@ const PremiumProductStage: React.FC<VideoProps & { animated?: boolean }> = ({ ey
         <div style={{ display: "grid", flex: 1, gridTemplateColumns: isStory ? "48% 52%" : "49% 51%", minHeight: 0, paddingTop: isStory ? 48 : 30 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: isStory ? 28 : 18, justifyContent: "space-between", paddingBottom: isStory ? 28 : 18, paddingTop: isStory ? 36 : 18, position: "relative", zIndex: 4 }}>
             <div style={{ display: "flex", flexDirection: "column", gap: isStory ? 26 : 16 }}>
-              <div data-qa="headline" style={{ fontSize: isStory ? 148 : 110, fontWeight: 800, letterSpacing: isStory ? -7 : -5, lineHeight: 0.84, maxWidth: "100%", opacity: intro, whiteSpace: "pre-line" }}>{headline}</div>
+              <div data-qa="headline" style={{ fontSize: isStory ? 148 : 110, fontWeight: 800, letterSpacing: isStory ? -7 : -5, lineHeight: 0.84, maxWidth: "100%", opacity: intro, translate: `0 ${interpolate(intro, [0, 1], [30, 0])}px`, whiteSpace: "pre-line" }}>{headline}</div>
               <OfferPill label={offerLabel} size={isStory ? 48 : 34} />
               <div style={{ fontSize: isStory ? 38 : 27, fontWeight: 600, lineHeight: 1.2, maxWidth: "78%", opacity: intro }}>{supportingText}</div>
             </div>
@@ -329,19 +325,19 @@ const PremiumProductStage: React.FC<VideoProps & { animated?: boolean }> = ({ ey
 
           {/* Product stage with clean 3D podium */}
           <div data-qa="product-stage" style={{ alignItems: "flex-end", display: "flex", height: stageHeight, justifyContent: "center", overflow: "visible", position: "relative" }}>
-            {/* Clean 3D Vector Podium */}
-            <CleanPodium story={isStory} width={podiumW} bottom={isStory ? -85 : -94} treatment="hero" />
-            {/* Product Image */}
+            {/* Clean 3D Vector Podium - Lowered baseline */}
+            <CleanPodium story={isStory} width={podiumW} bottom={isStory ? -155 : -140} treatment="hero" />
+            {/* Product Image - Bold Hero Sizing & Grounded Positioning */}
             <ProductImage
               imageSrc={imageSrc}
               style={{
-                height: isTransparentProduct ? (isWideProduct ? (isStory ? "66%" : "70%") : (isStory ? "106%" : "110%")) : (isStory ? "78%" : "82%"),
-                maxWidth: isTransparentProduct ? (isWideProduct ? "118%" : (isStory ? "138%" : "144%")) : "94%",
+                height: isTransparentProduct ? (isWideProduct ? (isStory ? "82%" : "88%") : (isStory ? "108%" : "112%")) : (isStory ? "84%" : "88%"),
+                maxWidth: isTransparentProduct ? (isWideProduct ? "142%" : (isStory ? "140%" : "146%")) : "96%",
                 objectPosition: "center bottom",
                 opacity: product,
                 position: "relative",
                 scale: interpolate(product, [0, 1], [0.92, 1]),
-                translate: `0 ${interpolate(product, [0, 1], [isStory ? 42 : 24, isStory ? -62 : -14], { extrapolateRight: "clamp" })}px`,
+                translate: `0 ${interpolate(product, [0, 1], [50, 8], { extrapolateRight: "clamp" })}px`,
                 zIndex: 5,
               }}
             />
@@ -358,20 +354,18 @@ const PremiumProductStage: React.FC<VideoProps & { animated?: boolean }> = ({ ey
 const EditorialSplit: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow, headline, supportingText, offerKind, offerLabel, cta, imageSrc, imageBackground, locationLine, footerStyle = "brand-full", animated = false }) => {
   const { height } = useVideoConfig();
   const isStory = height > 1500;
-  const intro = useEntrance(animated, 0);
-  const product = useEntrance(animated, 0.75);
-  const offer = useEntrance(animated, 1.45);
+  const intro = useSpringEntrance(animated, 0);
+  const product = useSpringEntrance(animated, 12);
+  const offer = useSpringEntrance(animated, 24);
   const isTransparentProduct = imageBackground === "transparent";
   const badgeSize = isStory ? 240 : 180;
   const hasOfferBadge = offerKind !== "none" && offerLabel.trim().length > 0;
 
   return (
     <AbsoluteFill style={{ backgroundColor: colors.cream, color: colors.petrol, fontFamily: brandFontFamily, overflow: "hidden" }}>
-      {/* Background arch */}
       <CleanStageArch story={isStory} />
 
       <div style={{ boxSizing: "border-box", display: "flex", flexDirection: "column", height: "100%", padding: `${isStory ? 74 : 62}px ${isStory ? 74 : 62}px ${isStory ? 170 : 120}px`, position: "relative", zIndex: 3 }}>
-        {/* Header: eyebrow + logo */}
         <div style={{ alignItems: "center", display: "flex", justifyContent: "space-between", opacity: intro }}>
           <div style={{ display: "flex", flexDirection: "column", gap: isStory ? 14 : 9 }}>
             <div style={{ fontSize: isStory ? 27 : 21, fontWeight: 800, letterSpacing: isStory ? 3.2 : 2.5, textTransform: "uppercase" }}>{eyebrow}</div>
@@ -380,17 +374,14 @@ const EditorialSplit: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow
           <LogoMark size={isStory ? 62 : 48} />
         </div>
 
-        {/* Main content grid */}
         <div style={{ display: "grid", flex: 1, gridTemplateColumns: isStory ? "52% 48%" : "48% 52%", minHeight: 0, paddingTop: isStory ? 66 : 70 }}>
-          {/* Left column: giant title + subtext */}
           <div style={{ display: "flex", flexDirection: "column", gap: isStory ? 22 : 14, minWidth: 0, paddingTop: isStory ? 38 : 24, position: "relative", zIndex: 4 }}>
             <div data-qa="headline" style={{ fontSize: isStory ? 132 : 80, fontWeight: 800, letterSpacing: isStory ? -6 : -3.5, lineHeight: 0.9, maxWidth: "100%", opacity: intro, whiteSpace: "pre-line" }}>{headline}</div>
             <div style={{ fontSize: isStory ? 36 : 26, fontWeight: 600, lineHeight: 1.2, maxWidth: "90%", opacity: intro }}>{supportingText}</div>
           </div>
 
-          {/* Right column: product box on clean podium + circular offer badge overlapping bottom-left */}
           <div data-qa="product-stage" style={{ alignItems: "flex-end", display: "flex", height: "100%", justifyContent: "center", overflow: "visible", position: "relative" }}>
-            <CleanPodium story={isStory} width={isStory ? 460 : 340} bottom={isStory ? -108 : -86} />
+            <CleanPodium story={isStory} width={isStory ? 520 : 380} bottom={isStory ? -150 : -130} />
             <ProductImage
               imageSrc={imageSrc}
               style={{
@@ -412,7 +403,6 @@ const EditorialSplit: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow
         </div>
       </div>
 
-      {/* Brand footer */}
       <BrandFooter cta={cta} footerStyle={footerStyle === "minimal" ? "minimal" : "brand-full"} locationLine={locationLine} story={isStory} opacity={offer} />
     </AbsoluteFill>
   );
@@ -434,9 +424,9 @@ const VerticalSpotlight: React.FC<{ story: boolean; variant: "atelier" | "type" 
 const ProductAtelier: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow, headline, supportingText, cta, imageSrc, imageBackground, productShape, locationLine, footerStyle = "brand-full", animated = false }) => {
   const { height } = useVideoConfig();
   const isStory = height > 1500;
-  const intro = useEntrance(animated, 0);
-  const product = useEntrance(animated, 0.7);
-  const footer = useEntrance(animated, 1.55);
+  const intro = useSpringEntrance(animated, 0);
+  const product = useSpringEntrance(animated, 12);
+  const footer = useSpringEntrance(animated, 24);
   const isTransparentProduct = imageBackground === "transparent";
   const isTallProduct = productShape === "tall";
 
@@ -458,8 +448,8 @@ const ProductAtelier: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow
             <LocationMarker label={locationLine} onLight size={isStory ? 25 : 18} />
           </div>
           <div data-qa="product-stage" style={{ alignItems: "flex-end", display: "flex", justifyContent: "center", minHeight: isStory ? 940 : 620, overflow: isTransparentProduct ? "visible" : "hidden", position: "relative", zIndex: 6 }}>
-            <CleanPodium story={isStory} width={isStory ? 610 : 440} bottom={isStory ? -118 : -94} treatment="hero" />
-            <ProductImage imageSrc={imageSrc} style={{ height: isTransparentProduct ? (isTallProduct ? (isStory ? "119%" : "124%") : (isStory ? "106%" : "112%")) : (isStory ? "80%" : "84%"), maxWidth: isTransparentProduct ? (isTallProduct ? "112%" : "130%") : "92%", objectPosition: "center bottom", opacity: product, position: "relative", scale: interpolate(product, [0, 1], [0.91, 1]), translate: `0 ${interpolate(product, [0, 1], [isStory ? 58 : 34, isStory ? -26 : -14], { extrapolateRight: "clamp" })}px`, zIndex: 5 }} />
+            <CleanPodium story={isStory} width={isStory ? 610 : 440} bottom={isStory ? -150 : -130} treatment="hero" />
+            <ProductImage imageSrc={imageSrc} style={{ height: isTransparentProduct ? (isTallProduct ? (isStory ? "119%" : "124%") : (isStory ? "106%" : "112%")) : (isStory ? "80%" : "84%"), maxWidth: isTransparentProduct ? (isTallProduct ? "112%" : "130%") : "92%", objectPosition: "center bottom", opacity: product, position: "relative", scale: interpolate(product, [0, 1], [0.91, 1]), translate: `0 ${interpolate(product, [0, 1], [40, 10], { extrapolateRight: "clamp" })}px`, zIndex: 5 }} />
           </div>
         </div>
       </div>
@@ -471,9 +461,9 @@ const ProductAtelier: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow
 const MinimalOffer: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow, headline, supportingText, offerLabel, cta, imageSrc, imageBackground, locationLine, footerStyle = "cta-only", animated = false }) => {
   const { height } = useVideoConfig();
   const isStory = height > 1500;
-  const intro = useEntrance(animated, 0);
-  const product = useEntrance(animated, 0.65);
-  const footer = useEntrance(animated, 1.45);
+  const intro = useSpringEntrance(animated, 0);
+  const product = useSpringEntrance(animated, 10);
+  const footer = useSpringEntrance(animated, 22);
   const isTransparentProduct = imageBackground === "transparent";
   return (
     <AbsoluteFill style={{ backgroundColor: colors.cream, color: colors.petrol, fontFamily: brandFontFamily, overflow: "hidden" }}>
@@ -492,7 +482,7 @@ const MinimalOffer: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow, 
             <div style={{ fontSize: isStory ? 34 : 25, fontWeight: 600, lineHeight: 1.17 }}>{supportingText}</div>
           </div>
           <div style={{ alignItems: "center", display: "flex", height: isTransparentProduct ? (isStory ? 760 : 540) : (isStory ? 680 : 450), justifyContent: "center", overflow: isTransparentProduct ? "visible" : "hidden", position: "relative", width: isTransparentProduct ? (isStory ? "68%" : "64%") : "48%" }}>
-            <CleanPodium story={isStory} width={isStory ? 400 : 280} bottom={isStory ? -104 : -82} />
+            <CleanPodium story={isStory} width={isStory ? 440 : 320} bottom={isStory ? -140 : -120} />
             <ProductImage imageSrc={imageSrc} style={{ height: isTransparentProduct ? "140%" : "78%", maxWidth: isTransparentProduct ? "128%" : "150%", opacity: product, position: "relative", scale: interpolate(product, [0, 1], [0.9, 1]), zIndex: 5 }} />
           </div>
         </div>
@@ -505,9 +495,9 @@ const MinimalOffer: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow, 
 const ProductCard: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow, headline, supportingText, offerLabel, cta, imageSrc, imageBackground, locationLine, animated = false }) => {
   const { height } = useVideoConfig();
   const isStory = height > 1500;
-  const intro = useEntrance(animated, 0);
-  const product = useEntrance(animated, 0.75);
-  const footer = useEntrance(animated, 1.55);
+  const intro = useSpringEntrance(animated, 0);
+  const product = useSpringEntrance(animated, 12);
+  const footer = useSpringEntrance(animated, 24);
   const isTransparentProduct = imageBackground === "transparent";
   return (
     <AbsoluteFill style={{ backgroundColor: colors.petrol, color: colors.cream, fontFamily: brandFontFamily, overflow: "hidden" }}>
@@ -524,7 +514,7 @@ const ProductCard: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow, h
           <div style={{ fontSize: isStory ? 38 : 29, fontWeight: 600, lineHeight: 1.18, maxWidth: "78%" }}>{supportingText}</div>
         </div>
         <div style={{ alignItems: "center", display: "flex", flex: 1, justifyContent: "center", margin: isStory ? "54px 0 42px" : "36px 0 28px", minHeight: isStory ? 620 : 390, overflow: isTransparentProduct ? "visible" : "hidden", position: "relative" }}>
-          <CleanPodium story={isStory} width={isStory ? 480 : 340} bottom={isStory ? -104 : -82} />
+          <CleanPodium story={isStory} width={isStory ? 520 : 380} bottom={isStory ? -145 : -125} />
           <ProductImage imageSrc={imageSrc} style={{ height: isTransparentProduct ? "134%" : "80%", maxWidth: isTransparentProduct ? "125%" : "86%", opacity: product, position: "relative", scale: interpolate(product, [0, 1], [0.9, 1]), zIndex: 5 }} />
         </div>
         <div style={{ alignItems: "center", display: "flex", gap: isStory ? 30 : 22, justifyContent: "space-between", opacity: footer }}>
@@ -542,9 +532,9 @@ const ProductCard: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow, h
 const GalleryShelf: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow, headline, supportingText, offerKind, offerLabel, cta, imageSrc, imageBackground, locationLine, footerStyle = "brand-full", animated = false }) => {
   const { height } = useVideoConfig();
   const isStory = height > 1500;
-  const intro = useEntrance(animated, 0);
-  const product = useEntrance(animated, 0.72);
-  const footer = useEntrance(animated, 1.45);
+  const intro = useSpringEntrance(animated, 0);
+  const product = useSpringEntrance(animated, 12);
+  const footer = useSpringEntrance(animated, 24);
   const isTransparentProduct = imageBackground === "transparent";
   const hasOfferPill = offerKind !== "none" && offerLabel.trim().length > 0;
 
@@ -569,7 +559,7 @@ const GalleryShelf: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow, 
             </div>
           </div>
           <div data-qa="product-stage" style={{ alignItems: "flex-end", display: "flex", justifyContent: "center", minHeight: isStory ? 760 : 510, order: 1, overflow: "visible", position: "relative", zIndex: 6 }}>
-            <CleanPodium story={isStory} width={isStory ? 540 : 370} bottom={isStory ? -76 : -68} treatment="hero" />
+            <CleanPodium story={isStory} width={isStory ? 580 : 400} bottom={isStory ? -140 : -120} treatment="hero" />
             <ProductImage
               imageSrc={imageSrc}
               style={{
@@ -595,9 +585,9 @@ const OfferOrbit: React.FC<VideoProps & { animated?: boolean }> = (props) => <Pr
 const TypeStage: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow, headline, supportingText, cta, imageSrc, imageBackground, productShape, locationLine, footerStyle = "brand-full", animated = false }) => {
   const { height } = useVideoConfig();
   const isStory = height > 1500;
-  const intro = useEntrance(animated, 0);
-  const product = useEntrance(animated, 0.62);
-  const footer = useEntrance(animated, 1.42);
+  const intro = useSpringEntrance(animated, 0);
+  const product = useSpringEntrance(animated, 10);
+  const footer = useSpringEntrance(animated, 22);
   const isTransparentProduct = imageBackground === "transparent";
   const isTallProduct = productShape === "tall";
 
@@ -617,8 +607,8 @@ const TypeStage: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow, hea
           <div style={{ fontSize: isStory ? 36 : 27, fontWeight: 600, lineHeight: 1.2, maxWidth: "68%" }}>{supportingText}</div>
         </div>
         <div data-qa="product-stage" style={{ alignItems: "flex-end", bottom: isStory ? 218 : 132, display: "flex", height: isStory ? 1070 : 720, justifyContent: "center", overflow: isTransparentProduct ? "visible" : "hidden", position: "absolute", right: isStory ? -8 : -18, width: isStory ? "65%" : "64%", zIndex: 6 }}>
-          <CleanPodium story={isStory} width={isStory ? 670 : 500} bottom={isStory ? -104 : -82} treatment="hero" />
-          <ProductImage imageSrc={imageSrc} style={{ height: isTransparentProduct ? (isTallProduct ? (isStory ? "126%" : "132%") : (isStory ? "112%" : "118%")) : (isStory ? "84%" : "88%"), maxWidth: isTransparentProduct ? (isTallProduct ? "112%" : "132%") : "94%", objectPosition: "center bottom", opacity: product, position: "relative", scale: interpolate(product, [0, 1], [0.9, 1]), translate: `0 ${interpolate(product, [0, 1], [isStory ? 80 : 52, isStory ? -52 : -28], { extrapolateRight: "clamp" })}px`, zIndex: 5 }} />
+          <CleanPodium story={isStory} width={isStory ? 670 : 500} bottom={isStory ? -150 : -130} treatment="hero" />
+          <ProductImage imageSrc={imageSrc} style={{ height: isTransparentProduct ? (isTallProduct ? (isStory ? "126%" : "132%") : (isStory ? "112%" : "118%")) : (isStory ? "84%" : "88%"), maxWidth: isTransparentProduct ? (isTallProduct ? "112%" : "132%") : "94%", objectPosition: "center bottom", opacity: product, position: "relative", scale: interpolate(product, [0, 1], [0.9, 1]), translate: `0 ${interpolate(product, [0, 1], [50, 10], { extrapolateRight: "clamp" })}px`, zIndex: 5 }} />
         </div>
       </div>
       <BrandFooter cta={cta} footerStyle={footerStyle === "minimal" ? "minimal" : "brand-full"} locationLine={locationLine} story={isStory} opacity={footer} />
@@ -647,10 +637,13 @@ const Variant: React.FC<VideoProps & { animated?: boolean }> = (props) => {
 const PromoHook: React.FC<VideoProps> = ({ eyebrow, headline, offerLabel, motionTreatment = "staged-reveal" }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const hookSpring = spring({ frame: Math.max(0, frame - 2), fps, config: { damping: 14, stiffness: 85 } });
   const opacity = interpolate(frame, [0, fps * 0.45, fps * 2.15, fps * 2.5], [0, 1, 1, 0], { easing: easeOut, extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const lead = motionTreatment === "offer-build" ? offerLabel : motionTreatment === "location-close" ? "DOSTUPNO U APOTEKAMA" : eyebrow;
   const horizontalEntrance = motionTreatment === "editorial-pan" || motionTreatment === "detail-cutaway";
-  const titleTranslate = interpolate(frame, [0, fps * 0.7], [70, 0], { easing: easeOut, extrapolateRight: "clamp" });
+  const titleTranslate = interpolate(hookSpring, [0, 1], [50, 0]);
+  const lineProgress = spring({ frame: Math.max(0, frame - 10), fps, config: { damping: 16, stiffness: 90 } });
+
   return (
     <AbsoluteFill data-qa="reels-hook" style={{ backgroundColor: colors.petrol, color: colors.cream, fontFamily: brandFontFamily, opacity, overflow: "hidden", padding: "132px 84px" }}>
       <div style={{ alignItems: "center", display: "flex", justifyContent: "space-between", position: "relative", zIndex: 2 }}>
@@ -658,7 +651,7 @@ const PromoHook: React.FC<VideoProps> = ({ eyebrow, headline, offerLabel, motion
         <LogoMark size={70} />
       </div>
       <div style={{ bottom: 480, fontSize: 126, fontWeight: 800, left: 84, letterSpacing: -7, lineHeight: 0.88, maxWidth: 850, position: "absolute", translate: horizontalEntrance ? `${titleTranslate}px 0` : `0 ${titleTranslate}px`, whiteSpace: "pre-line", zIndex: 2 }}>{headline}</div>
-      <div style={{ backgroundColor: colors.lime, bottom: 398, height: 8, left: 84, position: "absolute", width: interpolate(frame, [0, fps * 1.1], [0, 360], { easing: easeOut, extrapolateRight: "clamp" }), zIndex: 2 }} />
+      <div style={{ backgroundColor: colors.lime, bottom: 398, height: 8, left: 84, position: "absolute", width: interpolate(lineProgress, [0, 1], [0, 360]), zIndex: 2 }} />
     </AbsoluteFill>
   );
 };
@@ -666,11 +659,29 @@ const PromoHook: React.FC<VideoProps> = ({ eyebrow, headline, offerLabel, motion
 const Closing: React.FC<Pick<VideoProps, "cta" | "imageSrc" | "locationLine" | "offerLabel" | "productShape">> = ({ offerLabel, cta, imageSrc, locationLine, productShape }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const opacity = interpolate(frame, [0, fps * 0.5], [0, 1], { easing: easeOut, extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const opacity = interpolate(frame, [0, fps * 0.4], [0, 1], { easing: easeOut, extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const productSpring = spring({ frame: Math.max(0, frame - 4), fps, config: { damping: 14, stiffness: 80, mass: 0.8 } });
+  const textSpring = spring({ frame: Math.max(0, frame - 8), fps, config: { damping: 16, stiffness: 90 } });
+
   return (
     <AbsoluteFill data-qa="reels-closing" style={{ backgroundColor: colors.petrol, color: colors.cream, fontFamily: brandFontFamily, opacity, overflow: "hidden", padding: "120px 88px" }}>
-      {imageSrc && <ProductImage imageSrc={imageSrc} style={{ bottom: productShape === "tall" ? 120 : 250, height: productShape === "tall" ? 720 : undefined, maxWidth: productShape === "tall" ? 460 : 620, position: "absolute", right: productShape === "tall" ? 12 : 18, width: productShape === "tall" ? undefined : 620, zIndex: 2 }} />}
-      <div style={{ display: "flex", flexDirection: "column", gap: 34, maxWidth: 720, position: "relative", zIndex: 3 }}>
+      {imageSrc && (
+        <ProductImage
+          imageSrc={imageSrc}
+          style={{
+            bottom: productShape === "tall" ? 100 : 160,
+            height: productShape === "tall" ? 760 : undefined,
+            maxWidth: productShape === "tall" ? 480 : 740,
+            position: "absolute",
+            right: productShape === "tall" ? 12 : 18,
+            scale: interpolate(productSpring, [0, 1], [0.92, 1]),
+            translate: `${interpolate(productSpring, [0, 1], [40, 0])}px 0`,
+            width: productShape === "tall" ? undefined : 740,
+            zIndex: 2,
+          }}
+        />
+      )}
+      <div style={{ display: "flex", flexDirection: "column", gap: 34, maxWidth: 720, position: "relative", translate: `0 ${interpolate(textSpring, [0, 1], [30, 0])}px`, zIndex: 3 }}>
         <LogoMark size={110} />
         <div style={{ fontSize: 94, fontWeight: 800, letterSpacing: -4 }}>AU Šeki-Tilia</div>
         <div style={{ color: colors.lime, fontSize: 52, fontWeight: 800 }}>{offerLabel}</div>
