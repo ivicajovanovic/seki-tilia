@@ -108,6 +108,12 @@ const referenceManifestPath = resolve(repositoryRoot, "brand/design-references/r
 const referenceManifest = readJson(referenceManifestPath, "brand/design-references/references.json");
 const approvedReferenceList = Array.isArray(referenceManifest?.approved) ? referenceManifest.approved : [];
 const approvedReferenceFiles = new Set(approvedReferenceList);
+const palettePath = resolve(repositoryRoot, "brand/color-palette.json");
+const colorPalette = readJson(palettePath, "brand/color-palette.json");
+const paletteColors = Array.isArray(colorPalette?.colors) ? colorPalette.colors : [];
+const paletteIds = new Set(paletteColors.map((color) => color?.id).filter((id) => typeof id === "string"));
+const safeTextPairs = new Set((Array.isArray(colorPalette?.safeTextPairs) ? colorPalette.safeTextPairs : []).map((pair) => `${pair?.foreground}|${pair?.background}`));
+const approvedLogoBackgrounds = new Set(Array.isArray(colorPalette?.approvedLogoBackgrounds) ? colorPalette.approvedLogoBackgrounds : []);
 const reviewPath = resolve(postDirectory, "review.md");
 const review = existsSync(reviewPath) ? readFileSync(reviewPath, "utf8") : "";
 const visualDesignSkillPath = resolve(repositoryRoot, "agent-skills-required/visual-design/SKILL.md");
@@ -115,6 +121,7 @@ const captionPath = ["final/caption.md", "generated/caption.md"].map((file) => r
 const caption = captionPath ? readFileSync(captionPath, "utf8") : "";
 
 if (approvedReferenceFiles.size === 0) errors.push("references.json mora sadržati najmanje jednu odobrenu referencu.");
+if (paletteIds.size < 2 || safeTextPairs.size === 0 || approvedLogoBackgrounds.size === 0) errors.push("color-palette.json mora imati boje, bezbedne tekstualne parove i odobrene logo-pozadine.");
 if (approvedReferenceFiles.size !== approvedReferenceList.length) errors.push("references.json ne sme sadržati duplirane identifikatore.");
 for (const referenceFile of approvedReferenceFiles) {
   if (typeof referenceFile !== "string" || !/^[a-z0-9][a-z0-9-]*\.png$/.test(referenceFile)) {
@@ -268,7 +275,18 @@ if (requestedFormats.includes("reels") && !supportedMotionTreatments.has(designD
 if (requestedFormats.includes("reels") && videoProps?.motionTreatment !== designDirection?.motionTreatment) {
   errors.push("video-props.json motionTreatment mora da odgovara motionTreatment vrednosti iz design-direction.json.");
 }
-if (designDirection?.logoSurface !== "cream-card") errors.push("Originalni znak logoa sme biti samo na cream-card podlozi.");
+if (designDirection?.logoSurface !== "none") errors.push("Originalni znak logoa se koristi bez pravougaone podloge.");
+if (designDirection?.palettePlan !== undefined) {
+  const palettePlan = designDirection.palettePlan;
+  for (const field of ["background", "surface", "textForeground", "textBackground", "accent", "logoBackground"]) {
+    if (!paletteIds.has(palettePlan?.[field])) errors.push(`palettePlan.${field} mora koristiti identifikator iz brand/color-palette.json.`);
+  }
+  if (!palettePlan?.rationale?.trim()) errors.push("palettePlan.rationale mora objasniti izbor boja prema zadatku.");
+  if (palettePlan?.textForeground && palettePlan?.textBackground && !safeTextPairs.has(`${palettePlan.textForeground}|${palettePlan.textBackground}`)) {
+    errors.push("palettePlan tekstualni par nije dozvoljen: koristi safeTextPairs sa dovoljnim kontrastom.");
+  }
+  if (palettePlan?.logoBackground && !approvedLogoBackgrounds.has(palettePlan.logoBackground)) errors.push("palettePlan.logoBackground nije bezbedna kontrolisana podloga za originalni logo.");
+}
 if (designDirection?.typography?.family !== "AUSekiManrope") errors.push("Finalni renderer mora koristiti Manrope font bez zamene.");
 if (!Array.isArray(designDirection?.typography?.weights) || designDirection.typography.weights.length < 1) {
   errors.push("Nedostaju korišćene težine fonta u design-direction.json.");
@@ -420,7 +438,7 @@ const rendererCss = existsSync(rendererCssPath) ? readFileSync(rendererCssPath, 
 if (!renderer.includes("AUSekiManrope") || !rendererCss.includes("font-family: \"AUSekiManrope\"") || !rendererCss.includes("xn7gYHE41ni1AdIRggexSg.woff2") || !rendererCss.includes("manrope-latin-ext.woff2") || renderer.includes("Arial")) {
   errors.push("Renderer nema obavezno učitavanje punog Manrope fonta bez fallbacka.");
 }
-if (!renderer.includes("LogoOnCreamCard")) errors.push("Renderer nema obaveznu krem logo-karticu.");
+if (!renderer.includes("LogoMark")) errors.push("Renderer nema obavezni originalni znak logoa.");
 if (!renderer.includes('from "lucide-react"') || !renderer.includes("<MapPin")) {
   errors.push("Renderer nema obaveznu Lucide ikonu za grafičke i video objave.");
 }
@@ -444,7 +462,8 @@ for (const family of ["offer-orbit", "type-stage", "gallery-shelf"]) {
 if (!renderer.includes("<Sequence") || !renderer.includes("PromoHook") || !renderer.includes('data-qa="reels-hook"') || !renderer.includes('data-qa="reels-closing"') || !renderer.includes("motionTreatment")) {
   errors.push("Renderer nema stvarni višescenski Reels tok sa hook, hero i closing scenama.");
 }
-for (const qaRole of ["product-stage", "product", "podium", "contact-shadow", "headline", "cta-footer"]) {
+if (/\b(?:drop-shadow|box-shadow|shadow|blur)\b/i.test(renderer)) errors.push("Renderer ne sme koristiti senke ili blur.");
+for (const qaRole of ["product-stage", "product", "podium", "headline", "cta-footer"]) {
   if (!renderer.includes(`data-qa="${qaRole}"`)) errors.push(`Renderer nema obaveznu QA ulogu ${qaRole}.`);
 }
 const roundedRectangleLines = renderer

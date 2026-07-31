@@ -1,7 +1,7 @@
 # Handoff: AU Šeki-Tilia produkcioni sistem
 
-**Ažurirano:** 30. jul 2026.
-**Trenutni status:** `premium-product-stage` je potvrđen. Slede piksel-mapiranja preostale tri reference.
+**Ažurirano:** 31. jul 2026.
+**Trenutni status:** sistem je spreman za rad sa stvarnim, potvrđenim klijentskim briefom. Interni paketi `premium-product-stage`, `editorial-split` i `gallery-shelf` imaju aktuelne rendere, nezavisan pregled i prolazan pre-flight. `product-atelier` i `type-stage` su implementirane kao zasebne familije; pre prve javne upotrebe prolaze isti paketni tok kao i svaka stvarna objava.
 
 ## Cilj
 
@@ -24,6 +24,7 @@ Glavni izvori istine su:
 - `brand/brand-guide.md` za identitet brenda;
 - `production/content-safety-rules.md` i `production/copy-playbook.md` za bezbedan sadržaj;
 - `brand/design-system.md` za familije, varijacije i pravila logoa;
+- `brand/color-palette.json` za devet dozvoljenih tonova, kontrastne parove za tekst i kontrolisane podloge za logo;
 - `brand/design-references/references.json` za jedine četiri dozvoljene reference;
 - `production/scripts/check-post.mjs` za tehnički pre-flight.
 
@@ -31,19 +32,19 @@ Glavni izvori istine su:
 
 ### Vizuelni model
 
-Renderer sada koristi čist model: produktni asset, preciznu Manrope tipografiju, semantičke Lucide ikonice i režiranu vektorsku scenu. PNG lišće, noise overlay i dekorativni radijalni blur nisu deo aktivne kompozicije.
+Renderer sada koristi čist model: produktni asset, preciznu Manrope tipografiju, semantičke Lucide ikonice i režiranu vektorsku scenu. Senke i zamućenja, vektorski ili rasterski, nisu deo aktivne kompozicije.
 
 Ključne komponente nalaze se u `video-renderer/src/Composition.tsx`:
 
 - `CleanStageArch` za čistu taupe pozadinsku masu;
-- `CleanPodium` za podijum i kontrolisanu kontaktnu senku;
-- `BrandFooter` sa petrol završetkom, lokacijskom ikonicom i krem logo-karticom;
+- `CleanPodium` za podijum sa izraženim vektorskim gradijentom, vidljivom gornjom ravni i prednjom masom koja ulazi iza footera;
+- `BrandFooter` sa petrol završetkom, lokacijskom ikonicom, većim nazivom lanca i originalnim logom bez pravougaone podloge;
 - `OfferBadge` za kružnu ponudu u familijama kojima je stvarno potrebna;
 - `BenefitIconsRow` bez podrazumevanih zdravstvenih tvrdnji. Red se prikazuje samo kada su konkretni benefiti dostavljeni i potvrđeni za aktuelni proizvod.
 
-Znak logoa se koristi samo na krem kartici. Transparentni proizvod ostaje slobodan na sceni, bez pravougaonog rama, kartice ili podloge.
+Znak logoa se koristi bez bele, krem ili druge pravougaone kartice. Transparentni proizvod ostaje slobodan na sceni, bez pravougaonog rama, kartice ili podloge.
 
-### Validirana familija: `premium-product-stage`
+### Podržana familija: `premium-product-stage`
 
 Familija je mapirana prema `ref-premium-product-stage.png` kroz:
 
@@ -51,53 +52,26 @@ Familija je mapirana prema `ref-premium-product-stage.png` kroz:
 - naslov od 110 px u Feed-u i 148 px u Story-ju, sa `lineHeight: 0.84`;
 - podijum širine 490 px u Feed-u i 640 px u Story-ju;
 - prilagođavanje širine transparentnom `wide` proizvodu, tako da proizvod ne izlazi iz kadra;
-- petrol CTA/footer završetak sa jasnim kontrastom i krem logo-karticom.
+- petrol CTA/footer završetak sa jasnim kontrastom, većim nazivom lanca i logom bez pravougaone podloge.
 
-Prvi draft je otkrio koliziju dužeg pomoćnog teksta sa scenom. Final je korigovan skraćivanjem tog reda, pa tekst i produkt imaju čiste odvojene zone.
+Aktuelni vizuelni ugovor: taupe luk je jedna neprekinuta kriva bez uglastog spoja; premium podijum dobija dubinu kroz izražen vektorski gradijent i vidljivu gornju ravan, a proizvod se po formatu vezuje za tu ravan. Prednja masa podijuma ulazi iza footera. Brand footer ima veći naziv lanca, uz lokacijsku ikonicu i logo bez pravougaone podloge.
 
-Poslednja korekcija je rešila tri uočena problema: taupe luk je sada jedna neprekinuta kriva bez uglastog spoja, premium podijum ima veću dubinu i vidljivu kontaktnu senku na gornjoj ravni, a proizvod se po formatu vezuje za tu ravan. Brand footer je povećan po visini, uz veću CTA tipografiju, lokacijsku ikonicu i krem logo-karticu za čitanje na telefonu.
+### Početno stanje dokaza
 
-### Dokaz i provera
+Prethodni interni test-paketi i njihovi renderi namerno nisu deo čistog radnog prostora. Nisu uzor za naredne objave i ne računaju se kao istorija dizajna. Prvi stvarni paket postaje prvi lokalni zapis; svaki sledeći paket prolazi svoj asset gate, render, nezavisni pregled i pre-flight prema pravilima iz `AGENT-OPERATING-MAP.md`.
 
-Interni, neobjavljivi validacioni paket je:
+## Spremnost za stvarne objave
 
-`productions/2026/07/002-2026-07-30-premium-stage-sistemska-validacija/`
+Framework je spreman da otvori prvi stvarni paket, ali ne sme sam da izmisli njegov sadržaj. U `client-assets/` trenutno nema odobrenih produktnih ili lokacijskih fotografija za novu objavu, niti postoji potvrđen brief.
 
-On koristi neutralni, transparentni test-model, ne stvarni klijentov proizvod. Zato nema zdravstvene, komercijalne ni lokacijske tvrdnje.
+Za prvi stvarni paket korisnik dostavlja:
 
-- `npm run lint` prolazi za `video-renderer`;
-- Feed, Story i Reels su renderovani;
-- Reels je 1080x1920 i traje približno 12 sekundi;
-- asset je pregledan na svetloj i tamnoj pozadini, vezan SHA-256 hashom i odobren sa dokumentovanim ograničenjem umerenog uvećanja;
-- `prepare-visual-review.mjs` je pokrenut nakon konačnog rendera;
-- nezavisni reviewer `codex-independent-visual-qc-20260730` potvrdio je `meets-reference-bar`;
-- `check-post.mjs` prolazi. Jedino upozorenje je dokumentovano umereno uvećanje neutralnog test-asset-a.
+1. temu objave i potvrđene činjenice o proizvodu ili kategoriji;
+2. originalni produktni asset, po mogućnosti transparentni PNG ili kvalitetnu neprovidnu fotografiju;
+3. cenu, mehaniku, rok i izvor samo ako se radi o akciji;
+4. konkretnu lokaciju i podatke samo ako je objava lokalna.
 
-Koren `video-renderer/` više ne sadrži stare `test-feed*.png` rendere. Svi aktuelni radni renderi i dokazi čuvaju se samo u paketu objave.
-
-## Šta sledi
-
-Sledeći rad se radi ovim redosledom. Ne preskakati korake i ne započinjati novu objavu pre završetka odgovarajućeg asset gate-a.
-
-1. Mapirati `editorial-split` i `gallery-shelf` prema `ref-editorial-offer-stage.png`.
-   - Fokus: editorial odnos poruke levo i produktne scene desno, rotirani `OfferBadge` samo kada postoji potvrđena ponuda.
-
-2. Mapirati `minimal-offer` i `product-card` prema `ref-product-stage-footer.png`.
-   - Fokus: dominantna centrirana scena, podijum, premium osvetljenje i funkcionalan footer.
-
-3. Mapirati `product-atelier` i `type-stage` prema `ref-vertical-product-spotlight.png`.
-   - Fokus: vertikalna skala proizvoda i slojevita kružna scenografija.
-
-4. Za svaku od tri matrice napraviti novi interni paket i proveriti Feed, Story i Reels.
-   - Pokrenuti `inspect-assets.mjs`.
-   - Pregledati svetli i tamni asset-preview.
-   - Napraviti draft, zatim najmanje jednu vidljivu korekciju.
-   - Renderovati Feed, Story, tri Reels ključna kadra i MP4.
-   - Pokrenuti `prepare-visual-review.mjs`.
-   - Tražiti nezavisan pregled drugog agenta sa drugačijim `reviewerId`.
-   - Pokrenuti `check-post.mjs`.
-
-5. Tek nakon četiri validirane matrice koristiti renderer za stvarne klijentske objave.
+Zatim se otvara novi paket komandom `node production/scripts/create-post.mjs --slug "kratak-naziv-objave"` i sprovodi ceo tok iz `AGENT-OPERATING-MAP.md`: asset gate, tekst iz potvrđenih činjenica, dizajn, stvarna korekcija, render, nezavisan pregled i pre-flight. Završni materijal se nikada ne objavljuje automatski.
 
 ## Pravila koja ne smeju biti prekršena
 
@@ -106,7 +80,7 @@ Sledeći rad se radi ovim redosledom. Ne preskakati korake i ne započinjati nov
 - Akcija zahteva mehaniku, vrednost, rok i izvor. Bez toga paket ostaje blokiran ili se menja u neutralnu objavu.
 - Transparentni produktni asset sa kursorom, UI tragom, pogrešnim proizvodom, ozbiljnom deformacijom ili neupotrebljivom alfa ivicom je blokada. Ne retuširati generativno sadržaj pakovanja.
 - Logo, glavna poruka, ponuda, proizvod i CTA moraju ostati čitljivi u punoj veličini i pri prikazu telefona.
-- Pravougaoni paneli, footeri, kartice i logo-kartice imaju oštre uglove. Pill oznaka i kružni oblici su jedini izuzeci.
+- Pravougaoni paneli, footeri i kartice imaju oštre uglove. Pill oznaka i kružni oblici su jedini izuzeci. Senke i zamućenja nisu dozvoljeni, ni vektorski ni rasterski.
 - Za svaku grafiku i video koristi se smislena Lucide ikonica. Benefit i medicinska ikonica traže potvrđenu tvrdnju.
 - Nakon `prepare-visual-review.mjs` ne menjati input, props, renderer, CSS, reference ni render bez novog review ciklusa.
 

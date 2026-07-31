@@ -14,6 +14,9 @@
 !/productions/.gitkeep
 /video-renderer/public/jobs/
 /client-assets/locations/
+/client-assets/inbox/*
+!/client-assets/inbox/README.md
+/archive/
 
 # Secrets and local tooling
 .env

@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "source": "../paleta.jpg",
+  "usage": "Operativna paleta za grafike, video i druge vizuelne materijale AU Šeki-Tilia.",
+  "colors": [
+    { "id": "deer-run", "name": "Deer Run", "hex": "#B2A69A", "role": "warm-surface" },
+    { "id": "slate-gray", "name": "Sivi ton A", "hex": "#7A7C7A", "role": "neutral-mid" },
+    { "id": "black-is-back", "name": "Black is Back", "hex": "#0F1519", "role": "dark-ink" },
+    { "id": "moss-gray", "name": "Sivi ton B", "hex": "#7D7D79", "role": "neutral-warm" },
+    { "id": "livid-lime", "name": "Livid Lime", "hex": "#B8E100", "role": "accent" },
+    { "id": "royal-neptune", "name": "Royal Neptune", "hex": "#1C3B42", "role": "brand-dark" },
+    { "id": "icy-tundra", "name": "Icy Tundra", "hex": "#F7F5EC", "role": "light-base" },
+    { "id": "steel-blue", "name": "Sivi ton C", "hex": "#4E5A5F", "role": "neutral-cool" },
+    { "id": "riviera-sea", "name": "Riviera Sea", "hex": "#1B8188", "role": "secondary-accent" }
+  ],
+  "contrastPolicy": {
+    "minimumTextRatio": 4.5,
+    "largeTextMinimumRatio": 3,
+    "rule": "Tekst, CTA i informativne ikonice koriste samo parove iz safeTextPairs. Svetli tonovi se ne postavljaju na svetle, niti tamni na tamne površine."
+  },
+  "safeTextPairs": [
+    { "foreground": "black-is-back", "background": "deer-run", "ratio": 7.72 },
+    { "foreground": "black-is-back", "background": "livid-lime", "ratio": 12.1 },
+    { "foreground": "black-is-back", "background": "icy-tundra", "ratio": 16.84 },
+    { "foreground": "royal-neptune", "background": "deer-run", "ratio": 5.03 },
+    { "foreground": "royal-neptune", "background": "livid-lime", "ratio": 7.87 },
+    { "foreground": "royal-neptune", "background": "icy-tundra", "ratio": 10.96 },
+    { "foreground": "icy-tundra", "background": "black-is-back", "ratio": 16.84 },
+    { "foreground": "icy-tundra", "background": "royal-neptune", "ratio": 10.96 },
+    { "foreground": "icy-tundra", "background": "steel-blue", "ratio": 6.51 },
+    { "foreground": "livid-lime", "background": "black-is-back", "ratio": 12.1 },
+    { "foreground": "livid-lime", "background": "royal-neptune", "ratio": 7.87 },
+    { "foreground": "livid-lime", "background": "steel-blue", "ratio": 4.68 }
+  ],
+  "largeTextOnlyPairs": [
+    { "foreground": "black-is-back", "background": "slate-gray", "ratio": 4.37 },
+    { "foreground": "black-is-back", "background": "moss-gray", "ratio": 4.45 }
+  ],
+  "approvedLogoBackgrounds": ["black-is-back", "royal-neptune", "steel-blue"],
+  "suggestedSchemes": [
+    {
+      "id": "calm-studio",
+      "background": "icy-tundra",
+      "surface": "deer-run",
+      "textForeground": "royal-neptune",
+      "accent": "livid-lime",
+      "logoBackground": "royal-neptune"
+    },
+    {
+      "id": "dark-editorial",
+      "background": "royal-neptune",
+      "surface": "steel-blue",
+      "textForeground": "icy-tundra",
+      "accent": "livid-lime",
+      "logoBackground": "royal-neptune"
+    },
+    {
+      "id": "high-clarity-offer",
+      "background": "livid-lime",
+      "surface": "icy-tundra",
+      "textForeground": "black-is-back",
+      "accent": "royal-neptune",
+      "logoBackground": "black-is-back"
+    }
+  ]
+}

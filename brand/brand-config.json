@@ -10,7 +10,12 @@
     "cream": "#F7F5EC",
     "lime": "#B8E100",
     "beige": "#B2A69A",
-    "charcoal": "#0F1519"
+    "charcoal": "#0F1519",
+    "rivieraSea": "#1B8188",
+    "slateGray": "#7A7C7A",
+    "mossGray": "#7D7D79",
+    "steelBlue": "#4E5A5F",
+    "paletteSource": "brand/color-palette.json"
   },
   "fonts": {
     "display": "Manrope",

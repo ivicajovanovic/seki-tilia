@@ -69,8 +69,8 @@ const makeFixture = () => {
     status: "spremno-za-ljudsku-proveru",
     postType: "novitet",
     product: "Test tema",
-    contentApproach: "professional-prompt",
-    copyFreshnessNote: "Testira stručni prompt i drugačiji sadržajni ugao u odnosu na prethodne objave.",
+    contentApproach: "local-availability",
+    copyFreshnessNote: "Testira neutralan ugao dostupnosti, različit od poslednje tri objave.",
     clientFacts: [],
     claims: [],
     confirmedOffer: { mechanic: null, value: null, regularPrice: null, promoPrice: null, validFrom: null, validUntil: null, source: null },
@@ -90,7 +90,7 @@ const makeFixture = () => {
     productShape: "compact",
     locationLine: "AU Šeki-Tilia",
     designVariant: "offer-orbit",
-    motionTreatment: "detail-cutaway",
+    motionTreatment: "offer-build",
   };
   const direction = {
     family: "offer-orbit",
@@ -101,7 +101,7 @@ const makeFixture = () => {
     distinctFromRecent: "Test koristi tipografski fokus bez produktnog kolaža.",
     designInterventions: ["reading-order", "icon-role"],
     freshInterventionNote: "Menja redosled čitanja i funkciju lokacijske ikone u završetku.",
-    motionTreatment: "detail-cutaway",
+    motionTreatment: "offer-build",
     formatAdaptations: { feed: "Bočna Feed kompozicija.", story: "Vertikalni Story stack.", reels: "Trodelni Reels tok." },
     formatPlan: {
       feed: { readingOrder: "headline-cta", productAnchor: "right-stage", layoutId: "offer-orbit-feed-stage" },
@@ -109,7 +109,16 @@ const makeFixture = () => {
       reels: { shotPlan: ["typographic-hook", "detail-stage", "branded-close"], layoutId: "offer-orbit-three-scene-reel" },
     },
     familyFit: { productShape: null, supportsOfferStrength: true, supportsSceneDepth: true, rationale: "Familija podržava jasnu poruku i kontrolisanu scensku dubinu." },
-    logoSurface: "cream-card",
+    logoSurface: "none",
+    palettePlan: {
+      background: "icy-tundra",
+      surface: "deer-run",
+      textForeground: "royal-neptune",
+      textBackground: "icy-tundra",
+      accent: "livid-lime",
+      logoBackground: "royal-neptune",
+      rationale: "Svetla informativna scena koristi petrol tekst, limeta akcenat i tamnu kontrolisanu podlogu za originalni logo.",
+    },
     typography: { family: "AUSekiManrope", weights: [600, 800] },
     validatedRenders: [
       "final/feed-1080x1350.png",

@@ -8,9 +8,11 @@ Ovaj dokument je početna tačka rada u repou AU Šeki-Tilia. Služi da agent od
 | --- | --- | --- |
 | Redosled rada i nepregovariva pravila | `AGENTS.md` | obavezne korake, bezbednost, lokacije i izlazne fajlove |
 | Identitet brenda | `brand/brand-guide.md` | paletu, Manrope, originalni logo, ton i vidljivost |
+| Operativna paleta i kontrast | `brand/color-palette.json` | izbor devet tonova, bezbedne tekstualne parove i tamnu kontrolisanu podlogu za originalni logo |
 | Plan sadržaja | `brand/content-framework.md` | rubriku, format i ulogu objave u seriji |
 | Potvrđeni podaci o ograncima | `brand/brand-config.json` | adresu, telefon i radno vreme samo za lokalnu objavu |
 | Copy i bezbednost | `production/copy-playbook.md`, `production/content-safety-rules.md` | caption, CTA, hashtagove, tvrdnje i blokade |
+| Životni ciklus materijala | `production/artifact-lifecycle.md` | privremeni ulaz, aktivni paket, arhiva i bezbedno uklanjanje |
 | Dizajnerski sistem i varijacije | `brand/design-system.md` | familiju, `signature`, svežu intervenciju i proveru poslednje tri objave |
 | Obavezni vizuelni skill | `agent-skills-required/visual-design/SKILL.md` | art direkciju, kompoziciju, obradu i pregled rendera |
 | Odobrene reference | `brand/design-references/references.json`, `catalog.md` i četiri slike iz istog foldera | kvalitet, ritam i produktnu scenu bez kopiranja sadržaja |
@@ -22,7 +24,7 @@ Kada se dokumenti razlikuju, prednost imaju najnovije korisnikovo uputstvo, zati
 
 1. Pročitaj ovaj dokument, zatim `AGENTS.md` i sve dokumente koje on navodi.
 2. Otvori novi paket komandom `node production/scripts/create-post.mjs --slug "kratak-naziv"`.
-3. Doslovno sačuvaj korisnikov brief u `brief.md`, a originale bez izmene u `source/`.
+3. Doslovno sačuvaj korisnikov brief u `brief.md`, a originale bez izmene u `source/`. Nerazvrstani privatni materijal može privremeno biti u `client-assets/inbox/`, ali ne ostaje tamo nakon otvaranja paketa.
 4. Popuni `input.json`: potvrđene činjenice, izvore, format, `contentApproach` i `copyFreshnessNote`.
 5. Za lokalnu objavu proveri `brand/brand-config.json`; za sve zdravstvene i produktne tvrdnje proveri izvor ili ih izostavi.
 6. Za produktni vizual pokreni `inspect-assets.mjs` i otvori svetli/tamni pregled. Umereno slabiji klijentov asset odobri kao `approved-with-limitations`, dokumentuj `qualityLimitations` i prilagodi kompoziciju; blokiraj samo kritične defekte iz `blockingDefects`. Svaka korišćena pripremljena kopija mora biti vezana hashom.

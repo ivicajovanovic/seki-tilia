@@ -1,6 +1,6 @@
 # Lokalni materijali klijenta
 
-Ovaj folder je namenjen privatnim, izvornim fotografijama i drugim materijalima koje dostavlja AU Šeki-Tilija. Sadržaj foldera se ne objavljuje na GitHub-u.
+Ovaj folder je namenjen privatnim, izvornim fotografijama i drugim materijalima koje dostavlja AU Šeki-Tilija. Sadržaj foldera se ne objavljuje na GitHub-u. Novi, još nerazvrstani materijal prvo ide u `inbox/`; pravila premeštanja i arhiviranja su u `production/artifact-lifecycle.md`.
 
 ## Fotografije apoteka
 

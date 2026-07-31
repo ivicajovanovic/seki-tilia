@@ -15,16 +15,17 @@ Nikada ne predstavljamo generisanu osobu kao stvarnu zaposlenu apoteke.
 
 | Uloga | Naziv | Hex |
 | --- | --- | --- |
-| Primarna tamna | Petrol | `#1C3B42` |
-| Osnovna pozadina | Svetla krem | `#F7F5EC` |
-| Akcenat / CTA | Limeta | `#B8E100` |
-| Sekundarna površina | Topla bež | `#B2A69A` |
-| Tehnički tamna | Ugalj | `#0F1519` |
+| Primarna tamna | Royal Neptune | `#1C3B42` |
+| Osnovna pozadina | Icy Tundra | `#F7F5EC` |
+| Akcenat / CTA | Livid Lime | `#B8E100` |
+| Sekundarna površina | Deer Run | `#B2A69A` |
+| Tehnički tamna | Black is Back | `#0F1519` |
+| Sekundarni akcenat | Riviera Sea | `#1B8188` |
+| Neutralna srednja | Sivi ton A | `#7A7C7A` |
+| Neutralna topla | Sivi ton B | `#7D7D79` |
+| Neutralna hladna | Sivi ton C | `#4E5A5F` |
 
-- Petrol je podrazumevana boja teksta i ikona.
-- Krem je podrazumevana pozadina.
-- Limeta se koristi štedljivo: cena, popust, kratka ključna poruka ili CTA.
-- Bež daje toplinu pozadinskim blokovima, ali ne sme smanjiti čitljivost teksta.
+Operativni izbor i kontrastne kombinacije vode se u [color-palette.md](color-palette.md) i `color-palette.json`. Agent može izabrati novu kombinaciju iz svih devet tonova kada ona odgovara zadatku, ali tekst, CTA i funkcionalne ikonice koriste samo unapred odobrene kontrastne parove. Originalni logo koristi isključivo tamnu kontrolisanu podlogu iz `approvedLogoBackgrounds`; ne rešava se kontrast belom karticom.
 
 ## Tipografija
 
@@ -42,7 +43,7 @@ Originali se nalaze u `logos/`:
 - `logo2.svg` — horizontalna verzija;
 - `logo3.svg` — znak, bez naziva.
 
-Za avatar profila koristi se `logo3.svg`, na krem podlozi. Za feed se koristi znak ili puna verzija, zavisno od slobodnog prostora. Znak `logo3.svg` mora imati krem podlogu koja jasno odvaja njegov limeta deo od okoline. Logo nikada ne sme biti rastegnut, obojen drugom bojom ili postavljen preko nečitljive fotografije, limeta polja ili druge nekontrolisane podloge.
+Za avatar profila koristi se `logo3.svg`. Za feed se koristi znak ili puna verzija, zavisno od slobodnog prostora. Logo se postavlja bez bele, krem ili druge pravougaone kartice oko znaka. Njegov neposredni deo kompozicije mora imati kontrolisan kontrast, tako da oba originalna dela znaka, petrol i limeta, ostanu čitljiva. Logo nikada ne sme biti rastegnut, obojen drugom bojom ili postavljen preko nečitljive fotografije, limeta polja ili druge nekontrolisane podloge.
 
 ## Vizuelni princip
 
@@ -56,7 +57,9 @@ Objava treba da deluje čisto, savremeno i ljudski:
 
 Izbegavamo kolaže, agresivne akcijske poruke, previše ikona, medicinske simbole van znaka i „luksuzni” vizuelni ton.
 
-Pravougaoni paneli, kartice, podloge proizvoda, footeri i logo-kartice imaju oštre uglove. Zaobljenje je dozvoljeno samo za pill-dugme ili kratku CTA/ponudnu oznaku, kao i za namerno kružne dekorativne oblike. Ne koristiti zaobljene pravougaonike kao podrazumevani vizuelni motiv.
+Pravougaoni paneli, kartice, podloge proizvoda, footeri i okviri imaju oštre uglove. Zaobljenje je dozvoljeno samo za pill-dugme ili kratku CTA/ponudnu oznaku, kao i za namerno kružne dekorativne oblike. Ne koristiti zaobljene pravougaonike kao podrazumevani vizuelni motiv.
+
+Senke i zamućenja nisu dozvoljeni, ni kao vektorski CSS/SVG efekat ni kao rasterski dodatak. Dubina se gradi isključivo geometrijom, kontrastom i vektorskim gradijentima.
 
 Kada klijent dostavi proizvod kao transparentni PNG, proizvod se postavlja direktno na kompoziciju, bez spoljnog pravougaonog rama, kartice, okvira ili podloge. Dobija dominantnu zonu u kadru i ne sme ostati sitan unutar velike praznine. Ako je izvor slabije rezolucije, dominacija se gradi položajem, kontrastom i scenom umesto forsiranim uvećanjem koje razara sliku. Pravougaona podloga može da se koristi samo za neprovidnu fotografiju proizvoda kada je neophodna radi čitljivosti i ne sme se dodavati transparentnom PNG-u.
 
@@ -64,9 +67,9 @@ Grafike i video kadrovi koriste najmanje jednu funkcionalnu profesionalnu ikonu 
 
 ## Premium produktna scena
 
-Interna autorska referenca `ref-premium-product-stage.png` postavlja kvalitet za produktne akcije. Njena dizajnerska logika može da se koristi sa varijacijama: velika ponuda, dominantan proizvod, organska pozadina i podijum/senka koji daju dubinu, uz petrol završni blok sa jednim CTA-om.
+Interna autorska referenca `ref-premium-product-stage.png` postavlja kvalitet za produktne akcije. Njena dizajnerska logika može da se koristi sa varijacijama: velika ponuda, dominantan proizvod, organska pozadina i izražen podijum sa vektorskim gradijentom koji daje dubinu, uz petrol završni blok sa jednim CTA-om.
 
-Proizvod u takvoj sceni ostaje slobodan glavni element. Organski oblik, podijum i senka grade prostor oko proizvoda, ali ga ne zatvaraju u pravougaonu karticu, okvir ili podlogu. Za transparentni PNG to pravilo je obavezno.
+Proizvod u takvoj sceni ostaje slobodan glavni element. Organski oblik i podijum grade prostor oko proizvoda, ali ga ne zatvaraju u pravougaonu karticu, okvir ili podlogu. Gornja ravan podijuma mora jasno da nosi proizvod, a njegova prednja masa da uđe iza footera. Za transparentni PNG to pravilo je obavezno.
 
 Na grafiku se ne prenose automatski ikone, benefit-redovi ni zdravstvene tvrdnje iz prethodnih primera. Prikazuju se samo kada su konkretne formulacije za aktuelni proizvod potvrđene. U suprotnom prednost imaju velika ponuda, proizvod, jasan CTA i mirna, dovršena kompozicija.
 

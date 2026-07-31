@@ -97,11 +97,11 @@ Kada brief odgovara familiji `premium-product-stage`, gradi scenu namerno, a ne 
 
 - proizvod je veliki, glavni vizuelni element i optički je povezan sa scenom;
 - asimetrična, ali uravnotežena hijerarhija prvo vodi do potvrđene ponude ili naslova, zatim do proizvoda, pa do jednog CTA-a;
-- organska masa, podijum, kontaktna senka i kontrolisano premium osvetljenje stvaraju dubinu oko proizvoda, bez pravougaonog rama ili kartice oko transparentnog PNG-a;
+- organska masa i podijum sa izraženim vektorskim gradijentom stvaraju dubinu oko proizvoda, bez pravougaonog rama ili kartice oko transparentnog PNG-a. Gornja ravan podijuma mora vidljivo nositi proizvod, dok njegova prednja masa ulazi iza footera;
 - krem, bež i petrol grade mirnu bazu, dok limeta služi kao štedljiv akcenat za potvrđenu ponudu, kratku oznaku ili CTA;
 - petrol završni blok može objediniti kratak CTA i neutralnu informaciju o dostupnosti, ali footer nije obavezan modul svake objave.
 
-Iz referenci se ne preuzimaju zdravstvene tvrdnje, benefit-ikonice, sastojci, proizvod, cena, rok, copy, položaj logoa, kursor/UI artefakt ni zaobljen strukturni footer. Za AU Šeki-Tilia logo ostaje originalan, na zasebnoj krem `cream-card` podlozi sa oštrim uglovima. Pravougaoni paneli, footeri, kartice i logo-kartica ostaju oštrih uglova. Kada ikona može jasno da unapredi razumevanje informacije ili navigaciju, njeno korišćenje je obavezno i koristi se odgovarajuća semantička Lucide ikona, na primer ikona lokacije uz potvrđenu dostupnost ili CTA. Ikona nikada nije nasumična dekoracija, a medicinska ili benefit-ikona traži potvrđenu tvrdnju koju tačno predstavlja.
+Iz referenci se ne preuzimaju zdravstvene tvrdnje, benefit-ikonice, sastojci, proizvod, cena, rok, copy, položaj logoa, kursor/UI artefakt ni zaobljen strukturni footer. AU Šeki-Tilia logo ostaje originalan i bez bele, krem ili druge pravougaone podloge (`logoSurface: "none"`); neposredni kontrast mora čuvati oba njegova originalna dela. Senke i zamućenja nisu dozvoljeni ni kao vektorski ni kao rasterski efekti. Pravougaoni paneli, footeri i kartice ostaju oštrih uglova. Kada ikona može jasno da unapredi razumevanje informacije ili navigaciju, njeno korišćenje je obavezno i koristi se odgovarajuća semantička Lucide ikona, na primer ikona lokacije uz potvrđenu dostupnost ili CTA. Ikona nikada nije nasumična dekoracija, a medicinska ili benefit-ikona traži potvrđenu tvrdnju koju tačno predstavlja.
 
 Ovaj sloj pojačava vizuelni standard reference, ali ne menja činjenice, obavezni Manrope font, pravila kontrasta, ograničenja za transparentni PNG niti bezbednosna pravila projekta. Kada postoji sukob, brend i potvrđene činjenice imaju prednost nad referencom.
 
@@ -111,7 +111,7 @@ Za kontinuiranu seriju objava ne ponavljaj istu grafiku uz novu boju, novi proiz
 
 Kvalitet ima prednost nad novošću. Ne biraj novu familiju samo da bi prošla istorijsku proveru. Najpre popuni `familyFit` prema obliku proizvoda, snazi potvrđene ponude i potrebnoj dubini scene. Ako nova familija nije kompatibilna, koristi kompatibilnu familiju sa novim redosledom, kadrom ili scenografijom i jedinstvenom signature kombinacijom.
 
-Za svaki traženi format zapiši namernu adaptaciju: Feed može graditi sporiju hijerarhiju, Story jednu brzu radnju, a Reels zaseban ritam otkrivanja. Ne rasteži isti layout između formata. Kada postoji Reels, promeni i dokumentuj `motionTreatment` u odnosu na prethodne tri Reels objave. Razlika mora ostati u okvirima palete, Manrope tipografije, krem logo-kartice, oštrih pravougaonih uglova i potvrđenih činjenica.
+Za svaki traženi format zapiši namernu adaptaciju: Feed može graditi sporiju hijerarhiju, Story jednu brzu radnju, a Reels zaseban ritam otkrivanja. Ne rasteži isti layout između formata. Kada postoji Reels, promeni i dokumentuj `motionTreatment` u odnosu na prethodne tri Reels objave. Razlika mora ostati u okvirima palete, Manrope tipografije, originalnog logoa bez pravougaone podloge, oštrih pravougaonih uglova i potvrđenih činjenica.
 
 ### 5. Choose one design architecture
 
@@ -252,7 +252,7 @@ When generating imagery:
 - Ensure text contrast remains strong across the full image.
 - Inspect every exported format at full size and at thumbnail size. Keep the logo, primary message, offer, product, and CTA, when present, immediately visible against their direct backgrounds.
 - Never place a logo, text, icon, or CTA in the same or nearly the same color and value as its direct background. When contrast is insufficient, move it to a controlled solid surface or use an appropriate supplied logo variant. Never recolor, redraw, stretch, or otherwise alter the original logo to solve contrast.
-- Apply texture, grain, gradients, shadows, metallic effects, and blur sparingly and consistently.
+- Apply texture, grain, gradients, metallic effects, and blur sparingly and consistently. For AU Šeki-Tilia specifically, do not use shadows or blur at all.
 - Premium does not automatically mean black and gold. Medical does not automatically mean blue. Youth does not automatically mean neon.
 
 #### Information modules

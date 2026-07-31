@@ -111,7 +111,16 @@ writeFileSync(join(postDirectory, "generated", "design-direction.json"), JSON.st
     supportsSceneDepth: false,
     rationale: null
   },
-  logoSurface: "cream-card",
+  logoSurface: "none",
+  palettePlan: {
+    background: null,
+    surface: null,
+    textForeground: null,
+    textBackground: null,
+    accent: null,
+    logoBackground: null,
+    rationale: null
+  },
   typography: { family: "AUSekiManrope", weights: [] },
   validatedRenders: []
 }, null, 2) + "\n");

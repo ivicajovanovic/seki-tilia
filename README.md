@@ -66,6 +66,7 @@ Ručna objava na Instagramu i Facebooku
 | [brand/design-system.md](brand/design-system.md) | Familije kompozicija, logo podloga, tipografija i zaštita od monotonije |
 | [production/copy-playbook.md](production/copy-playbook.md) | Copy pravila, CTA, strukture i šabloni captiona |
 | [production/README.md](production/README.md) | Kreiranje paketa, render i validacija |
+| [production/artifact-lifecycle.md](production/artifact-lifecycle.md) | Ulazni materijali, aktivni paketi, arhiviranje i uklanjanje artefakata |
 
 Ako tvoj LLM alat ne učitava automatski `AGENTS.md`, u prvom zahtevu dodaj: „Prvo pročitaj `HANDOFF.md` i `AGENTS.md`.”
 
@@ -117,6 +118,7 @@ brand/           # identitet, pravila i konfiguracija lokacija
 logos/           # vektorski i PNG logo brenda
 production/      # workflow, copy pravila, bezbednost i skripte
 productions/     # lokalni paketi stvarnih objava (ignorisani u Git-u)
+client-assets/   # privatni materijali lokacija i privremeni ulaz briefova
 video-renderer/  # Remotion šabloni za PNG i MP4
 AGENTS.md        # obavezna pravila za LLM agente
 HANDOFF.md       # početna tačka za novu sesiju
