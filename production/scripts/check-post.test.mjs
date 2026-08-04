@@ -92,6 +92,7 @@ const makeFixture = () => {
     motionTreatment: "offer-build",
     audioTrack: "mp3/paper-sun-parade.mp3",
     audioVolume: 0.8,
+    colorScheme: "calm-studio",
   };
   const direction = {
     family: "offer-orbit",
@@ -103,6 +104,7 @@ const makeFixture = () => {
     designInterventions: ["reading-order", "icon-role"],
     freshInterventionNote: "Menja redosled čitanja i funkciju lokacijske ikone u završetku.",
     motionTreatment: "offer-build",
+    colorScheme: "calm-studio",
     formatAdaptations: { feed: "Bočna Feed kompozicija.", story: "Vertikalni Story stack.", reels: "Trodelni Reels tok." },
     formatPlan: {
       feed: { readingOrder: "headline-cta", productAnchor: "right-stage", layoutId: "offer-orbit-feed-stage" },
@@ -348,7 +350,7 @@ test("Feed i Story sa istim layout fingerprintom ne prolaze", () => {
   assert.match(output, /razlikovati po redosledu čitanja ili poziciji proizvoda/);
 });
 
-test("Feed-only paket ne zahteva Story ni Reels artefakte", () => {
+test("svaki paket zahteva Feed, Story i Reels", () => {
   const fixture = makeFixture();
   fixture.input.requestedFormats = ["feed"];
   fixture.direction.validatedRenders = ["final/feed-1080x1350.png"];
@@ -362,29 +364,7 @@ test("Feed-only paket ne zahteva Story ni Reels artefakte", () => {
     join(fixture.generated, "reels-closing.png"),
   ]) rmSync(path);
   refreshLockedInputHashes(fixture);
-  assert.match(runChecker(fixture.postDirectory), /PROVERA PROŠLA/);
-});
-
-test("Feed-only visual review pravi poređenje bez hstack greške", () => {
-  const fixture = makeFixture();
-  fixture.input.requestedFormats = ["feed"];
-  fixture.direction.validatedRenders = ["final/feed-1080x1350.png"];
-  writeJson(join(fixture.postDirectory, "input.json"), fixture.input);
-  writeJson(join(fixture.generated, "design-direction.json"), fixture.direction);
-  for (const path of [
-    join(fixture.final, "story-1080x1920.png"),
-    join(fixture.final, "reels-1080x1920.mp4"),
-    join(fixture.generated, "reels-intro.png"),
-    join(fixture.generated, "reels-offer.png"),
-    join(fixture.generated, "reels-closing.png"),
-  ]) rmSync(path);
-
-  assert.doesNotThrow(() => execFileSync(process.execPath, [join(repositoryRoot, "production/scripts/prepare-visual-review.mjs"), "--post", fixture.postDirectory], { cwd: repositoryRoot, encoding: "utf8", stdio: "pipe" }));
-  const review = JSON.parse(readFileSync(fixture.qualityReviewPath, "utf8"));
-  assert.equal(review.renderHashes.story, undefined);
-  assert.equal(review.renderHashes.reelsMp4, undefined);
-  assert.equal(Object.keys(review.renderHashes).some((key) => key.startsWith("audioTrack:")), false);
-  assert.ok(review.renderHashes.formatComparison);
+  assert.match(runBlocked(fixture.postDirectory), /sva tri formata: feed, story i reels/);
 });
 
 test("requestedFormats mora biti neprazan niz podržanih jedinstvenih vrednosti", () => {
@@ -419,7 +399,14 @@ test("logoVariant mora odgovarati neposrednoj logo pozadini", () => {
   assert.match(runBlocked(fixture.postDirectory), /nije odobrena za palettePlan\.logoBackground royal-neptune/);
 });
 
-test("create-post bira audio numeru deterministički iz ID-a paketa", () => {
+test("colorScheme mora biti identičan u props i design-direction", () => {
+  const fixture = makeFixture();
+  fixture.videoProps.colorScheme = "matcha-abyssal";
+  writeJson(join(fixture.postDirectory, "video-props.json"), fixture.videoProps);
+  assert.match(runBlocked(fixture.postDirectory), /colorScheme mora odgovarati/);
+});
+
+test("create-post nasumično bira dozvoljenu muziku i colorScheme", () => {
   const slug = `audio-rotation-${process.pid}`;
   const date = "2099-12-31";
   const monthDirectory = join(repositoryRoot, "productions", "2099", "12");
@@ -429,8 +416,12 @@ test("create-post bira audio numeru deterministički iz ID-a paketa", () => {
   const postDirectory = join(monthDirectory, createdName);
   const props = JSON.parse(readFileSync(join(postDirectory, "video-props.json"), "utf8"));
   const tracks = ["mp3/clear-path.mp3", "mp3/clear-path-ambient.mp3", "mp3/open-sky-drift.mp3", "mp3/open-sky-drift-chill.mp3", "mp3/paper-sun-parade.mp3", "mp3/paper-sun-parade-upbeat.mp3"];
-  const expectedIndex = [...createdName].reduce((sum, character) => sum + character.codePointAt(0), 0) % tracks.length;
-  assert.equal(props.audioTrack, tracks[expectedIndex]);
+  const direction = JSON.parse(readFileSync(join(postDirectory, "generated/design-direction.json"), "utf8"));
+  const palette = JSON.parse(readFileSync(join(repositoryRoot, "brand/color-palette.json"), "utf8"));
+  assert.ok(tracks.includes(props.audioTrack));
+  assert.ok(palette.rendererThemes.some((theme) => theme.id === props.colorScheme));
+  assert.equal(direction.colorScheme, props.colorScheme);
+  assert.equal(direction.palettePlan.rationale, null);
   assert.equal(JSON.parse(readFileSync(join(postDirectory, "input.json"), "utf8")).requiresProfessionalReview, undefined);
   rmSync(postDirectory, { recursive: true });
 });

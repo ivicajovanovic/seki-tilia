@@ -1,10 +1,10 @@
 # Operativna paleta
 
-Izvor je [paleta.jpg](../paleta.jpg). `brand/color-palette.json` je mašinski čitljiv izvor istine za izbor boja u grafici, videu, promptovima i dizajnerskom smeru.
+Izvori su [paleta.jpg](../paleta.jpg) i [boje-dodatak.jpg](../public/boje-dodatak.jpg). Drugi izvor dodaje Abyssal Teal `#2C3638`, Matcha `#D0D1AF` i Desert Khaki `#DBCCB7`; prvobitnih devet boja ostaje neizmenjeno. `brand/color-palette.json` je mašinski čitljiv izvor istine.
 
 ## Obavezan izbor boja
 
-Pre prvog drafta agent bira `palettePlan` u `generated/design-direction.json`: pozadinu, površinu, tekst, akcenat i kontrolisanu podlogu za logo. Može da počne od jednog od `suggestedSchemes` iz JSON-a ili da sastavi novu kombinaciju od devet dozvoljenih tonova, ako je svaki tekstualni par naveden u `safeTextPairs`.
+Pri otvaranju paketa sistem nasumično bira `colorScheme` iz šest bezbednih `rendererThemes`. Agent proverava da li tema odgovara proizvodu i može je nasumično zameniti drugom kompatibilnom temom. `colorScheme` mora biti isti u `video-props.json` i `generated/design-direction.json`, a `palettePlan` mora doslovno odgovarati izabranoj temi. Ukupno je dostupno dvanaest tonova; samostalna kombinacija je dozvoljena tek kada se doda kao proverena `rendererThemes` tema.
 
 Za normalan tekst, CTA, cenu, datum, naslov ili funkcionalnu ikonicu potrebna je kontrastna vrednost od najmanje 4,5:1. Parovi u `largeTextOnlyPairs` dozvoljeni su samo za krupan naslov ili krupnu dekorativnu reč, nikada za pomoćni tekst, CTA ili sitnu informaciju.
 
@@ -14,8 +14,8 @@ Originalni znak se ne prebojava i nema belu ili krem karticu. Varijanta `on-ligh
 
 ## Zabranjene kombinacije
 
-- svetli tekst na `icy-tundra`, `deer-run`, `slate-gray` ili `moss-gray` površini;
-- tamni tekst na `black-is-back`, `royal-neptune` ili `steel-blue` površini;
+- svetli tekst na `icy-tundra`, `deer-run`, `slate-gray`, `moss-gray`, `matcha` ili `desert-khaki` površini;
+- tamni tekst na `black-is-back`, `royal-neptune`, `steel-blue` ili `abyssal-teal` površini;
 - limeta tekst na `riviera-sea` ili bilo kojoj svetloj površini;
 - pogrešna varijanta logoa za neposrednu pozadinu;
 - logo na limeta ili fotografski nekontrolisanoj pozadini.

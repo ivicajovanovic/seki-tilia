@@ -84,7 +84,7 @@ Preporučena dužina: 50–120 reči. Prelomi redove radi čitljivosti. Za Faceb
 [CTA: sačuvajte / pogledajte / svratite / pitajte farmaceuta.]
 ```
 
-Preporučena dužina: 25–70 reči. Ključna poruka mora biti i u samom videu, jer se Reels često gleda bez čitanja captiona. Za plaćeni Reels video držimo 9:16 format, zvuk po potrebi i ključne elemente unutar sigurnih margina, u skladu sa Meta preporukama. [Meta — Reels creative](https://www.facebook.com/business/ads/facebook-instagram-reels-ads)
+Preporučena dužina: 25–70 reči. Ključna poruka mora biti i u samom videu, jer se Reels često gleda bez čitanja captiona. Reels je u 9:16 formatu, uvek ima nasumično izabranu odobrenu muzičku podlogu i drži ključne elemente unutar sigurnih margina, u skladu sa Meta preporukama. [Meta — Reels creative](https://www.facebook.com/business/ads/facebook-instagram-reels-ads)
 
 ### Story
 

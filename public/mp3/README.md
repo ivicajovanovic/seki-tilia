@@ -17,6 +17,6 @@ Metapodaci u MP3 fajlovima navode autora/nalog `isaakmoreira` i oznaku `made wit
 
 ## Prava korišćenja
 
-Pre komercijalne objave vlasnik projekta mora potvrditi da je Suno nalog pod kojim su numere generisane imao odgovarajuća komercijalna prava u trenutku generisanja. Ovaj repo čuva tehničko poreklo, ali sam po sebi nije dokaz licence.
+Vlasnik projekta je potvrdio da je svih šest numera dozvoljeno za korišćenje u AU Šeki-Tilia materijalima. Agent nasumično bira jednu numeru za svaki novi Reels.
 
 Numere se ne zamenjuju fajlom istog imena bez ponovnog renderovanja i vizuelno-audio pregleda svih aktivnih paketa koji ga koriste. Review manifest zaključava izabranu numeru SHA-256 hashom.

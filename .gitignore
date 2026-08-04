@@ -8,6 +8,7 @@
 /*.png
 !/ovako mora biti.png
 /public/*
+!/public/boje-dodatak.jpg
 !/public/mp3/
 !/public/mp3/**
 

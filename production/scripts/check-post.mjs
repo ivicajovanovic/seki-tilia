@@ -132,12 +132,16 @@ const palettePath = resolve(repositoryRoot, "brand/color-palette.json");
 const colorPalette = readJson(palettePath, "brand/color-palette.json");
 const paletteColors = Array.isArray(colorPalette?.colors) ? colorPalette.colors : [];
 const paletteIds = new Set(paletteColors.map((color) => color?.id).filter((id) => typeof id === "string"));
-const safeTextPairs = new Set((Array.isArray(colorPalette?.safeTextPairs) ? colorPalette.safeTextPairs : []).map((pair) => `${pair?.foreground}|${pair?.background}`));
+const paletteHexById = new Map(paletteColors.map((color) => [color?.id, color?.hex]));
+const safeTextPairList = Array.isArray(colorPalette?.safeTextPairs) ? colorPalette.safeTextPairs : [];
+const safeTextPairs = new Set(safeTextPairList.map((pair) => `${pair?.foreground}|${pair?.background}`));
 const approvedLogoBackgrounds = new Set(Array.isArray(colorPalette?.approvedLogoBackgrounds) ? colorPalette.approvedLogoBackgrounds : []);
 const logoVariantFiles = { "on-light": "logo-tamniji.svg", "on-dark": "logo-svetliji.svg" };
 const approvedLogoPlacements = colorPalette?.approvedLogoPlacements && typeof colorPalette.approvedLogoPlacements === "object"
   ? colorPalette.approvedLogoPlacements
   : {};
+const rendererThemeList = Array.isArray(colorPalette?.rendererThemes) ? colorPalette.rendererThemes : [];
+const rendererThemes = new Map(rendererThemeList.filter((theme) => typeof theme?.id === "string").map((theme) => [theme.id, theme]));
 const reviewPath = resolve(postDirectory, "review.md");
 const review = existsSync(reviewPath) ? readFileSync(reviewPath, "utf8") : "";
 const visualDesignSkillPath = resolve(repositoryRoot, "agent-skills-required/visual-design/SKILL.md");
@@ -146,6 +150,36 @@ const caption = captionPath ? readFileSync(captionPath, "utf8") : "";
 
 if (approvedReferenceFiles.size === 0) errors.push("references.json mora sadržati najmanje jednu odobrenu referencu.");
 if (paletteIds.size < 2 || safeTextPairs.size === 0 || approvedLogoBackgrounds.size === 0 || Object.keys(approvedLogoPlacements).length === 0) errors.push("color-palette.json mora imati boje, bezbedne tekstualne parove i mapu odobrenih logo-varijanti i pozadina.");
+if (paletteIds.size !== paletteColors.length || paletteColors.some((color) => typeof color?.id !== "string" || !/^#[0-9a-f]{6}$/i.test(color?.hex ?? ""))) errors.push("color-palette.json mora imati jedinstvene ID vrednosti i validne šestocifrene HEX kodove.");
+const relativeLuminance = (hex) => {
+  const channels = hex.slice(1).match(/../g).map((channel) => Number.parseInt(channel, 16) / 255).map((channel) => channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4);
+  return (0.2126 * channels[0]) + (0.7152 * channels[1]) + (0.0722 * channels[2]);
+};
+const contrastRatio = (foreground, background) => {
+  const foregroundLuminance = relativeLuminance(foreground);
+  const backgroundLuminance = relativeLuminance(background);
+  return (Math.max(foregroundLuminance, backgroundLuminance) + 0.05) / (Math.min(foregroundLuminance, backgroundLuminance) + 0.05);
+};
+for (const pair of safeTextPairList) {
+  const foregroundHex = paletteHexById.get(pair?.foreground);
+  const backgroundHex = paletteHexById.get(pair?.background);
+  if (!/^#[0-9a-f]{6}$/i.test(foregroundHex ?? "") || !/^#[0-9a-f]{6}$/i.test(backgroundHex ?? "")) {
+    errors.push(`safeTextPairs navodi nepostojeću boju: ${pair?.foreground}|${pair?.background}.`);
+    continue;
+  }
+  const actualRatio = contrastRatio(foregroundHex, backgroundHex);
+  if (actualRatio < Number(colorPalette?.contrastPolicy?.minimumTextRatio ?? 4.5) || Math.abs(actualRatio - Number(pair?.ratio)) > 0.06) {
+    errors.push(`safeTextPairs odnos ${pair.foreground}|${pair.background} nema tačan bezbedan kontrast.`);
+  }
+}
+if (rendererThemes.size < 2 || rendererThemes.size !== rendererThemeList.length) errors.push("color-palette.json mora imati najmanje dve jedinstvene rendererThemes teme.");
+for (const theme of rendererThemeList) {
+  for (const field of ["background", "surface", "dark", "accent", "secondary", "stage", "logoBackground"]) {
+    if (!paletteIds.has(theme?.[field])) errors.push(`rendererThemes.${theme?.id ?? "unknown"}.${field} mora koristiti boju iz palete.`);
+  }
+  if (!logoVariantFiles[theme?.logoVariant]) errors.push(`rendererThemes.${theme?.id ?? "unknown"}.logoVariant mora biti on-light ili on-dark.`);
+  if (!safeTextPairs.has(`${theme?.dark}|${theme?.background}`)) errors.push(`rendererThemes.${theme?.id ?? "unknown"} nema bezbedan odnos dark/background.`);
+}
 for (const logoFile of Object.values(logoVariantFiles)) {
   const placements = approvedLogoPlacements?.[logoFile];
   if (!Array.isArray(placements) || placements.length === 0 || placements.some((background) => !paletteIds.has(background))) errors.push(`color-palette.json nema validne approvedLogoPlacements vrednosti za ${logoFile}.`);
@@ -233,6 +267,9 @@ if (!Array.isArray(input?.requestedFormats) || requestedFormats.length === 0) {
   const invalidFormats = requestedFormats.filter((format) => typeof format !== "string" || !supportedFormats.has(format));
   if (invalidFormats.length > 0) errors.push(`input.requestedFormats sadrži nepodržane vrednosti: ${invalidFormats.join(", ")}.`);
   if (new Set(requestedFormats).size !== requestedFormats.length) errors.push("input.requestedFormats ne sme sadržati duplikate.");
+  if (supportedFormats.size !== requestedFormats.length || [...supportedFormats].some((format) => !requestedFormats.includes(format))) {
+    errors.push("Svaki paket mora sadržati sva tri formata: feed, story i reels.");
+  }
 }
 
 for (const field of ["eyebrow", "headline", "supportingText", "offerLabel", "cta"]) {
@@ -344,6 +381,25 @@ if (designDirection?.palettePlan === undefined) {
   const allowedBackgrounds = logoFile && Array.isArray(approvedLogoPlacements?.[logoFile]) ? approvedLogoPlacements[logoFile] : [];
   if (!logoFile) errors.push("design-direction.json logoVariant mora biti on-light ili on-dark.");
   else if (!allowedBackgrounds.includes(palettePlan?.logoBackground)) errors.push(`Logo varijanta ${logoVariant} (${logoFile}) nije odobrena za palettePlan.logoBackground ${palettePlan?.logoBackground}.`);
+
+  const colorScheme = designDirection?.colorScheme;
+  const rendererTheme = rendererThemes.get(colorScheme);
+  if (!rendererTheme) errors.push("design-direction.json colorScheme mora koristiti temu iz color-palette.json rendererThemes.");
+  if (videoProps?.colorScheme !== colorScheme) errors.push("video-props.json colorScheme mora odgovarati design-direction.json colorScheme vrednosti.");
+  if (rendererTheme) {
+    const expectedPalettePlan = {
+      background: rendererTheme.background,
+      surface: rendererTheme.surface,
+      textForeground: rendererTheme.dark,
+      textBackground: rendererTheme.background,
+      accent: rendererTheme.accent,
+      logoBackground: rendererTheme.logoBackground,
+    };
+    for (const [field, expected] of Object.entries(expectedPalettePlan)) {
+      if (palettePlan?.[field] !== expected) errors.push(`palettePlan.${field} mora odgovarati izabranoj colorScheme temi ${colorScheme}: ${expected}.`);
+    }
+    if (designDirection?.logoVariant !== rendererTheme.logoVariant) errors.push(`logoVariant mora odgovarati colorScheme temi ${colorScheme}: ${rendererTheme.logoVariant}.`);
+  }
 }
 if (designDirection?.typography?.family !== "AUSekiManrope") errors.push("Finalni renderer mora koristiti Manrope font bez zamene.");
 if (!Array.isArray(designDirection?.typography?.weights) || designDirection.typography.weights.length < 1) {

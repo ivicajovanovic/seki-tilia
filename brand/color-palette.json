@@ -1,6 +1,6 @@
 {
-  "version": 1,
-  "source": "../paleta.jpg",
+  "version": 2,
+  "source": ["../paleta.jpg", "../public/boje-dodatak.jpg"],
   "usage": "Operativna paleta za grafike, video i druge vizuelne materijale AU Šeki-Tilia.",
   "colors": [
     { "id": "deer-run", "name": "Deer Run", "hex": "#B2A69A", "role": "warm-surface" },
@@ -11,7 +11,10 @@
     { "id": "royal-neptune", "name": "Royal Neptune", "hex": "#1C3B42", "role": "brand-dark" },
     { "id": "icy-tundra", "name": "Icy Tundra", "hex": "#F7F5EC", "role": "light-base" },
     { "id": "steel-blue", "name": "Sivi ton C", "hex": "#4E5A5F", "role": "neutral-cool" },
-    { "id": "riviera-sea", "name": "Riviera Sea", "hex": "#1B8188", "role": "secondary-accent" }
+    { "id": "riviera-sea", "name": "Riviera Sea", "hex": "#1B8188", "role": "secondary-accent" },
+    { "id": "abyssal-teal", "name": "Abyssal Teal", "hex": "#2C3638", "role": "alternative-dark" },
+    { "id": "matcha", "name": "Matcha", "hex": "#D0D1AF", "role": "alternative-light-green" },
+    { "id": "desert-khaki", "name": "Desert Khaki", "hex": "#DBCCB7", "role": "alternative-light-warm" }
   ],
   "contrastPolicy": {
     "minimumTextRatio": 4.5,
@@ -30,16 +33,28 @@
     { "foreground": "icy-tundra", "background": "steel-blue", "ratio": 6.51 },
     { "foreground": "livid-lime", "background": "black-is-back", "ratio": 12.1 },
     { "foreground": "livid-lime", "background": "royal-neptune", "ratio": 7.87 },
-    { "foreground": "livid-lime", "background": "steel-blue", "ratio": 4.68 }
+    { "foreground": "livid-lime", "background": "steel-blue", "ratio": 4.68 },
+    { "foreground": "abyssal-teal", "background": "matcha", "ratio": 7.93 },
+    { "foreground": "abyssal-teal", "background": "desert-khaki", "ratio": 7.88 },
+    { "foreground": "abyssal-teal", "background": "icy-tundra", "ratio": 11.36 },
+    { "foreground": "abyssal-teal", "background": "livid-lime", "ratio": 8.16 },
+    { "foreground": "black-is-back", "background": "matcha", "ratio": 11.76 },
+    { "foreground": "black-is-back", "background": "desert-khaki", "ratio": 11.68 },
+    { "foreground": "royal-neptune", "background": "matcha", "ratio": 7.65 },
+    { "foreground": "royal-neptune", "background": "desert-khaki", "ratio": 7.60 },
+    { "foreground": "icy-tundra", "background": "abyssal-teal", "ratio": 11.36 },
+    { "foreground": "matcha", "background": "abyssal-teal", "ratio": 7.93 },
+    { "foreground": "desert-khaki", "background": "abyssal-teal", "ratio": 7.88 },
+    { "foreground": "livid-lime", "background": "abyssal-teal", "ratio": 8.16 }
   ],
   "largeTextOnlyPairs": [
     { "foreground": "black-is-back", "background": "slate-gray", "ratio": 4.37 },
     { "foreground": "black-is-back", "background": "moss-gray", "ratio": 4.45 }
   ],
-  "approvedLogoBackgrounds": ["icy-tundra", "deer-run", "black-is-back", "royal-neptune", "steel-blue"],
+  "approvedLogoBackgrounds": ["icy-tundra", "deer-run", "matcha", "desert-khaki", "black-is-back", "royal-neptune", "steel-blue", "abyssal-teal"],
   "approvedLogoPlacements": {
-    "logo-tamniji.svg": ["icy-tundra", "deer-run"],
-    "logo-svetliji.svg": ["black-is-back", "royal-neptune", "steel-blue"]
+    "logo-tamniji.svg": ["icy-tundra", "deer-run", "matcha", "desert-khaki"],
+    "logo-svetliji.svg": ["black-is-back", "royal-neptune", "steel-blue", "abyssal-teal"]
   },
   "suggestedSchemes": [
     {
@@ -65,6 +80,38 @@
       "textForeground": "black-is-back",
       "accent": "royal-neptune",
       "logoBackground": "black-is-back"
+    },
+    {
+      "id": "abyssal-matcha",
+      "background": "matcha",
+      "surface": "desert-khaki",
+      "textForeground": "abyssal-teal",
+      "accent": "livid-lime",
+      "logoBackground": "abyssal-teal"
+    },
+    {
+      "id": "abyssal-desert",
+      "background": "desert-khaki",
+      "surface": "matcha",
+      "textForeground": "abyssal-teal",
+      "accent": "livid-lime",
+      "logoBackground": "abyssal-teal"
+    },
+    {
+      "id": "royal-matcha",
+      "background": "matcha",
+      "surface": "desert-khaki",
+      "textForeground": "royal-neptune",
+      "accent": "livid-lime",
+      "logoBackground": "royal-neptune"
     }
+  ],
+  "rendererThemes": [
+    { "id": "calm-studio", "background": "icy-tundra", "surface": "deer-run", "dark": "royal-neptune", "accent": "livid-lime", "secondary": "riviera-sea", "stage": "deer-run", "logoBackground": "royal-neptune", "logoVariant": "on-dark" },
+    { "id": "icy-abyssal", "background": "icy-tundra", "surface": "matcha", "dark": "abyssal-teal", "accent": "livid-lime", "secondary": "riviera-sea", "stage": "desert-khaki", "logoBackground": "abyssal-teal", "logoVariant": "on-dark" },
+    { "id": "matcha-abyssal", "background": "matcha", "surface": "desert-khaki", "dark": "abyssal-teal", "accent": "livid-lime", "secondary": "riviera-sea", "stage": "deer-run", "logoBackground": "abyssal-teal", "logoVariant": "on-dark" },
+    { "id": "desert-abyssal", "background": "desert-khaki", "surface": "matcha", "dark": "abyssal-teal", "accent": "livid-lime", "secondary": "riviera-sea", "stage": "deer-run", "logoBackground": "abyssal-teal", "logoVariant": "on-dark" },
+    { "id": "matcha-royal", "background": "matcha", "surface": "desert-khaki", "dark": "royal-neptune", "accent": "livid-lime", "secondary": "abyssal-teal", "stage": "deer-run", "logoBackground": "royal-neptune", "logoVariant": "on-dark" },
+    { "id": "desert-royal", "background": "desert-khaki", "surface": "matcha", "dark": "royal-neptune", "accent": "livid-lime", "secondary": "abyssal-teal", "stage": "deer-run", "logoBackground": "royal-neptune", "logoVariant": "on-dark" }
   ]
 }

@@ -1,9 +1,16 @@
-import { existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
+import { randomInt } from "node:crypto";
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const scriptDirectory = dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = resolve(scriptDirectory, "../..");
+const colorPalette = JSON.parse(readFileSync(join(repositoryRoot, "brand/color-palette.json"), "utf8"));
+const rendererThemes = Array.isArray(colorPalette?.rendererThemes) ? colorPalette.rendererThemes : [];
+if (rendererThemes.length === 0) {
+  console.error("brand/color-palette.json mora sadržati najmanje jednu rendererThemes temu.");
+  process.exit(1);
+}
 const args = process.argv.slice(2);
 const valueFor = (name) => {
   const index = args.indexOf(name);
@@ -82,8 +89,8 @@ const availableAudioTracks = [
   "mp3/paper-sun-parade.mp3",
   "mp3/paper-sun-parade-upbeat.mp3"
 ];
-const audioRotationIndex = [...id].reduce((sum, character) => sum + character.codePointAt(0), 0) % availableAudioTracks.length;
-const selectedAudioTrack = availableAudioTracks[audioRotationIndex];
+const selectedAudioTrack = availableAudioTracks[randomInt(availableAudioTracks.length)];
+const selectedColorTheme = rendererThemes[randomInt(rendererThemes.length)];
 
 writeFileSync(join(postDirectory, "video-props.json"), JSON.stringify({
   eyebrow: "",
@@ -99,7 +106,8 @@ writeFileSync(join(postDirectory, "video-props.json"), JSON.stringify({
   designVariant: "",
   motionTreatment: "",
   audioTrack: selectedAudioTrack,
-  audioVolume: 0.8
+  audioVolume: 0.8,
+  colorScheme: selectedColorTheme.id
 }, null, 2) + "\n");
 writeFileSync(join(postDirectory, "generated", "design-direction.json"), JSON.stringify({
   family: null,
@@ -111,6 +119,7 @@ writeFileSync(join(postDirectory, "generated", "design-direction.json"), JSON.st
   designInterventions: [],
   freshInterventionNote: null,
   motionTreatment: null,
+  colorScheme: selectedColorTheme.id,
   formatAdaptations: { feed: null, story: null, reels: null },
   formatPlan: {
     feed: { readingOrder: null, productAnchor: null, layoutId: null },
@@ -124,14 +133,14 @@ writeFileSync(join(postDirectory, "generated", "design-direction.json"), JSON.st
     rationale: null
   },
   logoSurface: "none",
-  logoVariant: null,
+  logoVariant: selectedColorTheme.logoVariant,
   palettePlan: {
-    background: null,
-    surface: null,
-    textForeground: null,
-    textBackground: null,
-    accent: null,
-    logoBackground: null,
+    background: selectedColorTheme.background,
+    surface: selectedColorTheme.surface,
+    textForeground: selectedColorTheme.dark,
+    textBackground: selectedColorTheme.background,
+    accent: selectedColorTheme.accent,
+    logoBackground: selectedColorTheme.logoBackground,
     rationale: null
   },
   typography: { family: "AUSekiManrope", weights: [] },

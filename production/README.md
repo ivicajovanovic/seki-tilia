@@ -4,6 +4,8 @@ Pre bilo kog rada pročitaj `AGENT-OPERATING-MAP.md`. Ona daje redosled izvora i
 
 ## Kreiranje nove objave
 
+Svaki novi paket obavezno proizvodi sva tri formata: Feed, Story i Reels. Reels uvek dobija nasumično izabranu odobrenu numeru iz `public/mp3/`.
+
 Iz korena repoa:
 
 ```bash
@@ -95,7 +97,7 @@ npm run dev
 
 Podržane `designVariant` vrednosti su `product-atelier`, `editorial-split`, `minimal-offer`, `product-card`, `premium-product-stage`, `offer-orbit`, `type-stage` i `gallery-shelf`. Biraj ih prema briefu i dizajnerskoj istoriji, ne prema poslednjem korišćenom šablonu.
 
-Pre prvog drafta izaberi `palettePlan` iz `brand/color-palette.json`. Plan beleži pozadinu, površinu, tekst, akcenat i neposrednu logo-pozadinu. `logoVariant` je `on-light` ili `on-dark` i mora odgovarati kombinaciji iz `approvedLogoPlacements`. Tekstualni par mora biti naveden u `safeTextPairs`.
+Pre prvog drafta potvrdi početni nasumično izabrani `colorScheme` iz `brand/color-palette.json > rendererThemes`, ili ga nasumično zameni drugom kompatibilnom temom. Vrednost mora biti ista u `video-props.json` i `generated/design-direction.json`. `palettePlan` beleži pozadinu, površinu, tekst, akcenat i neposrednu logo-pozadinu i mora doslovno odgovarati temi. `logoVariant` mora odgovarati `approvedLogoPlacements`, a tekstualni par mora biti u `safeTextPairs`.
 
 Uz produktni vizual upiši `productShape` kao `wide`, `compact` ili `tall`. Uz ponudu upiši `offerKind` kao `price`, `discount`, `bundle`, `gift`, `deadline` ili `none`. Objava tipa akcija ne može koristiti `deadline` ili `none` kao zamenu za konkretnu mehaniku.
 

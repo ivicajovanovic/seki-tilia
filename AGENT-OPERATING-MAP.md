@@ -8,7 +8,7 @@ Ovaj dokument je početna tačka rada u repou AU Šeki-Tilia. Služi da agent od
 | --- | --- | --- |
 | Redosled rada i nepregovariva pravila | `AGENTS.md` | obavezne korake, bezbednost, lokacije i izlazne fajlove |
 | Identitet brenda | `brand/brand-guide.md` | paletu, Manrope, originalni logo, ton i vidljivost |
-| Operativna paleta i kontrast | `brand/color-palette.json` | izbor devet tonova, bezbedne tekstualne parove i odobrene `on-light`/`on-dark` logo kombinacije |
+| Operativna paleta i kontrast | `brand/color-palette.json` | izbor dvanaest tonova, šest renderer tema, bezbedne tekstualne parove i odobrene `on-light`/`on-dark` logo kombinacije |
 | Plan sadržaja | `brand/content-framework.md` | rubriku, format i ulogu objave u seriji |
 | Potvrđeni podaci o ograncima | `brand/brand-config.json` | adresu, telefon i radno vreme samo za lokalnu objavu |
 | Copy i bezbednost | `production/copy-playbook.md`, `production/content-safety-rules.md` | caption, CTA, hashtagove, tvrdnje i blokade |
@@ -25,7 +25,7 @@ Kada se dokumenti razlikuju, prednost imaju najnovije korisnikovo uputstvo, zati
 1. Pročitaj ovaj dokument, zatim `AGENTS.md` i sve dokumente koje on navodi.
 2. Otvori novi paket komandom `node production/scripts/create-post.mjs --slug "kratak-naziv"`.
 3. Doslovno sačuvaj korisnikov brief u `brief.md`, a originale bez izmene u `source/`. Nerazvrstani privatni materijal može privremeno biti u `client-assets/inbox/`, ali ne ostaje tamo nakon otvaranja paketa.
-4. Popuni `input.json`: potvrđene činjenice, izvore, format, `contentApproach` i `copyFreshnessNote`.
+4. Popuni `input.json`: potvrđene činjenice, izvore, sva tri obavezna formata, `contentApproach` i `copyFreshnessNote`.
 5. Za lokalnu objavu proveri `brand/brand-config.json`; za sve zdravstvene i produktne tvrdnje proveri izvor ili ih izostavi.
 6. Za produktni vizual pokreni `inspect-assets.mjs` i otvori svetli/tamni pregled. Umereno slabiji klijentov asset odobri kao `approved-with-limitations`, dokumentuj `qualityLimitations` i prilagodi kompoziciju; blokiraj samo kritične defekte iz `blockingDefects`. Svaka korišćena pripremljena kopija mora biti vezana hashom.
 7. Pregledaj sve četiri odobrene reference i poslednje tri evidentirane objave. Izaberi familiju tek nakon `familyFit` provere i popuni `generated/design-direction.json`, uključujući stvarno korišćene `referenceFiles`, dve stvarne intervencije, strukturisani `formatPlan`, formatne adaptacije i Reels ritam.
@@ -43,7 +43,7 @@ Kontinuitet brenda nije dozvola za recikliranje istog posta. Svaka nova objava m
 - `motionTreatment` je obavezan kada paket ima Reels, upisuje se identično u `design-direction.json` i `video-props.json`, utiče na render i ne sme se ponoviti u poslednje tri Reels objave.
 - `validatedRenders` koristi tačne putanje: `final/feed-1080x1350.png`, `final/story-1080x1920.png`, `generated/reels-intro.png`, `generated/reels-offer.png` i `generated/reels-closing.png`.
 - Review hashom zaključava input, props, design-direction, renderer, CSS, manifest, paletu, brend konfiguraciju, oba logo originala i renderer kopije, lokalne fontove, izabrani audio, package manifest/lock, sve četiri reference, rendere i finalni MP4. Svaka kasnija promena zahteva novo pokretanje `prepare-visual-review.mjs` i novi nezavisni pregled.
-- `formatAdaptations` mora objasniti šta se menja između Feed-a, Story-ja i Reels-a. Isti raspored se ne sme samo rastegnuti na drugi format.
+- Svaki zahtev proizvodi Feed, Story i Reels. `formatAdaptations` mora objasniti šta se menja između njih; isti raspored se ne sme samo rastegnuti.
 
 Pre-flight proverava ponovljeni `signature`, sadržajni ugao, kombinaciju dizajnerskih intervencija i Reels ritam. Opisna polja se proveravaju ručno u `review.md`: promena mora biti stvarna, ne samo druga boja, novi proizvod ili preformulisan isti tekst.
 

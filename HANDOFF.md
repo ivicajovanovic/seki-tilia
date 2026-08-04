@@ -10,6 +10,8 @@
 - Renderer, brend pravila, paleta, odobrene reference, pre-flight i tok nezavisnog pregleda su deo framework-a.
 - Svaki naredni paket mora proći kompletan tok i ne sme ponoviti sadržajni ili vizuelni pristup prethodna tri paketa.
 - Klijentske činjenice i materijale dostavljaju stručna lica. Sistem i dalje zahteva izvor uz svaku zdravstvenu ili produktnu tvrdnju, ali ne uvodi poseban interni stručni approval gate.
+- Svaki zahtev proizvodi Feed, Story i Reels. Reels uvek koristi nasumično izabranu odobrenu numeru, a početna tema boja se nasumično bira među šest bezbednih renderer tema.
+- Operativna paleta sada ima dvanaest tonova. Prvobitnih devet je zadržano, a dodati su Abyssal Teal `#2C3638`, Matcha `#D0D1AF` i Desert Khaki `#DBCCB7`.
 
 ## Obavezan početak rada
 
@@ -53,4 +55,4 @@ Finali idu samo u `final/`: Feed PNG, Story PNG, Reels MP4 i caption. Pravila za
 
 `brand/brand-config.json` sadrži 12 unetih lokacija, dok deo brend dokumentacije pominje najmanje 14. Pre prve lokalne objave potvrditi da li nedostaju dva zapisa ili treba uskladiti opis mreže.
 
-Metapodaci šest audio numera evidentirani su u `public/mp3/README.md`. Pre komercijalne upotrebe vlasnik projekta potvrđuje da je izvorni Suno nalog imao odgovarajuća prava u trenutku generisanja.
+Metapodaci šest audio numera evidentirani su u `public/mp3/README.md`; vlasnik projekta je potvrdio da su dozvoljene za korišćenje.

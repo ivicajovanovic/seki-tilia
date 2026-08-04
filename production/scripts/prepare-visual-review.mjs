@@ -39,8 +39,8 @@ const supportedAudioTracks = new Set([
   "mp3/paper-sun-parade-upbeat.mp3",
 ]);
 const requestedFormats = Array.isArray(input?.requestedFormats) ? input.requestedFormats : [];
-if (requestedFormats.length === 0 || requestedFormats.some((format) => !supportedFormats.has(format)) || new Set(requestedFormats).size !== requestedFormats.length) {
-  console.error("input.requestedFormats mora biti neprazan niz jedinstvenih vrednosti feed, story i/ili reels.");
+if (requestedFormats.length !== supportedFormats.size || requestedFormats.some((format) => !supportedFormats.has(format)) || new Set(requestedFormats).size !== requestedFormats.length) {
+  console.error("input.requestedFormats mora sadržati sva tri jedinstvena formata: feed, story i reels.");
   process.exit(1);
 }
 const artifactsByFormat = {

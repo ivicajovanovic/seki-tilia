@@ -2,6 +2,7 @@ import React from "react";
 import { loadFont } from "@remotion/fonts";
 import { Activity, CheckCircle2, HeartHandshake, MapPin, ShieldCheck, Sparkles } from "lucide-react";
 import { AbsoluteFill, Audio as RemotionAudio, cancelRender, Composition, continueRender, delayRender, Easing, Img, interpolate, Sequence, spring, staticFile, Still, useCurrentFrame, useVideoConfig } from "remotion";
+import colorPalette from "../../brand/color-palette.json";
 
 type DesignVariant = "product-atelier" | "editorial-split" | "minimal-offer" | "product-card" | "premium-product-stage" | "offer-orbit" | "type-stage" | "gallery-shelf";
 type MotionTreatment = "staged-reveal" | "offer-build" | "detail-cutaway" | "editorial-pan" | "location-close";
@@ -31,17 +32,35 @@ type VideoProps = {
   benefits?: BenefitItem[];
   audioTrack?: string;
   audioVolume?: number;
+  colorScheme?: string;
 };
 
 const colors = {
-  petrol: "#1C3B42",
-  cream: "#F7F5EC",
-  lime: "#B8E100",
-  beige: "#D8CFCAF0",
-  stageTaupe: "#D0C5B9",
-  podiumTop: "#E4DCD4",
-  podiumFront: "#C4B8AB",
-  charcoal: "#0F1519",
+  petrol: "var(--palette-dark)",
+  cream: "var(--palette-base)",
+  lime: "var(--palette-accent)",
+  beige: "var(--palette-surface)",
+  stageTaupe: "var(--palette-stage)",
+  podiumTop: "var(--palette-base)",
+  podiumFront: "var(--palette-surface)",
+  charcoal: "var(--palette-ink)",
+  aqua: "var(--palette-secondary)",
+};
+
+const paletteColorMap = new Map(colorPalette.colors.map((color) => [color.id, color.hex]));
+const rendererThemeMap = new Map(colorPalette.rendererThemes.map((theme) => [theme.id, theme]));
+const paletteHex = (id: string) => paletteColorMap.get(id) ?? "#0F1519";
+const paletteStyle = (schemeId = "calm-studio") => {
+  const theme = rendererThemeMap.get(schemeId) ?? rendererThemeMap.get("calm-studio") ?? colorPalette.rendererThemes[0];
+  return {
+    "--palette-base": paletteHex(theme.background),
+    "--palette-surface": paletteHex(theme.surface),
+    "--palette-dark": paletteHex(theme.dark),
+    "--palette-accent": paletteHex(theme.accent),
+    "--palette-secondary": paletteHex(theme.secondary),
+    "--palette-stage": paletteHex(theme.stage),
+    "--palette-ink": paletteHex("black-is-back"),
+  } as React.CSSProperties;
 };
 
 const brandFontFamily = "AUSekiManrope";
@@ -112,8 +131,8 @@ const CleanPodium: React.FC<{ story: boolean; width?: number; bottom?: number; t
 
   return (
     <div data-qa="podium" style={{ bottom: pb, height: topH + ph, left: "50%", position: "absolute", translate: "-50% 0", width: pw, zIndex: 2 }}>
-      <div style={{ background: "linear-gradient(104deg, #77695D 0%, #AA9A8B 18%, #E9DED3 43%, #F7F0E8 53%, #B6A696 76%, #706257 100%)", bottom: -frontExtension, height: ph + (topH / 2) + frontExtension, left: 0, position: "absolute", width: pw, zIndex: 2 }} />
-      <div style={{ background: "linear-gradient(114deg, #8E8071 0%, #C6B7A8 20%, #F8F2EA 42%, #FFFDF8 51%, #DACBBE 67%, #978879 100%)", borderRadius: "50%", height: topH, left: 0, position: "absolute", top: 0, width: pw, zIndex: 3 }} />
+      <div style={{ background: `linear-gradient(104deg, ${colors.petrol} 0%, ${colors.podiumFront} 24%, ${colors.podiumTop} 52%, ${colors.stageTaupe} 76%, ${colors.petrol} 100%)`, bottom: -frontExtension, height: ph + (topH / 2) + frontExtension, left: 0, position: "absolute", width: pw, zIndex: 2 }} />
+      <div style={{ background: `linear-gradient(114deg, ${colors.stageTaupe} 0%, ${colors.podiumFront} 25%, ${colors.podiumTop} 52%, ${colors.cream} 66%, ${colors.stageTaupe} 100%)`, borderRadius: "50%", height: topH, left: 0, position: "absolute", top: 0, width: pw, zIndex: 3 }} />
       <div style={{ borderTop: "3px solid rgba(255, 255, 255, 0.86)", borderRadius: "50%", height: topH, left: 0, position: "absolute", top: 0, width: pw, zIndex: 5 }} />
       <div style={{ borderTop: "2px solid rgba(28, 59, 66, 0.28)", borderRadius: "50%", height: topH * 0.66, left: pw * 0.10, position: "absolute", top: topH * 0.19, width: pw * 0.80, zIndex: 4 }} />
     </div>
@@ -462,7 +481,7 @@ const VerticalSpotlight: React.FC<{ story: boolean; variant: "atelier" | "type" 
   const offset = story ? (variant === "type" ? -130 : -92) : (variant === "type" ? -112 : -78);
   return (
     <div aria-hidden="true" style={{ bottom: story ? 235 : 165, height: diameter, position: "absolute", right: offset, width: diameter, zIndex: 1 }}>
-      <div style={{ background: "radial-gradient(circle at 37% 30%, #F7F0E8 0%, #D8CEC2 54%, #B2A394 100%)", borderRadius: "50%", height: "100%", position: "absolute", width: "100%" }} />
+      <div style={{ background: `radial-gradient(circle at 37% 30%, ${colors.cream} 0%, ${colors.beige} 54%, ${colors.stageTaupe} 100%)`, borderRadius: "50%", height: "100%", position: "absolute", width: "100%" }} />
       <div style={{ border: `${story ? 11 : 8}px solid ${colors.lime}`, borderRadius: "50%", height: "84%", position: "absolute", right: story ? -82 : -60, top: story ? -62 : -48, width: "84%" }} />
       <div style={{ border: `${story ? 3 : 2}px solid rgba(28, 59, 66, 0.20)`, borderRadius: "50%", height: "65%", left: story ? 72 : 54, position: "absolute", top: story ? 102 : 76, width: "65%" }} />
       <div style={{ background: "linear-gradient(110deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.68) 48%, rgba(255,255,255,0) 100%)", borderRadius: "50%", height: "26%", left: "15%", position: "absolute", top: "12%", width: "68%" }} />
@@ -694,7 +713,7 @@ const OfferOrbit: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow, he
       <div
         aria-hidden="true"
         style={{
-          background: "linear-gradient(138deg, #1C3B42 0%, #275A61 52%, #1B8188 100%)",
+          background: `linear-gradient(138deg, ${colors.petrol} 0%, ${colors.charcoal} 52%, ${colors.aqua} 100%)`,
           borderRadius: "50%",
           height: isStory ? 970 : 850,
           position: "absolute",
@@ -850,7 +869,7 @@ const PromoHook: React.FC<VideoProps & { durationInFrames: number }> = ({ durati
       {isOfferBuild && <div aria-hidden="true" style={{ backgroundColor: colors.lime, bottom: 0, height: "38%", left: 0, position: "absolute", right: 0 }} />}
       {isDetailCutaway && <div aria-hidden="true" style={{ backgroundColor: colors.stageTaupe, height: "100%", position: "absolute", right: cutawayTravel - 30, top: 0, width: 330 }} />}
       {isEditorialPan && <div aria-hidden="true" style={{ border: `9px solid ${colors.lime}`, borderRadius: "50%", height: 760, position: "absolute", right: editorialTravel - 260, top: 370, width: 760 }} />}
-      {isLocationClose && <div aria-hidden="true" style={{ background: "linear-gradient(145deg, #1C3B42 0%, #1B8188 100%)", borderRadius: "50%", height: 760, position: "absolute", right: -520, top: 420, width: 760 }} />}
+      {isLocationClose && <div aria-hidden="true" style={{ background: `linear-gradient(145deg, ${colors.petrol} 0%, ${colors.aqua} 100%)`, borderRadius: "50%", height: 760, position: "absolute", right: -520, top: 420, width: 760 }} />}
       <div style={{ alignItems: "center", display: "flex", justifyContent: "space-between", position: "relative", zIndex: 2 }}>
         <div style={{ color: isLocationClose ? colors.petrol : colors.lime, fontSize: isOfferBuild ? 50 : 34, fontWeight: 800, letterSpacing: isOfferBuild ? -1 : 3.4, maxWidth: 760 }}>{lead}</div>
         <LogoMark background={isLocationClose ? "light" : "dark"} size={70} />
@@ -948,7 +967,7 @@ export const SekiTiliaPromo: React.FC<VideoProps> = (props) => {
   const volume = props.audioVolume ?? 0.8;
 
   return (
-    <AbsoluteFill>
+    <AbsoluteFill style={paletteStyle(props.colorScheme)}>
       <RemotionAudio src={staticFile(audioSrc)} volume={volume} />
       <Sequence durationInFrames={plan.hookDuration} premountFor={30}><PromoHook {...props} durationInFrames={plan.hookDuration} /></Sequence>
       <Sequence from={plan.heroFrom} durationInFrames={plan.heroDuration} premountFor={30}><HeroScene {...props} durationInFrames={plan.heroDuration} /></Sequence>
@@ -956,12 +975,12 @@ export const SekiTiliaPromo: React.FC<VideoProps> = (props) => {
     </AbsoluteFill>
   );
 };
-export const SekiTiliaPost: React.FC<VideoProps> = (props) => <Variant {...props} />;
+export const SekiTiliaPost: React.FC<VideoProps> = (props) => <AbsoluteFill style={paletteStyle(props.colorScheme)}><Variant {...props} /></AbsoluteFill>;
 
 export const MyComposition: React.FC = () => (
   <>
-    <Composition id="SekiTiliaPromo" component={SekiTiliaPromo} durationInFrames={360} fps={30} width={1080} height={1920} defaultProps={{ eyebrow: "Novitet u ponudi", headline: "Pažljivo izabrano za vašu rutinu.", supportingText: "Uskoro stižu konkretne informacije i fotografije proizvoda.", offerLabel: "Saznajte više u apoteci", offerKind: "none", cta: "Posetite najbližu AU Šeki-Tilia apoteku.", locationLine: "AU Šeki-Tilia", productShape: "compact", designVariant: "product-atelier", motionTreatment: "staged-reveal", footerStyle: "brand-full" }} />
-    <Still id="SekiTiliaFeed" component={SekiTiliaPost} width={1080} height={1350} defaultProps={{ eyebrow: "Novitet u ponudi", headline: "Pažljivo izabrano za vašu rutinu.", supportingText: "Uskoro stižu konkretne informacije i fotografije proizvoda.", offerLabel: "Saznajte više u apoteci", offerKind: "none", cta: "Posetite AU Šeki-Tilia.", locationLine: "AU Šeki-Tilia", productShape: "compact", designVariant: "product-atelier", footerStyle: "brand-full" }} />
-    <Still id="SekiTiliaStory" component={SekiTiliaPost} width={1080} height={1920} defaultProps={{ eyebrow: "Novitet u ponudi", headline: "Pažljivo izabrano za vašu rutinu.", supportingText: "Uskoro stižu konkretne informacije i fotografije proizvoda.", offerLabel: "Saznajte više u apoteci", offerKind: "none", cta: "Posetite AU Šeki-Tilia.", locationLine: "AU Šeki-Tilia", productShape: "compact", designVariant: "product-atelier", footerStyle: "brand-full" }} />
+    <Composition id="SekiTiliaPromo" component={SekiTiliaPromo} durationInFrames={360} fps={30} width={1080} height={1920} defaultProps={{ eyebrow: "Novitet u ponudi", headline: "Pažljivo izabrano za vašu rutinu.", supportingText: "Uskoro stižu konkretne informacije i fotografije proizvoda.", offerLabel: "Saznajte više u apoteci", offerKind: "none", cta: "Posetite najbližu AU Šeki-Tilia apoteku.", locationLine: "AU Šeki-Tilia", productShape: "compact", designVariant: "product-atelier", motionTreatment: "staged-reveal", footerStyle: "brand-full", colorScheme: "calm-studio" }} />
+    <Still id="SekiTiliaFeed" component={SekiTiliaPost} width={1080} height={1350} defaultProps={{ eyebrow: "Novitet u ponudi", headline: "Pažljivo izabrano za vašu rutinu.", supportingText: "Uskoro stižu konkretne informacije i fotografije proizvoda.", offerLabel: "Saznajte više u apoteci", offerKind: "none", cta: "Posetite AU Šeki-Tilia.", locationLine: "AU Šeki-Tilia", productShape: "compact", designVariant: "product-atelier", footerStyle: "brand-full", colorScheme: "calm-studio" }} />
+    <Still id="SekiTiliaStory" component={SekiTiliaPost} width={1080} height={1920} defaultProps={{ eyebrow: "Novitet u ponudi", headline: "Pažljivo izabrano za vašu rutinu.", supportingText: "Uskoro stižu konkretne informacije i fotografije proizvoda.", offerLabel: "Saznajte više u apoteci", offerKind: "none", cta: "Posetite AU Šeki-Tilia.", locationLine: "AU Šeki-Tilia", productShape: "compact", designVariant: "product-atelier", footerStyle: "brand-full", colorScheme: "calm-studio" }} />
   </>
 );

@@ -24,8 +24,11 @@ Nikada ne predstavljamo generisanu osobu kao stvarnu zaposlenu apoteke.
 | Neutralna srednja | Sivi ton A | `#7A7C7A` |
 | Neutralna topla | Sivi ton B | `#7D7D79` |
 | Neutralna hladna | Sivi ton C | `#4E5A5F` |
+| Alternativna tamna | Abyssal Teal | `#2C3638` |
+| Alternativna svetlozelena | Matcha | `#D0D1AF` |
+| Alternativna topla svetla | Desert Khaki | `#DBCCB7` |
 
-Operativni izbor i kontrastne kombinacije vode se u [color-palette.md](color-palette.md) i `color-palette.json`. Agent može izabrati novu kombinaciju iz svih devet tonova kada ona odgovara zadatku, ali tekst, CTA i funkcionalne ikonice koriste samo unapred odobrene kontrastne parove. Logo koristi odgovarajuću `on-light` ili `on-dark` varijantu i samo kombinaciju iz `approvedLogoPlacements`; kontrast se ne rešava belom karticom.
+Operativni izbor i kontrastne kombinacije vode se u [color-palette.md](color-palette.md) i `color-palette.json`. Postojećih devet tonova je zadržano i dodata su tri nova, ukupno dvanaest. Agent nasumično bira jednu od šest bezbednih renderer tema, uz proveru kompatibilnosti sa proizvodom i direktnim kontrastom. Tekst, CTA i funkcionalne ikonice koriste samo unapred odobrene kontrastne parove. Logo koristi odgovarajuću `on-light` ili `on-dark` varijantu i samo kombinaciju iz `approvedLogoPlacements`; kontrast se ne rešava belom karticom.
 
 ## Tipografija
 

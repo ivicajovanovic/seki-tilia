@@ -7,7 +7,7 @@ Ovaj dokument pretvara brend vodič i vizuelne reference u operativna pravila za
 - Koristi se samo originalni logo iz `logos/`. Znak se nikada ne prebojava, rasteže niti postavlja direktno na limeta, fotografsku ili drugu nekontrolisanu podlogu.
 - Znak bez naziva koristi se bez bele, krem ili druge pravougaone kartice. `logoVariant: "on-light"` koristi `logo-tamniji.svg` na svetloj kontrolisanoj pozadini, a `logoVariant: "on-dark"` koristi `logo-svetliji.svg` na tamnoj. `logoSurface` je obavezno `"none"`; kombinacija varijante i neposredne pozadine mora postojati u `approvedLogoPlacements` iz `brand/color-palette.json`.
 - Jedina porodica teksta na AU Šeki-Tilia vizualima je **Manrope**. Naslov koristi 700 ili 800, a ostali tekst 400, 500 ili 600. Renderer eksplicitno učitava oba potrebna latin podskupa iste Manrope porodice i ne koristi zamenski font.
-- Paleta ima devet odobrenih tonova iz `brand/color-palette.json`. Agent bira kombinaciju prema briefu i beleži je u `palettePlan`; jedan vizual koristi najviše jedan dominantan akcenat i ne pretvara limetu u pozadinu za logo. Tekst, CTA i funkcionalne ikonice koriste samo parove iz `safeTextPairs`, dok logo koristi isključivo kombinacije iz `approvedLogoPlacements`.
+- Paleta ima dvanaest odobrenih tonova iz `brand/color-palette.json`: prvobitnih devet plus Abyssal Teal, Matcha i Desert Khaki. Sistem nasumično bira `colorScheme` iz šest `rendererThemes`, a agent ga potvrđuje ili nasumično zamenjuje drugom kompatibilnom temom. `colorScheme` se upisuje identično u `design-direction.json` i `video-props.json`, dok `palettePlan` mora odgovarati temi. Jedan vizual koristi najviše jedan dominantan akcenat. Tekst, CTA i funkcionalne ikonice koriste samo parove iz `safeTextPairs`, dok logo koristi isključivo kombinacije iz `approvedLogoPlacements`.
 - Obavezni elementi ostaju čitljivi na punoj veličini i u približno 25% prikazu telefona: logo, glavna poruka, ponuda, proizvod i CTA kada postoje.
 - Pravougaoni paneli, kartice, proizvodne podloge, footeri i okviri imaju oštre uglove. Zaobljenje je dozvoljeno samo za pill-dugme/kratku ponudnu oznaku (`borderRadius: 999`) ili čiste kružne dekorativne oblike (`borderRadius: 50%`).
 - Uz `imageSrc` u `video-props.json` podržani su opcioni parametari:
@@ -64,6 +64,7 @@ Pre dizajna agent pregleda četiri reference navedene u `brand/design-references
 - strukturisanim `formatPlan` vrednostima: različiti Feed i Story `layoutId`, redosled čitanja i anchor proizvoda, kao i Reels `shotPlan` sa najmanje tri scene;
 - `familyFit` potvrdom da familija odgovara proporciji proizvoda, stvarnoj snazi ponude i potrebnoj scenskoj dubini.
 - `palettePlan` sa identifikatorima pozadine, površine, teksta, akcenta i logo-pozadine iz `brand/color-palette.json`, uz kratko obrazloženje odnosa prema zadatku.
+- `colorScheme` iz `rendererThemes`, identičan u renderer props-ima i usklađen sa svim `palettePlan` poljima.
 
 U `referenceFiles` dozvoljene su samo vrednosti iz `brand/design-references/references.json`, a navode se samo reference čije su osobine stvarno primenjene. Za familiju `premium-product-stage` može se navesti `ref-premium-product-stage.png`.
 

@@ -6,7 +6,7 @@ Za Instagram i Facebook priprema se isti osnovni materijal:
 
 - 12 feed objava mesečno;
 - 4 Reels videa mesečno;
-- Story verzija po potrebi, izvedena iz feed objave ili Reels-a.
+- Story verzija za svaku objavu, uz Feed i Reels.
 
 Preporučena raspodela za jedan mesec:
 
@@ -48,7 +48,7 @@ Cena / popust / rok akcije:
 Mehanika akcije i izvor potvrde:
 Lokacija (ako je relevantno): sve | 1 | 2 | 3
 Fotografije: putanje ili fajlovi
-Željeni formati: feed | story | reels
+Formati: feed + story + reels (sva tri su obavezna)
 Napomena za stručnu proveru:
 ```
 
