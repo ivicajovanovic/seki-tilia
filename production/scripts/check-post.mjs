@@ -21,32 +21,29 @@ const supportedImageBackgrounds = new Set(["transparent", "opaque"]);
 const supportedContentApproaches = new Set(["offer-first", "product-context", "routine-moment", "practical-guidance", "seasonal-context", "local-availability", "professional-prompt"]);
 const supportedDesignInterventions = new Set(["reading-order", "product-placement", "offer-treatment", "scene-depth", "image-crop", "type-composition", "cta-footer", "icon-role", "motion-rhythm"]);
 const supportedMotionTreatments = new Set(["staged-reveal", "offer-build", "detail-cutaway", "editorial-pan", "location-close"]);
+const supportedFormats = new Set(["feed", "story", "reels"]);
 const supportedAudioTracks = new Set([
   "mp3/clear-path.mp3",
   "mp3/clear-path-ambient.mp3",
   "mp3/open-sky-drift.mp3",
   "mp3/open-sky-drift-chill.mp3",
   "mp3/paper-sun-parade.mp3",
-  "mp3/paper-sun-parade-upbeat.mp3",
-  "clear-path.mp3",
-  "clear-path-ambient.mp3",
-  "open-sky-drift.mp3",
-  "open-sky-drift-chill.mp3",
-  "paper-sun-parade.mp3",
-  "paper-sun-parade-upbeat.mp3"
+  "mp3/paper-sun-parade-upbeat.mp3"
 ]);
 const supportedProductShapes = new Set(["wide", "compact", "tall"]);
 const supportedOfferKinds = new Set(["deadline", "price", "discount", "bundle", "gift", "none"]);
 const approvedAssetStatuses = new Set(["approved", "approved-with-limitations"]);
 const requiredAssetManualChecks = ["inspectedOnLightAndDark", "noCursorOrUiArtifacts", "cleanCutoutEdges", "packagingUndistorted", "productIdentityVerifiable"];
-const requiredValidatedRenders = [
-  "final/feed-1080x1350.png",
-  "final/story-1080x1920.png",
-  "generated/reels-intro.png",
-  "generated/reels-offer.png",
-  "generated/reels-closing.png",
-];
-const requiredQualityCriteria = ["compositionAndBalance", "hierarchyAndMobileImpact", "productIntegrationAndGrounding", "depthLightingAndFinish", "referenceLevelDistinctiveness", "formatAdaptation", "reelsDynamics"];
+const renderRequirements = {
+  feed: [{ path: "final/feed-1080x1350.png", width: 1080, height: 1350, hashKey: "feed" }],
+  story: [{ path: "final/story-1080x1920.png", width: 1080, height: 1920, hashKey: "story" }],
+  reels: [
+    { path: "generated/reels-intro.png", width: 1080, height: 1920, hashKey: "reelsIntro" },
+    { path: "generated/reels-offer.png", width: 1080, height: 1920, hashKey: "reelsOffer" },
+    { path: "generated/reels-closing.png", width: 1080, height: 1920, hashKey: "reelsClosing" },
+  ],
+};
+const baseQualityCriteria = ["compositionAndBalance", "hierarchyAndMobileImpact", "productIntegrationAndGrounding", "depthLightingAndFinish", "referenceLevelDistinctiveness", "formatAdaptation"];
 const imageExtensions = new Set([".png", ".jpg", ".jpeg", ".webp"]);
 const hashFile = (path) => createHash("sha256").update(readFileSync(path)).digest("hex");
 const inside = (root, path) => path === root || path.startsWith(`${root}${sep}`);
@@ -55,6 +52,15 @@ const probeMedia = (path) => {
   if (result.status !== 0) return null;
   const parsed = JSON.parse(result.stdout);
   return { ...parsed.streams?.[0], formatDuration: parsed.format?.duration };
+};
+const hasAudioStream = (path) => {
+  const result = spawnSync("ffprobe", ["-v", "error", "-select_streams", "a:0", "-show_entries", "stream=codec_type", "-of", "json", path], { encoding: "utf8" });
+  if (result.status !== 0) return false;
+  try {
+    return JSON.parse(result.stdout)?.streams?.some((stream) => stream.codec_type === "audio") === true;
+  } catch {
+    return false;
+  }
 };
 const inspectVisualMetadata = (path) => {
   const media = probeMedia(path);
@@ -128,6 +134,10 @@ const paletteColors = Array.isArray(colorPalette?.colors) ? colorPalette.colors 
 const paletteIds = new Set(paletteColors.map((color) => color?.id).filter((id) => typeof id === "string"));
 const safeTextPairs = new Set((Array.isArray(colorPalette?.safeTextPairs) ? colorPalette.safeTextPairs : []).map((pair) => `${pair?.foreground}|${pair?.background}`));
 const approvedLogoBackgrounds = new Set(Array.isArray(colorPalette?.approvedLogoBackgrounds) ? colorPalette.approvedLogoBackgrounds : []);
+const logoVariantFiles = { "on-light": "logo-tamniji.svg", "on-dark": "logo-svetliji.svg" };
+const approvedLogoPlacements = colorPalette?.approvedLogoPlacements && typeof colorPalette.approvedLogoPlacements === "object"
+  ? colorPalette.approvedLogoPlacements
+  : {};
 const reviewPath = resolve(postDirectory, "review.md");
 const review = existsSync(reviewPath) ? readFileSync(reviewPath, "utf8") : "";
 const visualDesignSkillPath = resolve(repositoryRoot, "agent-skills-required/visual-design/SKILL.md");
@@ -135,7 +145,11 @@ const captionPath = ["final/caption.md", "generated/caption.md"].map((file) => r
 const caption = captionPath ? readFileSync(captionPath, "utf8") : "";
 
 if (approvedReferenceFiles.size === 0) errors.push("references.json mora sadržati najmanje jednu odobrenu referencu.");
-if (paletteIds.size < 2 || safeTextPairs.size === 0 || approvedLogoBackgrounds.size === 0) errors.push("color-palette.json mora imati boje, bezbedne tekstualne parove i odobrene logo-pozadine.");
+if (paletteIds.size < 2 || safeTextPairs.size === 0 || approvedLogoBackgrounds.size === 0 || Object.keys(approvedLogoPlacements).length === 0) errors.push("color-palette.json mora imati boje, bezbedne tekstualne parove i mapu odobrenih logo-varijanti i pozadina.");
+for (const logoFile of Object.values(logoVariantFiles)) {
+  const placements = approvedLogoPlacements?.[logoFile];
+  if (!Array.isArray(placements) || placements.length === 0 || placements.some((background) => !paletteIds.has(background))) errors.push(`color-palette.json nema validne approvedLogoPlacements vrednosti za ${logoFile}.`);
+}
 if (approvedReferenceFiles.size !== approvedReferenceList.length) errors.push("references.json ne sme sadržati duplirane identifikatore.");
 for (const referenceFile of approvedReferenceFiles) {
   if (typeof referenceFile !== "string" || !/^[a-z0-9][a-z0-9-]*\.png$/.test(referenceFile)) {
@@ -146,12 +160,17 @@ for (const referenceFile of approvedReferenceFiles) {
 }
 
 const getDesignRecords = () => {
-  const records = [];
+  const recordsById = new Map();
   const history = readJson(resolve(repositoryRoot, "brand/design-history.json"), "brand/design-history.json");
-  if (Array.isArray(history?.records)) records.push(...history.records);
+  if (Array.isArray(history?.records)) {
+    for (const record of history.records) {
+      if (record?.id && typeof record.id === "string") recordsById.set(record.id, record);
+      else warnings.push("Preskočen je zapis bez stabilnog id u brand/design-history.json.");
+    }
+  }
 
   const productionsDirectory = resolve(repositoryRoot, "productions");
-  if (!existsSync(productionsDirectory)) return records;
+  if (!existsSync(productionsDirectory)) return [...recordsById.values()];
   for (const year of readdirSync(productionsDirectory, { withFileTypes: true })) {
     if (!year.isDirectory()) continue;
     const yearDirectory = join(productionsDirectory, year.name);
@@ -166,7 +185,7 @@ const getDesignRecords = () => {
           const direction = JSON.parse(readFileSync(directionPath, "utf8"));
           const postInputPath = join(monthDirectory, post.name, "input.json");
           const postInput = existsSync(postInputPath) ? JSON.parse(readFileSync(postInputPath, "utf8")) : null;
-          if (direction?.signature) records.push({
+          if (direction?.signature) recordsById.set(post.name, {
             id: post.name,
             signature: direction.signature,
             contentApproach: postInput?.contentApproach,
@@ -179,7 +198,7 @@ const getDesignRecords = () => {
       }
     }
   }
-  return records;
+  return [...recordsById.values()];
 };
 
 if (input?.postType === null) errors.push("Nije odabran tip objave.");
@@ -205,6 +224,15 @@ if (Array.isArray(input?.claims)) {
   for (const claim of input.claims) {
     if (!claim.text || !claim.source) errors.push("Svaka zdravstvena ili produktna tvrdnja mora imati tekst i izvor.");
   }
+}
+
+const requestedFormats = Array.isArray(input?.requestedFormats) ? input.requestedFormats : [];
+if (!Array.isArray(input?.requestedFormats) || requestedFormats.length === 0) {
+  errors.push("input.requestedFormats mora biti neprazan niz traženih formata.");
+} else {
+  const invalidFormats = requestedFormats.filter((format) => typeof format !== "string" || !supportedFormats.has(format));
+  if (invalidFormats.length > 0) errors.push(`input.requestedFormats sadrži nepodržane vrednosti: ${invalidFormats.join(", ")}.`);
+  if (new Set(requestedFormats).size !== requestedFormats.length) errors.push("input.requestedFormats ne sme sadržati duplikate.");
 }
 
 for (const field of ["eyebrow", "headline", "supportingText", "offerLabel", "cta"]) {
@@ -261,22 +289,23 @@ if (uniqueDesignInterventions.length < 2 || uniqueDesignInterventions.some((inte
   errors.push("Upiši najmanje dve podržane designInterventions vrednosti za stvarnu dizajnersku promenu.");
 }
 if (!designDirection?.freshInterventionNote?.trim()) errors.push("Nedostaje freshInterventionNote sa konkretnom novom dizajnerskom odlukom.");
-const requestedFormats = Array.isArray(input?.requestedFormats) ? input.requestedFormats : [];
-for (const format of requestedFormats.filter((format) => ["feed", "story", "reels"].includes(format))) {
+for (const format of requestedFormats.filter((format) => supportedFormats.has(format))) {
   if (!designDirection?.formatAdaptations?.[format]?.trim()) errors.push(`Nedostaje formatAdaptations.${format} za namernu adaptaciju formata.`);
 }
 const formatPlan = designDirection?.formatPlan;
-if (!formatPlan?.feed?.readingOrder || !formatPlan?.feed?.productAnchor || !formatPlan?.feed?.layoutId) errors.push("formatPlan.feed mora imati readingOrder, productAnchor i layoutId.");
-if (!formatPlan?.story?.readingOrder || !formatPlan?.story?.productAnchor || !formatPlan?.story?.layoutId) errors.push("formatPlan.story mora imati readingOrder, productAnchor i layoutId.");
-if (formatPlan?.feed?.layoutId && formatPlan.feed.layoutId === formatPlan?.story?.layoutId) errors.push("Feed i Story moraju imati različite layoutId vrednosti.");
-if (formatPlan?.feed?.readingOrder === formatPlan?.story?.readingOrder && formatPlan?.feed?.productAnchor === formatPlan?.story?.productAnchor) errors.push("Feed i Story moraju se razlikovati po redosledu čitanja ili poziciji proizvoda.");
+if (requestedFormats.includes("feed") && (!formatPlan?.feed?.readingOrder || !formatPlan?.feed?.productAnchor || !formatPlan?.feed?.layoutId)) errors.push("formatPlan.feed mora imati readingOrder, productAnchor i layoutId kada je Feed tražen.");
+if (requestedFormats.includes("story") && (!formatPlan?.story?.readingOrder || !formatPlan?.story?.productAnchor || !formatPlan?.story?.layoutId)) errors.push("formatPlan.story mora imati readingOrder, productAnchor i layoutId kada je Story tražen.");
+if (requestedFormats.includes("feed") && requestedFormats.includes("story")) {
+  if (formatPlan?.feed?.layoutId && formatPlan.feed.layoutId === formatPlan?.story?.layoutId) errors.push("Feed i Story moraju imati različite layoutId vrednosti.");
+  if (formatPlan?.feed?.readingOrder === formatPlan?.story?.readingOrder && formatPlan?.feed?.productAnchor === formatPlan?.story?.productAnchor) errors.push("Feed i Story moraju se razlikovati po redosledu čitanja ili poziciji proizvoda.");
+}
 if (requestedFormats.includes("reels")) {
   const shotPlan = formatPlan?.reels?.shotPlan;
   if (!formatPlan?.reels?.layoutId || !Array.isArray(shotPlan) || new Set(shotPlan).size < 3) errors.push("formatPlan.reels mora imati poseban layoutId i najmanje tri različite scene.");
 }
 if (designDirection?.family === "offer-orbit") {
-  if (formatPlan?.feed?.layoutId !== "offer-orbit-feed-stage") errors.push("offer-orbit Feed mora koristiti stvarni layoutId offer-orbit-feed-stage.");
-  if (formatPlan?.story?.layoutId !== "offer-orbit-story-stack") errors.push("offer-orbit Story mora koristiti stvarni layoutId offer-orbit-story-stack.");
+  if (requestedFormats.includes("feed") && formatPlan?.feed?.layoutId !== "offer-orbit-feed-stage") errors.push("offer-orbit Feed mora koristiti stvarni layoutId offer-orbit-feed-stage.");
+  if (requestedFormats.includes("story") && formatPlan?.story?.layoutId !== "offer-orbit-story-stack") errors.push("offer-orbit Story mora koristiti stvarni layoutId offer-orbit-story-stack.");
   if (requestedFormats.includes("reels") && formatPlan?.reels?.layoutId !== "offer-orbit-three-scene-reel") errors.push("offer-orbit Reels mora koristiti stvarni layoutId offer-orbit-three-scene-reel.");
 }
 if (!designDirection?.familyFit?.rationale?.trim() || designDirection?.familyFit?.supportsOfferStrength !== true || designDirection?.familyFit?.supportsSceneDepth !== true) {
@@ -292,10 +321,15 @@ if (requestedFormats.includes("reels") && videoProps?.motionTreatment !== design
 if (requestedFormats.includes("reels")) {
   if (!videoProps?.audioTrack?.trim() || !supportedAudioTracks.has(videoProps.audioTrack.trim())) {
     errors.push("video-props.json mora navesti važeći audioTrack iz public/mp3/ za Reels video.");
+  } else if (!existsSync(resolve(repositoryRoot, "video-renderer/public", videoProps.audioTrack.trim()))) {
+    errors.push(`Izabrani audioTrack ne postoji u video-renderer/public/${videoProps.audioTrack.trim()}.`);
   }
+  if (!Number.isFinite(videoProps?.audioVolume) || videoProps.audioVolume < 0 || videoProps.audioVolume > 1) errors.push("video-props.json audioVolume mora biti broj između 0 i 1.");
 }
 if (designDirection?.logoSurface !== "none") errors.push("Originalni znak logoa se koristi bez pravougaone podloge.");
-if (designDirection?.palettePlan !== undefined) {
+if (designDirection?.palettePlan === undefined) {
+  errors.push("design-direction.json mora imati palettePlan.");
+} else {
   const palettePlan = designDirection.palettePlan;
   for (const field of ["background", "surface", "textForeground", "textBackground", "accent", "logoBackground"]) {
     if (!paletteIds.has(palettePlan?.[field])) errors.push(`palettePlan.${field} mora koristiti identifikator iz brand/color-palette.json.`);
@@ -305,6 +339,11 @@ if (designDirection?.palettePlan !== undefined) {
     errors.push("palettePlan tekstualni par nije dozvoljen: koristi safeTextPairs sa dovoljnim kontrastom.");
   }
   if (palettePlan?.logoBackground && !approvedLogoBackgrounds.has(palettePlan.logoBackground)) errors.push("palettePlan.logoBackground nije bezbedna kontrolisana podloga za originalni logo.");
+  const logoVariant = designDirection?.logoVariant;
+  const logoFile = logoVariantFiles[logoVariant];
+  const allowedBackgrounds = logoFile && Array.isArray(approvedLogoPlacements?.[logoFile]) ? approvedLogoPlacements[logoFile] : [];
+  if (!logoFile) errors.push("design-direction.json logoVariant mora biti on-light ili on-dark.");
+  else if (!allowedBackgrounds.includes(palettePlan?.logoBackground)) errors.push(`Logo varijanta ${logoVariant} (${logoFile}) nije odobrena za palettePlan.logoBackground ${palettePlan?.logoBackground}.`);
 }
 if (designDirection?.typography?.family !== "AUSekiManrope") errors.push("Finalni renderer mora koristiti Manrope font bez zamene.");
 if (!Array.isArray(designDirection?.typography?.weights) || designDirection.typography.weights.length < 1) {
@@ -327,32 +366,37 @@ if (requestedFormats.includes("reels") && designDirection?.motionTreatment && re
 }
 
 const finalDirectory = resolve(postDirectory, "final");
-for (const file of ["feed-1080x1350.png", "story-1080x1920.png", "reels-1080x1920.mp4", "caption.md"]) {
+const requestedFinalFiles = [
+  ...(requestedFormats.includes("feed") ? ["feed-1080x1350.png"] : []),
+  ...(requestedFormats.includes("story") ? ["story-1080x1920.png"] : []),
+  ...(requestedFormats.includes("reels") ? ["reels-1080x1920.mp4"] : []),
+  "caption.md",
+];
+for (const file of requestedFinalFiles) {
   if (!existsSync(join(finalDirectory, file))) errors.push(`Nedostaje final/${file}.`);
 }
+const requiredValidatedRenders = requestedFormats.flatMap((format) => renderRequirements[format] ?? []).map((entry) => entry.path);
 if (!Array.isArray(designDirection?.validatedRenders) || requiredValidatedRenders.some((path) => !designDirection.validatedRenders.includes(path))) {
-  errors.push("U design-direction.json nedostaju tačne putanje pregledanih Feed, Story i Reels ključnih kadrova.");
+  errors.push("U design-direction.json nedostaju tačne putanje pregledanih rendera za sve tražene formate.");
 }
 for (const relativePath of requiredValidatedRenders) {
   if (!existsSync(resolve(postDirectory, relativePath))) errors.push(`Evidentirani render ne postoji: ${relativePath}.`);
 }
 
-for (const [relativePath, expectedWidth, expectedHeight] of [
-  ["final/feed-1080x1350.png", 1080, 1350],
-  ["final/story-1080x1920.png", 1080, 1920],
-  ["generated/reels-intro.png", 1080, 1920],
-  ["generated/reels-offer.png", 1080, 1920],
-  ["generated/reels-closing.png", 1080, 1920],
-]) {
+for (const { path: relativePath, width: expectedWidth, height: expectedHeight } of requestedFormats.flatMap((format) => renderRequirements[format] ?? [])) {
   const absolutePath = resolve(postDirectory, relativePath);
   const media = existsSync(absolutePath) ? probeMedia(absolutePath) : null;
   if (!media || Number(media.width) !== expectedWidth || Number(media.height) !== expectedHeight) errors.push(`${relativePath} mora imati dimenzije ${expectedWidth}x${expectedHeight}.`);
 }
-const reelsPath = resolve(postDirectory, "final/reels-1080x1920.mp4");
-const reelsMedia = existsSync(reelsPath) ? probeMedia(reelsPath) : null;
-const reelsDuration = Number(reelsMedia?.formatDuration ?? reelsMedia?.duration);
-if (!reelsMedia || Number(reelsMedia.width) !== 1080 || Number(reelsMedia.height) !== 1920 || !Number.isFinite(reelsDuration) || reelsDuration < 11.5 || reelsDuration > 12.5) {
-  errors.push("Finalni Reels mora biti 1080x1920 i trajati približno 12 sekundi.");
+if (requestedFormats.includes("reels")) {
+  const reelsPath = resolve(postDirectory, "final/reels-1080x1920.mp4");
+  const reelsMedia = existsSync(reelsPath) ? probeMedia(reelsPath) : null;
+  const reelsDuration = Number(reelsMedia?.formatDuration ?? reelsMedia?.duration);
+  if (!reelsMedia || Number(reelsMedia.width) !== 1080 || Number(reelsMedia.height) !== 1920 || !Number.isFinite(reelsDuration) || reelsDuration < 11.5 || reelsDuration > 12.5) {
+    errors.push("Finalni Reels mora biti 1080x1920 i trajati približno 12 sekundi.");
+  } else if (!hasAudioStream(reelsPath)) {
+    errors.push("Finalni Reels mora sadržati audio stream.");
+  }
 }
 
 const sourceImageAssets = Array.isArray(input?.sourceAssets) ? input.sourceAssets.filter((path) => typeof path === "string" && imageExtensions.has(extname(path).toLowerCase())) : [];
@@ -413,13 +457,19 @@ for (const sourceAsset of sourceImageAssets) {
 }
 
 if (qualityReview?.status !== "meets-reference-bar") errors.push("quality-review.json nije dostigao status meets-reference-bar.");
+const requiredQualityCriteria = [...baseQualityCriteria, ...(requestedFormats.includes("reels") ? ["reelsDynamics"] : [])];
 for (const criterion of requiredQualityCriteria) {
   const entry = qualityReview?.criteria?.[criterion];
   if (!Number.isFinite(entry?.score) || entry.score < 4 || entry.score > 5 || !entry?.note?.trim() || entry.note.trim().length < 20) errors.push(`Kriterijum ${criterion} mora imati ocenu 4–5 i konkretan dokaz.`);
 }
 if (!qualityReview?.weakestArea?.trim()) errors.push("quality-review.json mora imenovati najslabiju preostalu oblast.");
 if (!qualityReview?.revisionEvidence?.issueFound?.trim() || !qualityReview?.revisionEvidence?.changeMade?.trim()) errors.push("Mora biti dokumentovana najmanje jedna stvarna korekcija između drafta i finala.");
-if (qualityReview?.revisionEvidence?.before !== "generated/feed-draft.png" || qualityReview?.revisionEvidence?.after !== "final/feed-1080x1350.png") errors.push("Dokaz revizije mora porediti generated/feed-draft.png sa final/feed-1080x1350.png.");
+const expectedRevision = requestedFormats.includes("feed")
+  ? { before: "generated/feed-draft.png", after: "final/feed-1080x1350.png", hashKey: "feedDraft" }
+  : requestedFormats.includes("story")
+    ? { before: "generated/story-draft.png", after: "final/story-1080x1920.png", hashKey: "storyDraft" }
+    : { before: "generated/reels-intro-draft.png", after: "generated/reels-intro.png", hashKey: "reelsIntroDraft" };
+if (qualityReview?.revisionEvidence?.before !== expectedRevision.before || qualityReview?.revisionEvidence?.after !== expectedRevision.after) errors.push(`Dokaz revizije mora porediti ${expectedRevision.before} sa ${expectedRevision.after}.`);
 const beforePath = qualityReview?.revisionEvidence?.before ? resolve(postDirectory, qualityReview.revisionEvidence.before) : null;
 const afterPath = qualityReview?.revisionEvidence?.after ? resolve(postDirectory, qualityReview.revisionEvidence.after) : null;
 if (!beforePath || !afterPath || !inside(postDirectory, beforePath) || !inside(postDirectory, afterPath) || !existsSync(beforePath) || !existsSync(afterPath) || hashFile(beforePath) === hashFile(afterPath)) errors.push("Draft i final moraju postojati i imati različite hasheve kao dokaz iteracije.");
@@ -427,13 +477,9 @@ if (qualityReview?.independentReview?.performed !== true || qualityReview?.indep
 const rendererPath = resolve(repositoryRoot, "video-renderer/src/Composition.tsx");
 const rendererCssPath = resolve(repositoryRoot, "video-renderer/src/index.css");
 for (const [key, relativePath] of [
-  ["feed", "final/feed-1080x1350.png"],
-  ["story", "final/story-1080x1920.png"],
-  ["reelsIntro", "generated/reels-intro.png"],
-  ["reelsOffer", "generated/reels-offer.png"],
-  ["reelsClosing", "generated/reels-closing.png"],
-  ["reelsMp4", "final/reels-1080x1920.mp4"],
-  ["feedDraft", "generated/feed-draft.png"],
+  ...requestedFormats.flatMap((format) => (renderRequirements[format] ?? []).map((entry) => [entry.hashKey, entry.path])),
+  ...(requestedFormats.includes("reels") ? [["reelsMp4", "final/reels-1080x1920.mp4"]] : []),
+  [expectedRevision.hashKey, expectedRevision.before],
   ["referenceComparison", "generated/reference-comparison.png"],
   ["formatComparison", "generated/format-comparison.png"],
   ["input", "input.json"],
@@ -443,10 +489,39 @@ for (const [key, relativePath] of [
   const absolutePath = resolve(postDirectory, relativePath);
   if (!existsSync(absolutePath) || qualityReview?.renderHashes?.[key] !== hashFile(absolutePath)) errors.push(`quality-review hash nije aktuelan za ${relativePath}.`);
 }
-for (const [key, absolutePath] of [
+const localFontDirectory = resolve(repositoryRoot, "video-renderer/public/assets");
+const localFontPaths = existsSync(localFontDirectory)
+  ? readdirSync(localFontDirectory, { withFileTypes: true })
+    .filter((entry) => entry.isFile() && /\.(?:woff2?|ttf|otf)$/i.test(entry.name))
+    .map((entry) => resolve(localFontDirectory, entry.name))
+    .sort()
+  : [];
+for (const logoFile of Object.values(logoVariantFiles)) {
+  const canonicalLogoPath = resolve(repositoryRoot, "logos", logoFile);
+  const rendererLogoPath = resolve(repositoryRoot, "video-renderer/public/assets", logoFile);
+  if (!existsSync(canonicalLogoPath) || !existsSync(rendererLogoPath) || hashFile(canonicalLogoPath) !== hashFile(rendererLogoPath)) {
+    errors.push(`Rendererova kopija ${logoFile} mora biti identična kanonskom fajlu iz logos/.`);
+  }
+}
+const systemHashPaths = [
   ["renderer", rendererPath],
   ["rendererCss", rendererCssPath],
   ["referenceManifest", referenceManifestPath],
+  ["brandConfig", resolve(repositoryRoot, "brand/brand-config.json")],
+  ["colorPalette", palettePath],
+  ["rendererPackage", resolve(repositoryRoot, "video-renderer/package.json")],
+  ["rendererPackageLock", resolve(repositoryRoot, "video-renderer/package-lock.json")],
+  ["logoCanonical:logo-tamniji.svg", resolve(repositoryRoot, "logos/logo-tamniji.svg")],
+  ["logoCanonical:logo-svetliji.svg", resolve(repositoryRoot, "logos/logo-svetliji.svg")],
+  ["logoRenderer:logo-tamniji.svg", resolve(repositoryRoot, "video-renderer/public/assets/logo-tamniji.svg")],
+  ["logoRenderer:logo-svetliji.svg", resolve(repositoryRoot, "video-renderer/public/assets/logo-svetliji.svg")],
+  ...localFontPaths.map((path) => [`font:${relative(repositoryRoot, path)}`, path]),
+  ...(requestedFormats.includes("reels") && supportedAudioTracks.has(videoProps?.audioTrack?.trim())
+    ? [[`audioTrack:${videoProps.audioTrack.trim()}`, resolve(repositoryRoot, "video-renderer/public", videoProps.audioTrack.trim())]]
+    : []),
+];
+for (const [key, absolutePath] of [
+  ...systemHashPaths,
   ...[...approvedReferenceFiles].filter((file) => typeof file === "string").map((file) => [`reference:${file}`, resolve(repositoryRoot, "brand/design-references", file)]),
 ]) {
   if (!existsSync(absolutePath) || qualityReview?.renderHashes?.[key] !== hashFile(absolutePath)) errors.push(`quality-review hash nije aktuelan za ${relative(repositoryRoot, absolutePath)}.`);
@@ -454,7 +529,7 @@ for (const [key, absolutePath] of [
 
 const renderer = existsSync(rendererPath) ? readFileSync(rendererPath, "utf8") : "";
 const rendererCss = existsSync(rendererCssPath) ? readFileSync(rendererCssPath, "utf8") : "";
-if (!renderer.includes("AUSekiManrope") || !rendererCss.includes("font-family: \"AUSekiManrope\"") || !rendererCss.includes("xn7gYHE41ni1AdIRggexSg.woff2") || !rendererCss.includes("manrope-latin-ext.woff2") || renderer.includes("Arial")) {
+if (!renderer.includes("AUSekiManrope") || !renderer.includes("loadFont") || !renderer.includes('staticFile("assets/manrope-latin.woff2")') || !renderer.includes('staticFile("assets/manrope-latin-ext.woff2")') || renderer.includes("Arial")) {
   errors.push("Renderer nema obavezno učitavanje punog Manrope fonta bez fallbacka.");
 }
 if (!renderer.includes("LogoMark")) errors.push("Renderer nema obavezni originalni znak logoa.");

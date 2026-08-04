@@ -15,9 +15,9 @@ Sistem **ne objavljuje automatski** na društvene mreže. Agent priprema komplet
 
 ## Preuzimanje i pokretanje na drugom računaru
 
-Repo sadrži kompletan sistem, šablone, logo, skripte i zaključane JavaScript zavisnosti. Ne sadrži privatne briefove, fotografije klijenta niti gotove objave, jer oni ostaju lokalni na računaru sa kog radiš.
+Repo sadrži kompletan sistem, šablone, logo, standardne audio assete, skripte i zaključane JavaScript zavisnosti. Produkcioni paketi, briefovi, klijentove slike, radni renderi i finalne objave ostaju lokalni i ne prate se Git-om.
 
-Potrebni su Git, Node.js 20 ili noviji i Codex/LLM agent koji ima pristup fajlovima repoa i generisanju slika.
+Potrebni su Git, Node.js 20, FFmpeg sa `ffprobe` komandom i Codex/LLM agent koji ima pristup fajlovima repoa i generisanju slika. `.nvmrc` zaključava glavnu Node verziju.
 
 ```bash
 git clone https://github.com/ivicajovanovic/seki-tilia.git
@@ -25,6 +25,7 @@ cd seki-tilia/video-renderer
 npm ci
 npm run lint
 cd ..
+node --test production/scripts/*.test.mjs
 ```
 
 Posle toga otvori root folder `seki-tilia` u Codex-u. `AGENTS.md` i `HANDOFF.md` daju agentu sav potreban kontekst za rad.
@@ -115,7 +116,7 @@ Skripta prepoznaje očigledne blokade, poput praznih podataka, nepotvrđene akci
 
 ```text
 brand/           # identitet, pravila i konfiguracija lokacija
-logos/           # vektorski i PNG logo brenda
+logos/           # dve originalne SVG varijante znaka za svetle i tamne pozadine
 production/      # workflow, copy pravila, bezbednost i skripte
 productions/     # lokalni paketi stvarnih objava (ignorisani u Git-u)
 client-assets/   # privatni materijali lokacija i privremeni ulaz briefova

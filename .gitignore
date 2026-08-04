@@ -7,7 +7,9 @@
 /*.jpeg
 /*.png
 !/ovako mora biti.png
-/public/
+/public/*
+!/public/mp3/
+!/public/mp3/**
 
 # Real post briefs, client assets and rendered deliverables stay local
 /productions/*
@@ -23,7 +25,9 @@
 .env.*
 !.env.example
 .DS_Store
+.vscode/
 node_modules/
 dist/
 out/
 coverage/
+/video-renderer/build/

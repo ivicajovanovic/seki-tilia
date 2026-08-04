@@ -1,4 +1,5 @@
 import React from "react";
+import { loadFont } from "@remotion/fonts";
 import { Activity, CheckCircle2, HeartHandshake, MapPin, ShieldCheck, Sparkles } from "lucide-react";
 import { AbsoluteFill, Audio as RemotionAudio, cancelRender, Composition, continueRender, delayRender, Easing, Img, interpolate, Sequence, spring, staticFile, Still, useCurrentFrame, useVideoConfig } from "remotion";
 
@@ -45,12 +46,30 @@ const colors = {
 
 const brandFontFamily = "AUSekiManrope";
 let fontRequested = false;
+const brandFontPromise = Promise.all([
+  loadFont({
+    display: "block",
+    family: brandFontFamily,
+    format: "woff2",
+    unicodeRange: "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD",
+    url: staticFile("assets/manrope-latin.woff2"),
+    weight: "200 800",
+  }),
+  loadFont({
+    display: "block",
+    family: brandFontFamily,
+    format: "woff2",
+    unicodeRange: "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF",
+    url: staticFile("assets/manrope-latin-ext.woff2"),
+    weight: "200 800",
+  }),
+]);
 
 const ensureBrandFont = () => {
   if (fontRequested) return;
   fontRequested = true;
   const fontVerificationHandle = delayRender("Loading AU Šeki-Tilia Manrope font");
-  void document.fonts.load(`800 76px "${brandFontFamily}"`).then(async () => {
+  void brandFontPromise.then(() => document.fonts.load(`800 76px "${brandFontFamily}"`)).then(async () => {
     if (!document.fonts.check(`800 76px "${brandFontFamily}"`)) {
       throw new Error("Manrope font nije dostupan renderer-u.");
     }
@@ -650,7 +669,101 @@ const GalleryShelf: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow, 
   );
 };
 
-const OfferOrbit: React.FC<VideoProps & { animated?: boolean }> = (props) => <PremiumProductStage {...props} />;
+const OfferOrbit: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow, headline, supportingText, offerLabel, cta, imageSrc, imageBackground, productShape = "unknown", locationLine, footerStyle = "brand-full", animated = false }) => {
+  const frame = useCurrentFrame();
+  const { height } = useVideoConfig();
+  const isStory = height > 1500;
+  const intro = useSpringEntrance(animated, 0, { damping: 17, stiffness: 86, mass: 0.8 });
+  const headlineSpring = useSpringEntrance(animated, 9, { damping: 15, stiffness: 82, mass: 0.8 });
+  const offerSpring = useSpringEntrance(animated, 19, { damping: 16, stiffness: 88, mass: 0.8 });
+  const product = useSpringEntrance(animated, 29, { damping: 14, stiffness: 76, mass: 0.9 });
+  const footer = useSpringEntrance(animated, 64, { damping: 18, stiffness: 70, mass: 0.8 });
+  const isTransparentProduct = imageBackground === "transparent";
+  const bottomPadding = isStory ? 310 : 240;
+  const padding = isStory ? 76 : 62;
+  const stageWidth = isStory ? 700 : 520;
+  const podiumWidth = productShape === "wide" ? (isStory ? 660 : 500) : (isStory ? 500 : 390);
+  const productHeight = productShape === "wide" ? (isStory ? "58%" : "64%") : productShape === "tall" ? (isStory ? "88%" : "90%") : (isStory ? "78%" : "84%");
+  const floatY = animated ? Math.sin(frame * 0.045) * 7 : 0;
+  const breathScale = animated ? 1 + Math.sin(frame * 0.035) * 0.012 : 1;
+  const orbitRotation = animated ? frame * 0.12 : 0;
+  const orbitPulse = animated ? 1 + Math.sin(frame * 0.04) * 0.018 : 1;
+
+  return (
+    <AbsoluteFill style={{ backgroundColor: colors.cream, color: colors.petrol, fontFamily: brandFontFamily, overflow: "hidden" }}>
+      <div
+        aria-hidden="true"
+        style={{
+          background: "linear-gradient(138deg, #1C3B42 0%, #275A61 52%, #1B8188 100%)",
+          borderRadius: "50%",
+          height: isStory ? 970 : 850,
+          position: "absolute",
+          right: isStory ? -300 : -270,
+          scale: orbitPulse,
+          top: isStory ? 610 : 205,
+          width: isStory ? 970 : 850,
+          zIndex: 1,
+        }}
+      />
+      <div
+        aria-hidden="true"
+        style={{
+          border: `${isStory ? 12 : 9}px solid ${colors.lime}`,
+          borderRadius: "50%",
+          height: isStory ? 790 : 680,
+          position: "absolute",
+          right: isStory ? -130 : -100,
+          rotate: `${orbitRotation}deg`,
+          top: isStory ? 690 : 280,
+          width: isStory ? 790 : 680,
+          zIndex: 2,
+        }}
+      >
+        <div style={{ backgroundColor: colors.lime, borderRadius: "50%", height: isStory ? 34 : 26, left: "9%", position: "absolute", top: "7%", width: isStory ? 34 : 26 }} />
+      </div>
+
+      <div style={{ boxSizing: "border-box", display: "flex", flexDirection: "column", height: "100%", padding: `${padding}px ${padding}px ${bottomPadding}px`, position: "relative", zIndex: 4 }}>
+        <div style={{ alignItems: "center", display: "flex", flexShrink: 0, justifyContent: "space-between", opacity: intro }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: isStory ? 14 : 10 }}>
+            <div style={{ fontSize: isStory ? 28 : 22, fontWeight: 800, letterSpacing: isStory ? 3.2 : 2.5, textTransform: "uppercase" }}>{eyebrow}</div>
+            <div style={{ backgroundColor: colors.lime, height: isStory ? 5 : 4, width: isStory ? 180 : 145 }} />
+          </div>
+          <LogoMark size={isStory ? 64 : 50} />
+        </div>
+
+        <div style={{ display: "grid", flex: 1, gridTemplateColumns: isStory ? "1fr" : "44% 56%", gridTemplateRows: isStory ? "41% 59%" : "1fr", minHeight: 0, paddingTop: isStory ? 42 : 34 }}>
+          <div style={{ alignSelf: "start", display: "flex", flexDirection: "column", gap: isStory ? 22 : 16, maxWidth: isStory ? "78%" : "100%", opacity: headlineSpring, paddingTop: isStory ? 12 : 52, position: "relative", translate: `${interpolate(headlineSpring, [0, 1], [-34, 0], { extrapolateRight: "clamp" })}px 0`, zIndex: 7 }}>
+            <div data-qa="headline" style={{ fontSize: isStory ? 102 : 84, fontWeight: 800, letterSpacing: isStory ? -5 : -3.8, lineHeight: 0.88, whiteSpace: "pre-line" }}>{headline}</div>
+            <div style={{ fontSize: isStory ? 31 : 24, fontWeight: 600, lineHeight: 1.2, maxWidth: isStory ? "88%" : "92%" }}>{supportingText}</div>
+            <div style={{ opacity: offerSpring, scale: animated ? 1 + Math.sin(frame * 0.055) * 0.018 : 1, transformOrigin: "left center", translate: `${interpolate(offerSpring, [0, 1], [-22, 0], { extrapolateRight: "clamp" })}px 0` }}>
+              <OfferPill label={offerLabel} size={isStory ? 42 : 32} />
+            </div>
+          </div>
+
+          <div data-qa="product-stage" style={{ alignItems: "flex-end", alignSelf: "stretch", display: "flex", justifyContent: "center", justifySelf: isStory ? "end" : "stretch", minHeight: 0, position: "relative", width: isStory ? stageWidth : "100%", zIndex: 6 }}>
+            <CleanPodium story={isStory} width={podiumWidth} bottom={isStory ? -165 : -130} treatment="hero" />
+            <ProductImage
+              imageSrc={imageSrc}
+              style={{
+                bottom: isStory ? 140 : 94,
+                height: isTransparentProduct ? productHeight : (isStory ? "70%" : "74%"),
+                maxWidth: "92%",
+                objectPosition: "center bottom",
+                opacity: product,
+                position: "absolute",
+                scale: interpolate(product, [0, 1], [0.9, 1], { extrapolateRight: "clamp" }) * breathScale,
+                translate: `${interpolate(product, [0, 1], [42, 0], { extrapolateRight: "clamp" })}px ${floatY}px`,
+                zIndex: 7,
+              }}
+            />
+          </div>
+        </div>
+      </div>
+
+      <BrandFooter cta={cta} footerStyle={footerStyle === "minimal" ? "minimal" : "brand-full"} locationLine={locationLine} story={isStory} opacity={footer} />
+    </AbsoluteFill>
+  );
+};
 
 const TypeStage: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow, headline, supportingText, cta, imageSrc, imageBackground, productShape, locationLine, footerStyle = "brand-full", animated = false }) => {
   const frame = useCurrentFrame();
@@ -712,39 +825,51 @@ const Variant: React.FC<VideoProps & { animated?: boolean }> = (props) => {
   }
 };
 
-const PromoHook: React.FC<VideoProps> = ({ eyebrow, headline, offerLabel, motionTreatment = "staged-reveal" }) => {
+const PromoHook: React.FC<VideoProps & { durationInFrames: number }> = ({ durationInFrames, eyebrow, headline, offerLabel, locationLine, motionTreatment = "staged-reveal" }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const hookSpring = spring({ frame: Math.max(0, frame - 2), fps, config: { damping: 14, stiffness: 85 } });
-  const opacity = interpolate(frame, [0, fps * 0.45, fps * 2.15, fps * 2.5], [0, 1, 1, 0], { easing: easeOut, extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const lead = motionTreatment === "offer-build" ? offerLabel : motionTreatment === "location-close" ? "DOSTUPNO U APOTEKAMA" : eyebrow;
+  const hookSpring = spring({ frame: Math.max(0, frame - (motionTreatment === "detail-cutaway" ? 8 : 2)), fps, config: { damping: 14, stiffness: motionTreatment === "offer-build" ? 72 : 85 } });
+  const opacity = interpolate(frame, [0, fps * 0.4, Math.max(fps * 0.4, durationInFrames - 18), durationInFrames], [0, 1, 1, 0], { easing: easeOut, extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const lead = motionTreatment === "offer-build" ? offerLabel : motionTreatment === "location-close" ? (locationLine ?? "AU Šeki-Tilia apoteke") : eyebrow;
   const horizontalEntrance = motionTreatment === "editorial-pan" || motionTreatment === "detail-cutaway";
   const titleTranslate = interpolate(hookSpring, [0, 1], [50, 0]);
   const lineProgress = spring({ frame: Math.max(0, frame - 10), fps, config: { damping: 16, stiffness: 90 } });
+  const isLocationClose = motionTreatment === "location-close";
+  const isOfferBuild = motionTreatment === "offer-build";
+  const isDetailCutaway = motionTreatment === "detail-cutaway";
+  const isEditorialPan = motionTreatment === "editorial-pan";
 
   // Continuous background zoom & bar pulse during Hook
-  const bgScale = interpolate(frame, [0, 75], [1, 1.04], { extrapolateRight: "clamp" });
+  const bgScale = interpolate(frame, [0, 75], isOfferBuild ? [1.035, 1] : [1, 1.04], { extrapolateRight: "clamp" });
   const barPulse = 1 + Math.sin(frame * 0.08) * 0.03;
+  const cutawayTravel = interpolate(frame, [0, 75], [0, -38], { extrapolateRight: "clamp" });
+  const editorialTravel = interpolate(frame, [0, 75], [34, -22], { extrapolateRight: "clamp" });
 
   return (
-    <AbsoluteFill data-qa="reels-hook" style={{ backgroundColor: colors.petrol, color: colors.cream, fontFamily: brandFontFamily, opacity, overflow: "hidden", padding: "132px 84px", scale: bgScale }}>
+    <AbsoluteFill data-qa="reels-hook" style={{ backgroundColor: isLocationClose ? colors.cream : colors.petrol, color: isLocationClose ? colors.petrol : colors.cream, fontFamily: brandFontFamily, opacity, overflow: "hidden", padding: "132px 84px", scale: bgScale }}>
+      {isOfferBuild && <div aria-hidden="true" style={{ backgroundColor: colors.lime, bottom: 0, height: "38%", left: 0, position: "absolute", right: 0 }} />}
+      {isDetailCutaway && <div aria-hidden="true" style={{ backgroundColor: colors.stageTaupe, height: "100%", position: "absolute", right: cutawayTravel - 30, top: 0, width: 330 }} />}
+      {isEditorialPan && <div aria-hidden="true" style={{ border: `9px solid ${colors.lime}`, borderRadius: "50%", height: 760, position: "absolute", right: editorialTravel - 260, top: 370, width: 760 }} />}
+      {isLocationClose && <div aria-hidden="true" style={{ background: "linear-gradient(145deg, #1C3B42 0%, #1B8188 100%)", borderRadius: "50%", height: 760, position: "absolute", right: -520, top: 420, width: 760 }} />}
       <div style={{ alignItems: "center", display: "flex", justifyContent: "space-between", position: "relative", zIndex: 2 }}>
-        <div style={{ color: colors.lime, fontSize: 34, fontWeight: 800, letterSpacing: 3.4 }}>{lead}</div>
-        <LogoMark background="dark" size={70} />
+        <div style={{ color: isLocationClose ? colors.petrol : colors.lime, fontSize: isOfferBuild ? 50 : 34, fontWeight: 800, letterSpacing: isOfferBuild ? -1 : 3.4, maxWidth: 760 }}>{lead}</div>
+        <LogoMark background={isLocationClose ? "light" : "dark"} size={70} />
       </div>
-      <div style={{ bottom: 480, fontSize: 126, fontWeight: 800, left: 84, letterSpacing: -7, lineHeight: 0.88, maxWidth: 850, position: "absolute", translate: horizontalEntrance ? `${titleTranslate}px 0` : `0 ${titleTranslate}px`, whiteSpace: "pre-line", zIndex: 2 }}>{headline}</div>
-      <div style={{ backgroundColor: colors.lime, bottom: 398, height: 8, left: 84, position: "absolute", scale: `${barPulse} 1`, transformOrigin: "left center", width: interpolate(lineProgress, [0, 1], [0, 360]), zIndex: 2 }} />
+      <div style={{ bottom: isOfferBuild ? 650 : isLocationClose ? 560 : 480, fontSize: isOfferBuild ? 106 : isDetailCutaway ? 112 : 126, fontWeight: 800, left: 84, letterSpacing: -7, lineHeight: 0.88, maxWidth: isDetailCutaway ? 680 : 850, position: "absolute", translate: horizontalEntrance ? `${titleTranslate}px 0` : `0 ${titleTranslate}px`, whiteSpace: "pre-line", zIndex: 2 }}>{headline}</div>
+      <div style={{ backgroundColor: isLocationClose ? colors.petrol : colors.lime, bottom: isOfferBuild ? 565 : isLocationClose ? 472 : 398, height: 8, left: 84, position: "absolute", scale: `${barPulse} 1`, transformOrigin: "left center", width: interpolate(lineProgress, [0, 1], [0, isEditorialPan ? 520 : 360]), zIndex: 2 }} />
     </AbsoluteFill>
   );
 };
 
-const Closing: React.FC<Pick<VideoProps, "cta" | "imageSrc" | "locationLine" | "offerLabel" | "productShape">> = ({ offerLabel, cta, imageSrc, locationLine }) => {
+const Closing: React.FC<Pick<VideoProps, "cta" | "imageSrc" | "locationLine" | "motionTreatment" | "offerLabel" | "productShape">> = ({ offerLabel, cta, imageSrc, locationLine, motionTreatment = "staged-reveal" }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const opacity = interpolate(frame, [0, fps * 0.35], [0, 1], { easing: easeOut, extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const logoSpring = spring({ frame: Math.max(0, frame - 2), fps, config: { damping: 14, stiffness: 85 } });
-  const productSpring = spring({ frame: Math.max(0, frame - 6), fps, config: { damping: 14, stiffness: 80, mass: 0.8 } });
-  const textSpring = spring({ frame: Math.max(0, frame - 12), fps, config: { damping: 16, stiffness: 90 } });
+  const isLocationClose = motionTreatment === "location-close";
+  const isOfferBuild = motionTreatment === "offer-build";
+  const logoSpring = spring({ frame: Math.max(0, frame - (isLocationClose ? 10 : 2)), fps, config: { damping: 14, stiffness: 85 } });
+  const productSpring = spring({ frame: Math.max(0, frame - (isOfferBuild ? 14 : 6)), fps, config: { damping: 14, stiffness: 80, mass: 0.8 } });
+  const textSpring = spring({ frame: Math.max(0, frame - (isLocationClose ? 2 : 12)), fps, config: { damping: 16, stiffness: 90 } });
 
   // Continuous float and breath in Closing scene
   const floatY = Math.sin(frame * 0.05) * 6;
@@ -771,7 +896,7 @@ const Closing: React.FC<Pick<VideoProps, "cta" | "imageSrc" | "locationLine" | "
           />
         </div>
       )}
-      <div style={{ display: "flex", flexDirection: "column", gap: 34, maxWidth: 720, position: "relative", translate: `0 ${interpolate(textSpring, [0, 1], [30, 0])}px`, zIndex: 3 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 34, maxWidth: 720, position: "relative", translate: `${interpolate(textSpring, [0, 1], [motionTreatment === "editorial-pan" ? -50 : 0, 0])}px ${interpolate(textSpring, [0, 1], [isLocationClose ? -20 : 30, 0])}px`, zIndex: 3 }}>
         <div style={{ opacity: logoSpring, translate: `0 ${interpolate(logoSpring, [0, 1], [20, 0])}px` }}>
           <LogoMark background="dark" size={110} />
         </div>
@@ -795,20 +920,25 @@ const HeroScene: React.FC<VideoProps & { durationInFrames: number }> = ({ durati
     [0, 1, 1, 0],
     { easing: easeOut, extrapolateLeft: "clamp", extrapolateRight: "clamp" }
   );
+  const treatment = props.motionTreatment ?? "staged-reveal";
+  const progress = interpolate(frame, [0, durationInFrames], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const translateX = treatment === "detail-cutaway" ? interpolate(progress, [0, 1], [-18, 14]) : treatment === "editorial-pan" ? interpolate(progress, [0, 1], [28, -12]) : 0;
+  const translateY = treatment === "staged-reveal" ? interpolate(progress, [0, 1], [16, -4]) : 0;
+  const scale = treatment === "offer-build" ? interpolate(progress, [0, 1], [0.985, 1.01]) : treatment === "location-close" ? interpolate(progress, [0, 1], [1.012, 1]) : 1;
 
   return (
-    <div style={{ height: "100%", opacity, position: "absolute", width: "100%" }}>
+    <div style={{ height: "100%", opacity, position: "absolute", scale, translate: `${translateX}px ${translateY}px`, width: "100%" }}>
       <Variant {...props} animated />
     </div>
   );
 };
 
 const motionPlans: Record<MotionTreatment, { hookDuration: number; heroFrom: number; heroDuration: number; closingFrom: number; closingDuration: number }> = {
-  "staged-reveal": { hookDuration: 64, heroFrom: 50, heroDuration: 220, closingFrom: 255, closingDuration: 105 },
-  "offer-build": { hookDuration: 64, heroFrom: 50, heroDuration: 220, closingFrom: 255, closingDuration: 105 },
-  "detail-cutaway": { hookDuration: 64, heroFrom: 50, heroDuration: 220, closingFrom: 255, closingDuration: 105 },
-  "editorial-pan": { hookDuration: 64, heroFrom: 50, heroDuration: 220, closingFrom: 255, closingDuration: 105 },
-  "location-close": { hookDuration: 64, heroFrom: 50, heroDuration: 210, closingFrom: 245, closingDuration: 115 },
+  "staged-reveal": { hookDuration: 60, heroFrom: 48, heroDuration: 222, closingFrom: 270, closingDuration: 90 },
+  "offer-build": { hookDuration: 72, heroFrom: 58, heroDuration: 206, closingFrom: 264, closingDuration: 96 },
+  "detail-cutaway": { hookDuration: 54, heroFrom: 42, heroDuration: 210, closingFrom: 252, closingDuration: 108 },
+  "editorial-pan": { hookDuration: 68, heroFrom: 54, heroDuration: 224, closingFrom: 278, closingDuration: 82 },
+  "location-close": { hookDuration: 48, heroFrom: 40, heroDuration: 194, closingFrom: 234, closingDuration: 126 },
 };
 
 export const SekiTiliaPromo: React.FC<VideoProps> = (props) => {
@@ -820,7 +950,7 @@ export const SekiTiliaPromo: React.FC<VideoProps> = (props) => {
   return (
     <AbsoluteFill>
       <RemotionAudio src={staticFile(audioSrc)} volume={volume} />
-      <Sequence durationInFrames={plan.hookDuration} premountFor={30}><PromoHook {...props} /></Sequence>
+      <Sequence durationInFrames={plan.hookDuration} premountFor={30}><PromoHook {...props} durationInFrames={plan.hookDuration} /></Sequence>
       <Sequence from={plan.heroFrom} durationInFrames={plan.heroDuration} premountFor={30}><HeroScene {...props} durationInFrames={plan.heroDuration} /></Sequence>
       <Sequence from={plan.closingFrom} durationInFrames={plan.closingDuration} premountFor={30}><Closing {...props} /></Sequence>
     </AbsoluteFill>

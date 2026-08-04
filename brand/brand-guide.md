@@ -25,7 +25,7 @@ Nikada ne predstavljamo generisanu osobu kao stvarnu zaposlenu apoteke.
 | Neutralna topla | Sivi ton B | `#7D7D79` |
 | Neutralna hladna | Sivi ton C | `#4E5A5F` |
 
-Operativni izbor i kontrastne kombinacije vode se u [color-palette.md](color-palette.md) i `color-palette.json`. Agent može izabrati novu kombinaciju iz svih devet tonova kada ona odgovara zadatku, ali tekst, CTA i funkcionalne ikonice koriste samo unapred odobrene kontrastne parove. Originalni logo koristi isključivo tamnu kontrolisanu podlogu iz `approvedLogoBackgrounds`; ne rešava se kontrast belom karticom.
+Operativni izbor i kontrastne kombinacije vode se u [color-palette.md](color-palette.md) i `color-palette.json`. Agent može izabrati novu kombinaciju iz svih devet tonova kada ona odgovara zadatku, ali tekst, CTA i funkcionalne ikonice koriste samo unapred odobrene kontrastne parove. Logo koristi odgovarajuću `on-light` ili `on-dark` varijantu i samo kombinaciju iz `approvedLogoPlacements`; kontrast se ne rešava belom karticom.
 
 ## Tipografija
 

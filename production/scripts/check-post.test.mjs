@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { execFileSync, spawnSync } from "node:child_process";
-import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { basename, join, resolve } from "node:path";
+import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { basename, join, relative, resolve } from "node:path";
 import test, { after } from "node:test";
 
 const repositoryRoot = resolve(import.meta.dirname, "../..");
@@ -13,6 +13,7 @@ const hashFile = (path) => createHash("sha256").update(readFileSync(path)).diges
 const referenceManifestPath = join(repositoryRoot, "brand/design-references/references.json");
 const approvedReferenceFiles = JSON.parse(readFileSync(referenceManifestPath, "utf8")).approved;
 const createdJobRoots = [];
+let mediaReady = false;
 
 after(() => {
   rmSync(fixtureRoot, { recursive: true, force: true });
@@ -25,6 +26,7 @@ const run = (command, args) => {
 };
 
 const ensureMediaCache = () => {
+  if (mediaReady) return;
   mkdirSync(mediaCache, { recursive: true });
   const images = [
     ["feed.png", "1080x1350", "0xF7F5EC"],
@@ -45,11 +47,8 @@ const ensureMediaCache = () => {
     }
   }
   const videoPath = join(mediaCache, "reels.mp4");
-  try {
-    readFileSync(videoPath);
-  } catch {
-    run("ffmpeg", ["-v", "error", "-y", "-f", "lavfi", "-i", "color=c=0x1C3B42:s=1080x1920:r=30:d=12", "-c:v", "libx264", "-pix_fmt", "yuv420p", videoPath]);
-  }
+  run("ffmpeg", ["-v", "error", "-y", "-f", "lavfi", "-i", "color=c=0x1C3B42:s=1080x1920:r=30:d=12", "-f", "lavfi", "-i", "sine=frequency=440:duration=12", "-c:v", "libx264", "-c:a", "aac", "-pix_fmt", "yuv420p", "-shortest", videoPath]);
+  mediaReady = true;
 };
 
 const writeJson = (path, value) => writeFileSync(path, `${JSON.stringify(value, null, 2)}\n`);
@@ -112,6 +111,7 @@ const makeFixture = () => {
     },
     familyFit: { productShape: null, supportsOfferStrength: true, supportsSceneDepth: true, rationale: "Familija podržava jasnu poruku i kontrolisanu scensku dubinu." },
     logoSurface: "none",
+    logoVariant: "on-dark",
     palettePlan: {
       background: "icy-tundra",
       surface: "deer-run",
@@ -166,6 +166,21 @@ const makeFixture = () => {
     renderer: join(repositoryRoot, "video-renderer/src/Composition.tsx"),
     rendererCss: join(repositoryRoot, "video-renderer/src/index.css"),
     referenceManifest: referenceManifestPath,
+    brandConfig: join(repositoryRoot, "brand/brand-config.json"),
+    colorPalette: join(repositoryRoot, "brand/color-palette.json"),
+    rendererPackage: join(repositoryRoot, "video-renderer/package.json"),
+    rendererPackageLock: join(repositoryRoot, "video-renderer/package-lock.json"),
+    "logoCanonical:logo-tamniji.svg": join(repositoryRoot, "logos/logo-tamniji.svg"),
+    "logoCanonical:logo-svetliji.svg": join(repositoryRoot, "logos/logo-svetliji.svg"),
+    "logoRenderer:logo-tamniji.svg": join(repositoryRoot, "video-renderer/public/assets/logo-tamniji.svg"),
+    "logoRenderer:logo-svetliji.svg": join(repositoryRoot, "video-renderer/public/assets/logo-svetliji.svg"),
+    ...Object.fromEntries(readdirSync(join(repositoryRoot, "video-renderer/public/assets"), { withFileTypes: true })
+      .filter((entry) => entry.isFile() && /\.(?:woff2?|ttf|otf)$/i.test(entry.name))
+      .map((entry) => {
+        const path = join(repositoryRoot, "video-renderer/public/assets", entry.name);
+        return [`font:${relative(repositoryRoot, path)}`, path];
+      })),
+    [`audioTrack:${videoProps.audioTrack}`]: join(repositoryRoot, "video-renderer/public", videoProps.audioTrack),
     ...Object.fromEntries(approvedReferenceFiles.map((file) => [`reference:${file}`, join(repositoryRoot, "brand/design-references", file)])),
   };
   const note = "Sirovi render potvrđuje kriterijum kroz jasno vidljivu i proverljivu razliku.";
@@ -256,6 +271,13 @@ test("visual review zaključava manifest i sve četiri reference", () => {
   execFileSync(process.execPath, [join(repositoryRoot, "production/scripts/prepare-visual-review.mjs"), "--post", fixture.postDirectory], { cwd: repositoryRoot, encoding: "utf8", stdio: "pipe" });
   const review = JSON.parse(readFileSync(fixture.qualityReviewPath, "utf8"));
   assert.equal(review.renderHashes.referenceManifest, hashFile(referenceManifestPath));
+  assert.equal(review.renderHashes.brandConfig, hashFile(join(repositoryRoot, "brand/brand-config.json")));
+  assert.equal(review.renderHashes.colorPalette, hashFile(join(repositoryRoot, "brand/color-palette.json")));
+  assert.equal(review.renderHashes.rendererPackageLock, hashFile(join(repositoryRoot, "video-renderer/package-lock.json")));
+  assert.equal(review.renderHashes["logoCanonical:logo-tamniji.svg"], hashFile(join(repositoryRoot, "logos/logo-tamniji.svg")));
+  assert.equal(review.renderHashes["logoRenderer:logo-svetliji.svg"], hashFile(join(repositoryRoot, "video-renderer/public/assets/logo-svetliji.svg")));
+  assert.equal(review.renderHashes[`audioTrack:${fixture.videoProps.audioTrack}`], hashFile(join(repositoryRoot, "video-renderer/public", fixture.videoProps.audioTrack)));
+  assert.ok(Object.keys(review.renderHashes).some((key) => key.startsWith("font:video-renderer/public/assets/")));
   for (const file of approvedReferenceFiles) assert.equal(review.renderHashes[`reference:${file}`], hashFile(join(repositoryRoot, "brand/design-references", file)));
 });
 
@@ -324,4 +346,91 @@ test("Feed i Story sa istim layout fingerprintom ne prolaze", () => {
   const output = runBlocked(fixture.postDirectory);
   assert.match(output, /različite layoutId vrednosti/);
   assert.match(output, /razlikovati po redosledu čitanja ili poziciji proizvoda/);
+});
+
+test("Feed-only paket ne zahteva Story ni Reels artefakte", () => {
+  const fixture = makeFixture();
+  fixture.input.requestedFormats = ["feed"];
+  fixture.direction.validatedRenders = ["final/feed-1080x1350.png"];
+  writeJson(join(fixture.postDirectory, "input.json"), fixture.input);
+  writeJson(join(fixture.generated, "design-direction.json"), fixture.direction);
+  for (const path of [
+    join(fixture.final, "story-1080x1920.png"),
+    join(fixture.final, "reels-1080x1920.mp4"),
+    join(fixture.generated, "reels-intro.png"),
+    join(fixture.generated, "reels-offer.png"),
+    join(fixture.generated, "reels-closing.png"),
+  ]) rmSync(path);
+  refreshLockedInputHashes(fixture);
+  assert.match(runChecker(fixture.postDirectory), /PROVERA PROŠLA/);
+});
+
+test("Feed-only visual review pravi poređenje bez hstack greške", () => {
+  const fixture = makeFixture();
+  fixture.input.requestedFormats = ["feed"];
+  fixture.direction.validatedRenders = ["final/feed-1080x1350.png"];
+  writeJson(join(fixture.postDirectory, "input.json"), fixture.input);
+  writeJson(join(fixture.generated, "design-direction.json"), fixture.direction);
+  for (const path of [
+    join(fixture.final, "story-1080x1920.png"),
+    join(fixture.final, "reels-1080x1920.mp4"),
+    join(fixture.generated, "reels-intro.png"),
+    join(fixture.generated, "reels-offer.png"),
+    join(fixture.generated, "reels-closing.png"),
+  ]) rmSync(path);
+
+  assert.doesNotThrow(() => execFileSync(process.execPath, [join(repositoryRoot, "production/scripts/prepare-visual-review.mjs"), "--post", fixture.postDirectory], { cwd: repositoryRoot, encoding: "utf8", stdio: "pipe" }));
+  const review = JSON.parse(readFileSync(fixture.qualityReviewPath, "utf8"));
+  assert.equal(review.renderHashes.story, undefined);
+  assert.equal(review.renderHashes.reelsMp4, undefined);
+  assert.equal(Object.keys(review.renderHashes).some((key) => key.startsWith("audioTrack:")), false);
+  assert.ok(review.renderHashes.formatComparison);
+});
+
+test("requestedFormats mora biti neprazan niz podržanih jedinstvenih vrednosti", () => {
+  const fixture = makeFixture();
+  fixture.input.requestedFormats = ["feed", "feed", "carousel"];
+  writeJson(join(fixture.postDirectory, "input.json"), fixture.input);
+  const output = runBlocked(fixture.postDirectory);
+  assert.match(output, /nepodržane vrednosti: carousel/);
+  assert.match(output, /ne sme sadržati duplikate/);
+});
+
+test("Reels zahteva postojeću dozvoljenu numeru i audioVolume u opsegu", () => {
+  const fixture = makeFixture();
+  fixture.videoProps.audioTrack = "mp3/nepostojeca.mp3";
+  fixture.videoProps.audioVolume = 1.5;
+  writeJson(join(fixture.postDirectory, "video-props.json"), fixture.videoProps);
+  const output = runBlocked(fixture.postDirectory);
+  assert.match(output, /važeći audioTrack/);
+  assert.match(output, /audioVolume mora biti broj između 0 i 1/);
+});
+
+test("Reels bez stvarnog audio streama ne prolazi", () => {
+  const fixture = makeFixture();
+  run("ffmpeg", ["-v", "error", "-y", "-f", "lavfi", "-i", "color=c=0x1C3B42:s=1080x1920:r=30:d=12", "-c:v", "libx264", "-pix_fmt", "yuv420p", join(fixture.final, "reels-1080x1920.mp4")]);
+  assert.match(runBlocked(fixture.postDirectory), /mora sadržati audio stream/);
+});
+
+test("logoVariant mora odgovarati neposrednoj logo pozadini", () => {
+  const fixture = makeFixture();
+  fixture.direction.logoVariant = "on-light";
+  writeJson(join(fixture.generated, "design-direction.json"), fixture.direction);
+  assert.match(runBlocked(fixture.postDirectory), /nije odobrena za palettePlan\.logoBackground royal-neptune/);
+});
+
+test("create-post bira audio numeru deterministički iz ID-a paketa", () => {
+  const slug = `audio-rotation-${process.pid}`;
+  const date = "2099-12-31";
+  const monthDirectory = join(repositoryRoot, "productions", "2099", "12");
+  execFileSync(process.execPath, [join(repositoryRoot, "production/scripts/create-post.mjs"), "--slug", slug, "--date", date], { cwd: repositoryRoot, stdio: "pipe" });
+  const createdName = readdirSync(monthDirectory).find((name) => name.endsWith(`-${slug}`));
+  assert.ok(createdName);
+  const postDirectory = join(monthDirectory, createdName);
+  const props = JSON.parse(readFileSync(join(postDirectory, "video-props.json"), "utf8"));
+  const tracks = ["mp3/clear-path.mp3", "mp3/clear-path-ambient.mp3", "mp3/open-sky-drift.mp3", "mp3/open-sky-drift-chill.mp3", "mp3/paper-sun-parade.mp3", "mp3/paper-sun-parade-upbeat.mp3"];
+  const expectedIndex = [...createdName].reduce((sum, character) => sum + character.codePointAt(0), 0) % tracks.length;
+  assert.equal(props.audioTrack, tracks[expectedIndex]);
+  assert.equal(JSON.parse(readFileSync(join(postDirectory, "input.json"), "utf8")).requiresProfessionalReview, undefined);
+  rmSync(postDirectory, { recursive: true });
 });

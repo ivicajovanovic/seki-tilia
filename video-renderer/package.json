@@ -5,10 +5,12 @@
   "repository": {},
   "license": "UNLICENSED",
   "private": true,
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "@remotion/cli": "4.0.494",
     "@remotion/fonts": "^4.0.494",
-    "@remotion/google-fonts": "^4.0.494",
     "@remotion/tailwind-v4": "4.0.494",
     "lucide-react": "^1.25.0",
     "react": "19.2.3",
@@ -20,7 +22,7 @@
     "@remotion/eslint-config-flat": "4.0.494",
     "@types/react": "19.2.7",
     "@types/web": "0.0.166",
-    "eslint": "9.19.0",
+    "eslint": "^9.39.5",
     "prettier": "3.8.1",
     "typescript": "5.9.3"
   },

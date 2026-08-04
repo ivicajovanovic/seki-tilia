@@ -2,6 +2,8 @@
 
 Ovaj dokument određuje gde žive privatni materijali, radni renderi i istorijske objave. Ne menja pravilo da se nijedan sadržaj ne objavljuje automatski.
 
+Svi paketi pod `productions/`, njihove renderer kopije pod `video-renderer/public/jobs/` i arhiva ostaju lokalni i ne prate se Git-om. GitHub čuva samo sistemske skripte, renderer, brend konfiguraciju, odobrene reference, logotipe i standardne audio assete. CI blokira slučajno dodavanje produkcionih paketa u repozitorijum.
+
 ## Aktivna objava
 
 Aktivna objava je celina sa istim ID-jem na dve lokacije:

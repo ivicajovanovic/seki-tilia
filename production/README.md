@@ -95,7 +95,7 @@ npm run dev
 
 Podržane `designVariant` vrednosti su `product-atelier`, `editorial-split`, `minimal-offer`, `product-card`, `premium-product-stage`, `offer-orbit`, `type-stage` i `gallery-shelf`. Biraj ih prema briefu i dizajnerskoj istoriji, ne prema poslednjem korišćenom šablonu.
 
-Pre prvog drafta izaberi `palettePlan` iz `brand/color-palette.json`. Plan beleži pozadinu, površinu, tekst, akcenat i tamnu kontrolisanu logo-pozadinu. Tekstualni par mora biti naveden u `safeTextPairs`, a originalni logo sme stajati samo na podlozi iz `approvedLogoBackgrounds`.
+Pre prvog drafta izaberi `palettePlan` iz `brand/color-palette.json`. Plan beleži pozadinu, površinu, tekst, akcenat i neposrednu logo-pozadinu. `logoVariant` je `on-light` ili `on-dark` i mora odgovarati kombinaciji iz `approvedLogoPlacements`. Tekstualni par mora biti naveden u `safeTextPairs`.
 
 Uz produktni vizual upiši `productShape` kao `wide`, `compact` ili `tall`. Uz ponudu upiši `offerKind` kao `price`, `discount`, `bundle`, `gift`, `deadline` ili `none`. Objava tipa akcija ne može koristiti `deadline` ili `none` kao zamenu za konkretnu mehaniku.
 

@@ -8,7 +8,7 @@ Ovaj dokument je početna tačka rada u repou AU Šeki-Tilia. Služi da agent od
 | --- | --- | --- |
 | Redosled rada i nepregovariva pravila | `AGENTS.md` | obavezne korake, bezbednost, lokacije i izlazne fajlove |
 | Identitet brenda | `brand/brand-guide.md` | paletu, Manrope, originalni logo, ton i vidljivost |
-| Operativna paleta i kontrast | `brand/color-palette.json` | izbor devet tonova, bezbedne tekstualne parove i tamnu kontrolisanu podlogu za originalni logo |
+| Operativna paleta i kontrast | `brand/color-palette.json` | izbor devet tonova, bezbedne tekstualne parove i odobrene `on-light`/`on-dark` logo kombinacije |
 | Plan sadržaja | `brand/content-framework.md` | rubriku, format i ulogu objave u seriji |
 | Potvrđeni podaci o ograncima | `brand/brand-config.json` | adresu, telefon i radno vreme samo za lokalnu objavu |
 | Copy i bezbednost | `production/copy-playbook.md`, `production/content-safety-rules.md` | caption, CTA, hashtagove, tvrdnje i blokade |
@@ -42,7 +42,7 @@ Kontinuitet brenda nije dozvola za recikliranje istog posta. Svaka nova objava m
 - `designInterventions` beleži najmanje dve stvarno promenjene osi dizajna, na primer redosled čitanja, položaj proizvoda, tretman ponude, dubina scene, kadar slike, tipografska kompozicija, CTA/footer, uloga ikone ili ritam videa.
 - `motionTreatment` je obavezan kada paket ima Reels, upisuje se identično u `design-direction.json` i `video-props.json`, utiče na render i ne sme se ponoviti u poslednje tri Reels objave.
 - `validatedRenders` koristi tačne putanje: `final/feed-1080x1350.png`, `final/story-1080x1920.png`, `generated/reels-intro.png`, `generated/reels-offer.png` i `generated/reels-closing.png`.
-- Review hashom zaključava input, props, design-direction, renderer, CSS, manifest i sve četiri reference, sve rendere i finalni MP4. Svaka kasnija promena zahteva novo pokretanje `prepare-visual-review.mjs` i novi nezavisni pregled.
+- Review hashom zaključava input, props, design-direction, renderer, CSS, manifest, paletu, brend konfiguraciju, oba logo originala i renderer kopije, lokalne fontove, izabrani audio, package manifest/lock, sve četiri reference, rendere i finalni MP4. Svaka kasnija promena zahteva novo pokretanje `prepare-visual-review.mjs` i novi nezavisni pregled.
 - `formatAdaptations` mora objasniti šta se menja između Feed-a, Story-ja i Reels-a. Isti raspored se ne sme samo rastegnuti na drugi format.
 
 Pre-flight proverava ponovljeni `signature`, sadržajni ugao, kombinaciju dizajnerskih intervencija i Reels ritam. Opisna polja se proveravaju ručno u `review.md`: promena mora biti stvarna, ne samo druga boja, novi proizvod ili preformulisan isti tekst.

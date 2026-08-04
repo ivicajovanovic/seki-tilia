@@ -1,14 +1,15 @@
 # Handoff: AU Šeki-Tilia produkcioni sistem
 
 **Ažurirano:** 4. avgust 2026.
-**Status:** sistem ima dva paketa spremna za ljudsku proveru i ažuriran logo-sistem. Završni materijal se nikada ne objavljuje automatski.
+**Status:** sistem je namenjen izradi novih lokalnih produkcionih paketa. Završni materijal se nikada ne objavljuje automatski.
 
 ## Trenutno stanje
 
-- Postoje dva paketa sa statusom `SPREMNO ZA LJUDSKU PROVERU`: `001-2026-07-31-enterobiotik-akcija` i `002-2026-07-31-multivitamin-akcija`. Njihovi finali i review dokazi su u pripadajućim paketima; aktivne pripremljene kopije asseta su pod `video-renderer/public/jobs/`.
-- `brand/design-history.json` i dalje nema evidencije. Pre sledeće objave proveriti i ažurirati istoriju prema stvarnim paketima, kako bi se sprovodilo pravilo sveže intervencije.
+- Lokalno mogu postojati raniji test-paketi i renderi. Oni nisu aktivni finali, ne zahtevaju ponovno renderovanje i ne prate se Git-om. GitHub sadrži samo sistem, standardne brend/reference/audio assete i sintetičke test fixture podatke.
+- `brand/design-history.json` čuva sažetu istoriju potrebnu za pravilo sveže intervencije kada se aktivni paket arhivira ili ukloni iz `productions/`; validator deduplikuje isti ID ako je privremeno prisutan na oba mesta.
 - Renderer, brend pravila, paleta, odobrene reference, pre-flight i tok nezavisnog pregleda su deo framework-a.
 - Svaki naredni paket mora proći kompletan tok i ne sme ponoviti sadržajni ili vizuelni pristup prethodna tri paketa.
+- Klijentske činjenice i materijale dostavljaju stručna lica. Sistem i dalje zahteva izvor uz svaku zdravstvenu ili produktnu tvrdnju, ali ne uvodi poseban interni stručni approval gate.
 
 ## Obavezan početak rada
 
@@ -51,3 +52,5 @@ Finali idu samo u `final/`: Feed PNG, Story PNG, Reels MP4 i caption. Pravila za
 ## Otvorena administrativna stavka
 
 `brand/brand-config.json` sadrži 12 unetih lokacija, dok deo brend dokumentacije pominje najmanje 14. Pre prve lokalne objave potvrditi da li nedostaju dva zapisa ili treba uskladiti opis mreže.
+
+Metapodaci šest audio numera evidentirani su u `public/mp3/README.md`. Pre komercijalne upotrebe vlasnik projekta potvrđuje da je izvorni Suno nalog imao odgovarajuća prava u trenutku generisanja.

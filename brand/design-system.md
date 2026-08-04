@@ -5,9 +5,9 @@ Ovaj dokument pretvara brend vodič i vizuelne reference u operativna pravila za
 ## Nepromenjivi elementi
 
 - Koristi se samo originalni logo iz `logos/`. Znak se nikada ne prebojava, rasteže niti postavlja direktno na limeta, fotografsku ili drugu nekontrolisanu podlogu.
-- Znak bez naziva koristi se bez bele, krem ili druge pravougaone kartice. Za svetlu kontrolisanu pozadinu koristi se `logo-tamniji.svg`, a za tamnu `logo-svetliji.svg`. `logoSurface` je obavezno `"none"`; kompozicija mora obezbediti kontrolisan kontrast tako da oba originalna dela znaka, petrol i limeta, ostanu vidljiva.
+- Znak bez naziva koristi se bez bele, krem ili druge pravougaone kartice. `logoVariant: "on-light"` koristi `logo-tamniji.svg` na svetloj kontrolisanoj pozadini, a `logoVariant: "on-dark"` koristi `logo-svetliji.svg` na tamnoj. `logoSurface` je obavezno `"none"`; kombinacija varijante i neposredne pozadine mora postojati u `approvedLogoPlacements` iz `brand/color-palette.json`.
 - Jedina porodica teksta na AU Šeki-Tilia vizualima je **Manrope**. Naslov koristi 700 ili 800, a ostali tekst 400, 500 ili 600. Renderer eksplicitno učitava oba potrebna latin podskupa iste Manrope porodice i ne koristi zamenski font.
-- Paleta ima devet odobrenih tonova iz `brand/color-palette.json`. Agent bira kombinaciju prema briefu i beleži je u `palettePlan`; jedan vizual koristi najviše jedan dominantan akcenat i ne pretvara limetu u pozadinu za logo. Tekst, CTA i funkcionalne ikonice koriste samo parove iz `safeTextPairs`, dok logo koristi isključivo `approvedLogoBackgrounds`.
+- Paleta ima devet odobrenih tonova iz `brand/color-palette.json`. Agent bira kombinaciju prema briefu i beleži je u `palettePlan`; jedan vizual koristi najviše jedan dominantan akcenat i ne pretvara limetu u pozadinu za logo. Tekst, CTA i funkcionalne ikonice koriste samo parove iz `safeTextPairs`, dok logo koristi isključivo kombinacije iz `approvedLogoPlacements`.
 - Obavezni elementi ostaju čitljivi na punoj veličini i u približno 25% prikazu telefona: logo, glavna poruka, ponuda, proizvod i CTA kada postoje.
 - Pravougaoni paneli, kartice, proizvodne podloge, footeri i okviri imaju oštre uglove. Zaobljenje je dozvoljeno samo za pill-dugme/kratku ponudnu oznaku (`borderRadius: 999`) ili čiste kružne dekorativne oblike (`borderRadius: 50%`).
 - Uz `imageSrc` u `video-props.json` podržani su opcioni parametari:
@@ -31,7 +31,7 @@ Za akcije, novitete i proizvode postoje različite kompozicione familije. Izaber
 | `minimal-offer` | Tipografija i potvrđena ponuda nose kadar, uz dominantan proizvod bez pravougaone podloge kada je PNG transparentan. Za kratke akcije i novitete. | drugom minimalnom objavom sa istim CTA modulom |
 | `product-card` | Proizvod na krem kartici preko petrol polja samo kada je fotografija neprovidna; transparentni PNG izlazi iz kartičnog tretmana kao slobodan heroj. | istom kartičnom strukturom u naredne tri objave |
 | `premium-product-stage` | Velika asimetrična ponuda i dominantan proizvod u režiranoj sceni: organska pozadina, izražen podijum sa vektorskim gradijentima i petrol završni blok sa CTA-om. Transparentni PNG slobodno prelazi preko scene, bez pravougaonog rama, kartice ili podloge. Za potvrđene akcije i proizvode čije pakovanje treba da bude glavni nosilac kadra. | bilo kojom familijom sa istim odnosom "velika ponuda levo, proizvod desno, petrol footer" u naredne tri objave |
-| `offer-orbit` | Orbitni akcenat i uzemljena produktna scena. Feed koristi asimetričan tekst/proizvod odnos i petrol CTA završetak, Story vertikalni stack, a Reels zaseban hook, hero i closing. | `editorial-split` ili drugom objavom sa istim odnosom teksta i proizvoda |
+| `offer-orbit` | Orbitni akcenat, kružna putanja ponude i uzemljena produktna scena sa zasebnim prostornim odnosom teksta i proizvoda. Feed, Story i Reels moraju imati stvarno različitu orbitnu kompoziciju, ne alias druge familije. | `editorial-split` ili drugom objavom sa istim odnosom teksta i proizvoda |
 | `type-stage` | Veliki tipografski naslov postavlja vertikalni ritam, a proizvod izlazi iz donje podijumske scene pred slojevitom kružnom scenografijom; CTA je kratak petrol završetak. | `minimal-offer` ili `premium-product-stage` sa sličnim redosledom čitanja |
 | `gallery-shelf` | Svetla produktna galerija levo i petrol informativni stub desno. Za novitet ili proizvod kada je naziv važniji od cene. | `offer-orbit` ili drugom kompozicijom sa tamnim desnim stubom |
 
@@ -58,7 +58,7 @@ Pre dizajna agent pregleda četiri reference navedene u `brand/design-references
 - izabranom familijom i jedinstvenim `signature` zapisom;
 - najmanje jednom korišćenom referencom i dve konkretne dizajnerske osobine preuzete kao inspiracija;
 - kratkim opisom po čemu se objava razlikuje od poslednje tri;
-- potvrdom da je `logoSurface` `"none"`, da nema pravougaone podloge iza znaka i da se koristi rendererova Manrope porodica `AUSekiManrope`;
+- potvrdom da je `logoSurface` `"none"`, da `logoVariant` odgovara neposrednoj pozadini i da se koristi rendererova Manrope porodica `AUSekiManrope`;
 - listom finalnih rendera pregledanih na punoj veličini i u umanjenom prikazu.
 - stabilan identitet autora u `authorId`, najmanje dve vrednosti `designInterventions`, opis `freshInterventionNote`, `motionTreatment` kada postoji Reels i opis `formatAdaptations` za svaki traženi format.
 - strukturisanim `formatPlan` vrednostima: različiti Feed i Story `layoutId`, redosled čitanja i anchor proizvoda, kao i Reels `shotPlan` sa najmanje tri scene;

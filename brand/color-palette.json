@@ -36,7 +36,11 @@
     { "foreground": "black-is-back", "background": "slate-gray", "ratio": 4.37 },
     { "foreground": "black-is-back", "background": "moss-gray", "ratio": 4.45 }
   ],
-  "approvedLogoBackgrounds": ["black-is-back", "royal-neptune", "steel-blue"],
+  "approvedLogoBackgrounds": ["icy-tundra", "deer-run", "black-is-back", "royal-neptune", "steel-blue"],
+  "approvedLogoPlacements": {
+    "logo-tamniji.svg": ["icy-tundra", "deer-run"],
+    "logo-svetliji.svg": ["black-is-back", "royal-neptune", "steel-blue"]
+  },
   "suggestedSchemes": [
     {
       "id": "calm-studio",

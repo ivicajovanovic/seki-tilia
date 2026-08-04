@@ -72,8 +72,7 @@ writeFileSync(join(postDirectory, "input.json"), JSON.stringify({
   blockingMissingFacts: [],
   locationId: null,
   sourceAssets: [],
-  requestedFormats: ["feed", "story", "reels"],
-  requiresProfessionalReview: true
+  requestedFormats: ["feed", "story", "reels"]
 }, null, 2) + "\n");
 const availableAudioTracks = [
   "mp3/clear-path.mp3",
@@ -83,7 +82,8 @@ const availableAudioTracks = [
   "mp3/paper-sun-parade.mp3",
   "mp3/paper-sun-parade-upbeat.mp3"
 ];
-const selectedAudioTrack = availableAudioTracks[Math.floor(Math.random() * availableAudioTracks.length)];
+const audioRotationIndex = [...id].reduce((sum, character) => sum + character.codePointAt(0), 0) % availableAudioTracks.length;
+const selectedAudioTrack = availableAudioTracks[audioRotationIndex];
 
 writeFileSync(join(postDirectory, "video-props.json"), JSON.stringify({
   eyebrow: "",
@@ -124,6 +124,7 @@ writeFileSync(join(postDirectory, "generated", "design-direction.json"), JSON.st
     rationale: null
   },
   logoSurface: "none",
+  logoVariant: null,
   palettePlan: {
     background: null,
     surface: null,
