@@ -82,6 +82,8 @@ Za svaku grafičku i video objavu koristi se najmanje jedna semantička ikona iz
 
 Iz foldera `video-renderer/` agent koristi `video-props.json` iz foldera objave.
 
+Za Reels `audioTrack` je obavezan, `audioVolume` je između 0.75 i 1, a renderer koristi čujni deo numere nakon njenog tihog uvoda. Pre-flight meri glasnoću finalnog MP4 fajla i blokira tih ili praktično nečujan audio. Tekst sme da se pomera ili skalira samo tokom ulazne i izlazne animacije; nakon pojavljivanja ostaje stabilan, dok kontinuirani pokret nose proizvod i dekorativni elementi.
+
 ```bash
 npx remotion still SekiTiliaFeed ../productions/.../final/feed-1080x1350.png --props=../productions/.../video-props.json
 npx remotion still SekiTiliaStory ../productions/.../final/story-1080x1920.png --props=../productions/.../video-props.json
@@ -97,7 +99,7 @@ npm run dev
 
 Podržane `designVariant` vrednosti su `product-atelier`, `editorial-split`, `minimal-offer`, `product-card`, `premium-product-stage`, `offer-orbit`, `type-stage` i `gallery-shelf`. Biraj ih prema briefu i dizajnerskoj istoriji, ne prema poslednjem korišćenom šablonu.
 
-Pre prvog drafta potvrdi početni nasumično izabrani `colorScheme` iz `brand/color-palette.json > rendererThemes`, ili ga nasumično zameni drugom kompatibilnom temom. Vrednost mora biti ista u `video-props.json` i `generated/design-direction.json`. `palettePlan` beleži pozadinu, površinu, tekst, akcenat i neposrednu logo-pozadinu i mora doslovno odgovarati temi. `logoVariant` mora odgovarati `approvedLogoPlacements`, a tekstualni par mora biti u `safeTextPairs`.
+Pri kreiranju paketa sistem automatski bira `colorSet` suprotan setu poslednje spremne objave, a zatim nasumično bira `colorScheme` samo unutar njega. `legacy` i `alternative` se ne smeju mešati u jednoj objavi. Agent može zameniti temu samo drugom kompatibilnom temom iz već izabranog seta. `colorSet` i `colorScheme` moraju biti isti u `video-props.json` i `generated/design-direction.json`. `palettePlan` beleži pozadinu, površinu, tekst, akcenat i neposrednu logo-pozadinu, doslovno odgovara temi i koristi isključivo boje tog seta. Originalni logo i stvarne boje proizvoda ostaju neizmenjeni izuzeci. `logoVariant` mora odgovarati `approvedLogoPlacements`, a tekstualni par mora biti u `safeTextPairs`.
 
 Uz produktni vizual upiši `productShape` kao `wide`, `compact` ili `tall`. Uz ponudu upiši `offerKind` kao `price`, `discount`, `bundle`, `gift`, `deadline` ili `none`. Objava tipa akcija ne može koristiti `deadline` ili `none` kao zamenu za konkretnu mehaniku.
 

@@ -28,7 +28,7 @@ Nikada ne predstavljamo generisanu osobu kao stvarnu zaposlenu apoteke.
 | Alternativna svetlozelena | Matcha | `#BDCCA5` |
 | Alternativna topla svetla | Desert Khaki | `#F8E4C9` |
 
-Operativni izbor i kontrastne kombinacije vode se u [color-palette.md](color-palette.md) i `color-palette.json`. Postojećih devet tonova je zadržano i dodata su tri nova, ukupno dvanaest. Agent nasumično bira jednu od šest bezbednih renderer tema, uz proveru kompatibilnosti sa proizvodom i direktnim kontrastom. Tekst, CTA i funkcionalne ikonice koriste samo unapred odobrene kontrastne parove. Logo koristi odgovarajuću `on-light` ili `on-dark` varijantu i samo kombinaciju iz `approvedLogoPlacements`; kontrast se ne rešava belom karticom.
+Operativni izbor i kontrastne kombinacije vode se u [color-palette.md](color-palette.md) i `color-palette.json`. Postojećih devet tonova čini nezavisni `legacy` set, a Abyssal Teal, Matcha i Desert Khaki čine nezavisni `alternative` set. Jedna objava koristi isključivo jedan set, a sistem ih obavezno smenjuje između uzastopnih objava. Unutar izabranog seta tema se bira nasumično. Mešanje tonova između setova nije dozvoljeno. Izuzetak su neizmenjive boje originalnog logoa i stvarne boje proizvoda ili izvorne fotografije. Tekst, CTA i funkcionalne ikonice koriste samo unapred odobrene kontrastne parove. Logo koristi odgovarajuću `on-light` ili `on-dark` varijantu i samo kombinaciju iz `approvedLogoPlacements`; kontrast se ne rešava belom karticom.
 
 ## Tipografija
 

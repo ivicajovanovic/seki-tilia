@@ -42,7 +42,8 @@ Status: SPREMNO ZA LJUDSKU PROVERU | BLOKIRANO
 - [ ] Futer ne zaklanja ikone, tekst ni druge sadržajne elemente u bilo kom formatu.
 - [ ] Tranzicije u videu (Reels) su čiste, bez preklapanja elemenata ili teksta u 8. i 9. sekundi.
 - [ ] Proizvod stoji pravilno i uzemljeno na postolju/podijumu.
-- [ ] Video (Reels) ima neprekidnu vizuelnu dinamičnost u svakom sekundu: fazni ulazak elemenata i mikro-animaciju tokom zadržavanja.
+- [ ] Video (Reels) ima neprekidnu vizuelnu dinamičnost u svakom sekundu, ali sav tekst nakon ulaska ostaje stabilan; mikro-animaciju tokom zadržavanja nose proizvod, ikone i dekorativni elementi.
+- [ ] Finalni Reels ima jasno čujnu nasumično izabranu MP3 podlogu i prolazi proveru stvarne glasnoće, ne samo prisustva audio streama.
 - [ ] Tekst je jezički i vizuelno pregledan.
 
 Napomene i nedostajući podaci:

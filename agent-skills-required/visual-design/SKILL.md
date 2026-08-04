@@ -113,6 +113,8 @@ Kvalitet ima prednost nad novošću. Ne biraj novu familiju samo da bi prošla i
 
 Za svaki traženi format zapiši namernu adaptaciju: Feed može graditi sporiju hijerarhiju, Story jednu brzu radnju, a Reels zaseban ritam otkrivanja. Ne rasteži isti layout između formata. Kada postoji Reels, promeni i dokumentuj `motionTreatment` u odnosu na prethodne tri Reels objave. Razlika mora ostati u okvirima palete, Manrope tipografije, originalnog logoa bez pravougaone podloge, oštrih pravougaonih uglova i potvrđenih činjenica.
 
+Paletu tretiraj kao dva strogo izolovana seta. Jedna objava koristi samo automatski izabrani `legacy` ili `alternative` set, a sledeća spremna objava mora koristiti drugi. Ne mešaj pozadinu, površinu, tekst, akcenat, ikonu, geometriju ili gradijent između setova. Originalni logo i stvarne boje proizvoda ili izvorne fotografije ostaju neizmenjeni izuzeci. Ako menjaš nasumično izabranu temu, zameni je samo temom iz istog `colorSet` seta.
+
 ### 5. Choose one design architecture
 
 Choose the architecture that best serves the content. Do not combine patterns merely to appear creative.
@@ -328,7 +330,8 @@ Inspect the rendered output, not just the source or prompt. Revise until all app
 - [ ] Product MUST stand correctly and grounded on the podium/stage without floating.
 - [ ] Footer MUST NEVER cover or obstruct any icons, text, or buttons in Story or Feed formats.
 - [ ] Video sequence transitions MUST BE clean without element collisions or text bleeding between scenes (e.g. at 8-9s handoffs, HeroScene exit fade-out must be complete).
-- [ ] Video animations (Reels) MUST maintain continuous visual motion throughout every second: staggered element reveals (eyebrow -> headline -> offer pill -> product stage -> benefit icons -> footer) plus continuous holding micro-animations (gentle bottle floating, accent pulse, gradient drift) so no frame remains static.
+- [ ] Video animations (Reels) MUST maintain continuous visual motion throughout every second: staggered element reveals (eyebrow -> headline -> offer pill -> product stage -> benefit icons -> footer). Once text has entered, it MUST remain fully stable without pulsing, floating, continuous scaling, or positional drift. Continuous holding motion belongs to the bottle, icons, accent lines, organic geometry, or gradient drift.
+- [ ] The final Reels MUST contain a clearly audible randomly selected MP3 bed. Validate measured loudness in the exported MP4; an audio stream alone is insufficient.
 - [ ] Critical content stays inside safe margins and survives likely feed crops.
 - [ ] Text does not sit over uncontrolled visual noise.
 - [ ] Supplied images are used at the best credible quality their source permits; documented client-side softness or compression is not treated as an agent failure by itself.

@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "source": ["../paleta.jpg", "../public/boje-dodatak.jpg", "Korisnička korekcija HEX vrednosti 2026-08-04"],
   "usage": "Operativna paleta za grafike, video i druge vizuelne materijale AU Šeki-Tilia.",
   "colors": [
@@ -15,6 +15,18 @@
     { "id": "abyssal-teal", "name": "Abyssal Teal", "hex": "#063F48", "role": "alternative-dark" },
     { "id": "matcha", "name": "Matcha", "hex": "#BDCCA5", "role": "alternative-light-green" },
     { "id": "desert-khaki", "name": "Desert Khaki", "hex": "#F8E4C9", "role": "alternative-light-warm" }
+  ],
+  "paletteSets": [
+    {
+      "id": "legacy",
+      "label": "Originalni set",
+      "colors": ["deer-run", "slate-gray", "black-is-back", "moss-gray", "livid-lime", "royal-neptune", "icy-tundra", "steel-blue", "riviera-sea"]
+    },
+    {
+      "id": "alternative",
+      "label": "Novi trobojni set",
+      "colors": ["abyssal-teal", "matcha", "desert-khaki"]
+    }
   ],
   "contrastPolicy": {
     "minimumTextRatio": 4.5,
@@ -36,16 +48,8 @@
     { "foreground": "livid-lime", "background": "steel-blue", "ratio": 4.68 },
     { "foreground": "abyssal-teal", "background": "matcha", "ratio": 6.81 },
     { "foreground": "abyssal-teal", "background": "desert-khaki", "ratio": 9.34 },
-    { "foreground": "abyssal-teal", "background": "icy-tundra", "ratio": 10.61 },
-    { "foreground": "abyssal-teal", "background": "livid-lime", "ratio": 7.62 },
-    { "foreground": "black-is-back", "background": "matcha", "ratio": 10.81 },
-    { "foreground": "black-is-back", "background": "desert-khaki", "ratio": 14.83 },
-    { "foreground": "royal-neptune", "background": "matcha", "ratio": 7.04 },
-    { "foreground": "royal-neptune", "background": "desert-khaki", "ratio": 9.66 },
-    { "foreground": "icy-tundra", "background": "abyssal-teal", "ratio": 10.61 },
     { "foreground": "matcha", "background": "abyssal-teal", "ratio": 6.81 },
-    { "foreground": "desert-khaki", "background": "abyssal-teal", "ratio": 9.34 },
-    { "foreground": "livid-lime", "background": "abyssal-teal", "ratio": 7.62 }
+    { "foreground": "desert-khaki", "background": "abyssal-teal", "ratio": 9.34 }
   ],
   "largeTextOnlyPairs": [
     { "foreground": "black-is-back", "background": "slate-gray", "ratio": 4.37 },
@@ -81,37 +85,15 @@
       "accent": "royal-neptune",
       "logoBackground": "black-is-back"
     },
-    {
-      "id": "abyssal-matcha",
-      "background": "matcha",
-      "surface": "desert-khaki",
-      "textForeground": "abyssal-teal",
-      "accent": "livid-lime",
-      "logoBackground": "abyssal-teal"
-    },
-    {
-      "id": "abyssal-desert",
-      "background": "desert-khaki",
-      "surface": "matcha",
-      "textForeground": "abyssal-teal",
-      "accent": "livid-lime",
-      "logoBackground": "abyssal-teal"
-    },
-    {
-      "id": "royal-matcha",
-      "background": "matcha",
-      "surface": "desert-khaki",
-      "textForeground": "royal-neptune",
-      "accent": "livid-lime",
-      "logoBackground": "royal-neptune"
-    }
+    { "id": "legacy-deer", "background": "deer-run", "surface": "icy-tundra", "textForeground": "royal-neptune", "accent": "livid-lime", "logoBackground": "royal-neptune" },
+    { "id": "alternative-matcha", "background": "matcha", "surface": "desert-khaki", "textForeground": "abyssal-teal", "accent": "desert-khaki", "logoBackground": "abyssal-teal" },
+    { "id": "alternative-desert", "background": "desert-khaki", "surface": "matcha", "textForeground": "abyssal-teal", "accent": "matcha", "logoBackground": "abyssal-teal" }
   ],
   "rendererThemes": [
-    { "id": "calm-studio", "background": "icy-tundra", "surface": "deer-run", "dark": "royal-neptune", "accent": "livid-lime", "secondary": "riviera-sea", "stage": "deer-run", "logoBackground": "royal-neptune", "logoVariant": "on-dark" },
-    { "id": "icy-abyssal", "background": "icy-tundra", "surface": "matcha", "dark": "abyssal-teal", "accent": "livid-lime", "secondary": "riviera-sea", "stage": "desert-khaki", "logoBackground": "abyssal-teal", "logoVariant": "on-dark" },
-    { "id": "matcha-abyssal", "background": "matcha", "surface": "desert-khaki", "dark": "abyssal-teal", "accent": "livid-lime", "secondary": "riviera-sea", "stage": "deer-run", "logoBackground": "abyssal-teal", "logoVariant": "on-dark" },
-    { "id": "desert-abyssal", "background": "desert-khaki", "surface": "matcha", "dark": "abyssal-teal", "accent": "livid-lime", "secondary": "riviera-sea", "stage": "deer-run", "logoBackground": "abyssal-teal", "logoVariant": "on-dark" },
-    { "id": "matcha-royal", "background": "matcha", "surface": "desert-khaki", "dark": "royal-neptune", "accent": "livid-lime", "secondary": "abyssal-teal", "stage": "deer-run", "logoBackground": "royal-neptune", "logoVariant": "on-dark" },
-    { "id": "desert-royal", "background": "desert-khaki", "surface": "matcha", "dark": "royal-neptune", "accent": "livid-lime", "secondary": "abyssal-teal", "stage": "deer-run", "logoBackground": "royal-neptune", "logoVariant": "on-dark" }
+    { "id": "calm-studio", "colorSet": "legacy", "background": "icy-tundra", "surface": "deer-run", "dark": "royal-neptune", "accent": "livid-lime", "secondary": "riviera-sea", "stage": "deer-run", "ink": "black-is-back", "logoBackground": "royal-neptune", "logoVariant": "on-dark" },
+    { "id": "legacy-deer", "colorSet": "legacy", "background": "deer-run", "surface": "icy-tundra", "dark": "royal-neptune", "accent": "livid-lime", "secondary": "riviera-sea", "stage": "deer-run", "ink": "black-is-back", "logoBackground": "royal-neptune", "logoVariant": "on-dark" },
+    { "id": "legacy-lime", "colorSet": "legacy", "background": "livid-lime", "surface": "icy-tundra", "dark": "black-is-back", "accent": "icy-tundra", "secondary": "riviera-sea", "stage": "deer-run", "ink": "black-is-back", "logoBackground": "black-is-back", "logoVariant": "on-dark" },
+    { "id": "alternative-matcha", "colorSet": "alternative", "background": "matcha", "surface": "desert-khaki", "dark": "abyssal-teal", "accent": "desert-khaki", "secondary": "matcha", "stage": "desert-khaki", "ink": "abyssal-teal", "logoBackground": "abyssal-teal", "logoVariant": "on-dark" },
+    { "id": "alternative-desert", "colorSet": "alternative", "background": "desert-khaki", "surface": "matcha", "dark": "abyssal-teal", "accent": "matcha", "secondary": "desert-khaki", "stage": "matcha", "ink": "abyssal-teal", "logoBackground": "abyssal-teal", "logoVariant": "on-dark" }
   ]
 }

@@ -10,8 +10,9 @@
 - Renderer, brend pravila, paleta, odobrene reference, pre-flight i tok nezavisnog pregleda su deo framework-a.
 - Svaki naredni paket mora proći kompletan tok i ne sme ponoviti sadržajni ili vizuelni pristup prethodna tri paketa.
 - Klijentske činjenice i materijale dostavljaju stručna lica. Sistem i dalje zahteva izvor uz svaku zdravstvenu ili produktnu tvrdnju, ali ne uvodi poseban interni stručni approval gate.
-- Svaki zahtev proizvodi Feed, Story i Reels. Reels uvek koristi nasumično izabranu odobrenu numeru, a početna tema boja se nasumično bira među šest bezbednih renderer tema.
-- Operativna paleta sada ima dvanaest tonova. Prvobitnih devet je zadržano, a važeće dodatne vrednosti su Abyssal Teal `#063F48`, Matcha `#BDCCA5` i Desert Khaki `#F8E4C9`.
+- Svaki zahtev proizvodi Feed, Story i Reels. Reels uvek koristi nasumično izabranu odobrenu numeru, čujni deo MP3 fajla i `audioVolume` između 0.75 i 1. Pre-flight proverava i stvarni nivo zvuka u finalnom MP4-u.
+- Tekst u Reels-u animira ulazak i izlazak, a zatim ostaje potpuno stabilan. Kontinuirani pokret nose proizvod, ikone, akcentne linije i pozadinska geometrija.
+- Operativna paleta ima dva strogo izolovana seta: `legacy` sa prvobitnih devet tonova i `alternative` sa Abyssal Teal `#063F48`, Matcha `#BDCCA5` i Desert Khaki `#F8E4C9`. Uzastopne objave automatski smenjuju set, a teme se nasumično biraju samo unutar aktivnog seta.
 
 ## Obavezan početak rada
 
@@ -56,3 +57,37 @@ Finali idu samo u `final/`: Feed PNG, Story PNG, Reels MP4 i caption. Pravila za
 `brand/brand-config.json` sadrži 12 unetih lokacija, dok deo brend dokumentacije pominje najmanje 14. Pre prve lokalne objave potvrditi da li nedostaju dva zapisa ili treba uskladiti opis mreže.
 
 Metapodaci šest audio numera evidentirani su u `public/mp3/README.md`; vlasnik projekta je potvrdio da su dozvoljene za korišćenje.
+
+## Preporučeno sledeće poboljšanje: kompozicioni otisak
+
+Trenutna istorijska provera poredi deklarisani `signature`, `contentApproach`, `designInterventions` i `motionTreatment`. Sledeći korak je provera stvarnog rasporeda, kako različita imena familija ili layouta ne bi prolazila kada finalni renderi i dalje izgledaju gotovo identično.
+
+Za svaku završenu objavu u `generated/design-direction.json` treba zabeležiti strukturisani `compositionFingerprint`, na primer:
+
+```json
+{
+  "headlineZone": "top-left",
+  "headlineShape": "three-line-block",
+  "productZone": "bottom-right",
+  "productScale": "large",
+  "offerZone": "middle-left",
+  "footerType": "full-width-dark",
+  "readingOrder": "headline-offer-product-cta",
+  "sceneGeometry": "circle-with-podium",
+  "lightDarkBalance": "light-dominant"
+}
+```
+
+Planirani otisak treba povezati sa stvarno renderovanim Feed-om, dok Story i Reels ostaju formatne adaptacije istog posla. Pre-flight zatim poredi novu objavu sa najmanje poslednje tri završene objave ponderisanim skorom:
+
+- položaj i skala proizvoda: 25%;
+- položaj i oblik naslova: 20%;
+- redosled čitanja: 15%;
+- dominantna geometrija scene: 15%;
+- položaj i tretman ponude: 10%;
+- footer/CTA struktura: 10%;
+- odnos svetlih i tamnih površina: 5%.
+
+Ako sličnost pređe početni prag od 75%, paket treba blokirati uz konkretno objašnjenje ponovljenih osa. Agent tada menja najmanje dve važne kompozicione odluke, na primer zonu proizvoda i strukturu footera, umesto da promeni samo boju ili naziv familije. Prag se nakon prvih stvarnih objava može kalibrisati prema tome da li previše blokira dobre brend-varijacije ili propušta očigledno ponavljanje.
+
+Druga faza treba da proveri da li je deklarisani otisak zaista sproveden u finalnom renderu, kroz nezavisni vizuelni pregled ili automatsko očitavanje zona. Time se sprečava da agent upiše drugačiji `layoutId` ili otisak, a zadrži praktično istu grafiku.

@@ -47,7 +47,7 @@ const ensureMediaCache = () => {
     }
   }
   const videoPath = join(mediaCache, "reels.mp4");
-  run("ffmpeg", ["-v", "error", "-y", "-f", "lavfi", "-i", "color=c=0x1C3B42:s=1080x1920:r=30:d=12", "-f", "lavfi", "-i", "sine=frequency=440:duration=12", "-c:v", "libx264", "-c:a", "aac", "-pix_fmt", "yuv420p", "-shortest", videoPath]);
+  run("ffmpeg", ["-v", "error", "-y", "-f", "lavfi", "-i", "color=c=0x1C3B42:s=1080x1920:r=30:d=12", "-f", "lavfi", "-i", "sine=frequency=440:duration=12,volume=4", "-c:v", "libx264", "-c:a", "aac", "-pix_fmt", "yuv420p", "-shortest", videoPath]);
   mediaReady = true;
 };
 
@@ -92,6 +92,7 @@ const makeFixture = () => {
     motionTreatment: "offer-build",
     audioTrack: "mp3/paper-sun-parade.mp3",
     audioVolume: 0.8,
+    colorSet: "legacy",
     colorScheme: "calm-studio",
   };
   const direction = {
@@ -104,6 +105,7 @@ const makeFixture = () => {
     designInterventions: ["reading-order", "icon-role"],
     freshInterventionNote: "Menja redosled čitanja i funkciju lokacijske ikone u završetku.",
     motionTreatment: "offer-build",
+    colorSet: "legacy",
     colorScheme: "calm-studio",
     formatAdaptations: { feed: "Bočna Feed kompozicija.", story: "Vertikalni Story stack.", reels: "Trodelni Reels tok." },
     formatPlan: {
@@ -252,7 +254,7 @@ const addLimitedResolutionAsset = (fixture) => {
   refreshLockedInputHashes(fixture);
 };
 
-const runChecker = (postDirectory) => execFileSync(process.execPath, [checkerPath, "--post", postDirectory], { cwd: repositoryRoot, encoding: "utf8", stdio: "pipe" });
+const runChecker = (postDirectory) => execFileSync(process.execPath, [checkerPath, "--post", postDirectory, "--skip-local-production-history"], { cwd: repositoryRoot, encoding: "utf8", stdio: "pipe" });
 const runBlocked = (postDirectory) => {
   try {
     runChecker(postDirectory);
@@ -383,13 +385,30 @@ test("Reels zahteva postojeću dozvoljenu numeru i audioVolume u opsegu", () => 
   writeJson(join(fixture.postDirectory, "video-props.json"), fixture.videoProps);
   const output = runBlocked(fixture.postDirectory);
   assert.match(output, /važeći audioTrack/);
-  assert.match(output, /audioVolume mora biti broj između 0 i 1/);
+  assert.match(output, /audioVolume mora biti broj između 0.75 i 1/);
 });
 
 test("Reels bez stvarnog audio streama ne prolazi", () => {
   const fixture = makeFixture();
   run("ffmpeg", ["-v", "error", "-y", "-f", "lavfi", "-i", "color=c=0x1C3B42:s=1080x1920:r=30:d=12", "-c:v", "libx264", "-pix_fmt", "yuv420p", join(fixture.final, "reels-1080x1920.mp4")]);
   assert.match(runBlocked(fixture.postDirectory), /mora sadržati audio stream/);
+});
+
+test("Reels sa praktično nečujnom muzikom ne prolazi", () => {
+  const fixture = makeFixture();
+  run("ffmpeg", ["-v", "error", "-y", "-f", "lavfi", "-i", "color=c=0x1C3B42:s=1080x1920:r=30:d=12", "-f", "lavfi", "-i", "sine=frequency=440:duration=12,volume=0.01", "-c:v", "libx264", "-c:a", "aac", "-pix_fmt", "yuv420p", "-shortest", join(fixture.final, "reels-1080x1920.mp4")]);
+  assert.match(runBlocked(fixture.postDirectory), /muzička podloga nije dovoljno čujna/);
+});
+
+test("renderer drži tekst stabilnim i koristi čujni MP3 segment", () => {
+  const renderer = readFileSync(join(repositoryRoot, "video-renderer/src/Composition.tsx"), "utf8");
+  assert.match(renderer, /from "@remotion\/media"/);
+  assert.match(renderer, /trimBefore=\{30 \* fps\}/);
+  assert.match(renderer, /frame >= delayFrames \+ 45/);
+  assert.doesNotMatch(renderer, /pillPulse|limePulse|scale: bgScale/);
+  const heroStart = renderer.indexOf("const HeroScene");
+  const heroEnd = renderer.indexOf("const motionPlans", heroStart);
+  assert.doesNotMatch(renderer.slice(heroStart, heroEnd), /translateX|translateY|const scale/);
 });
 
 test("logoVariant mora odgovarati neposrednoj logo pozadini", () => {
@@ -406,6 +425,22 @@ test("colorScheme mora biti identičan u props i design-direction", () => {
   assert.match(runBlocked(fixture.postDirectory), /colorScheme mora odgovarati/);
 });
 
+test("palettePlan ne sme mešati originalni i novi trobojni set", () => {
+  const fixture = makeFixture();
+  fixture.direction.palettePlan.surface = "matcha";
+  writeJson(join(fixture.generated, "design-direction.json"), fixture.direction);
+  assert.match(runBlocked(fixture.postDirectory), /meša boju van izabranog seta legacy/);
+});
+
+test("colorSet mora odgovarati izabranoj renderer temi", () => {
+  const fixture = makeFixture();
+  fixture.direction.colorSet = "alternative";
+  fixture.videoProps.colorSet = "alternative";
+  writeJson(join(fixture.generated, "design-direction.json"), fixture.direction);
+  writeJson(join(fixture.postDirectory, "video-props.json"), fixture.videoProps);
+  assert.match(runBlocked(fixture.postDirectory), /mora odgovarati temi calm-studio: legacy/);
+});
+
 test("create-post nasumično bira dozvoljenu muziku i colorScheme", () => {
   const slug = `audio-rotation-${process.pid}`;
   const date = "2099-12-31";
@@ -419,9 +454,28 @@ test("create-post nasumično bira dozvoljenu muziku i colorScheme", () => {
   const direction = JSON.parse(readFileSync(join(postDirectory, "generated/design-direction.json"), "utf8"));
   const palette = JSON.parse(readFileSync(join(repositoryRoot, "brand/color-palette.json"), "utf8"));
   assert.ok(tracks.includes(props.audioTrack));
+  assert.equal(props.audioVolume, 0.9);
   assert.ok(palette.rendererThemes.some((theme) => theme.id === props.colorScheme));
+  const selectedTheme = palette.rendererThemes.find((theme) => theme.id === props.colorScheme);
+  const selectedSet = palette.paletteSets.find((set) => set.id === props.colorSet);
+  assert.equal(direction.colorSet, props.colorSet);
+  assert.equal(selectedTheme.colorSet, props.colorSet);
+  assert.ok([selectedTheme.background, selectedTheme.surface, selectedTheme.dark, selectedTheme.accent, selectedTheme.secondary, selectedTheme.stage, selectedTheme.ink, selectedTheme.logoBackground].every((color) => selectedSet.colors.includes(color)));
   assert.equal(direction.colorScheme, props.colorScheme);
   assert.equal(direction.palettePlan.rationale, null);
   assert.equal(JSON.parse(readFileSync(join(postDirectory, "input.json"), "utf8")).requiresProfessionalReview, undefined);
+  const firstInputPath = join(postDirectory, "input.json");
+  const firstInput = JSON.parse(readFileSync(firstInputPath, "utf8"));
+  firstInput.status = "spremno-za-ljudsku-proveru";
+  writeJson(firstInputPath, firstInput);
+
+  const nextSlug = `color-alternation-${process.pid}`;
+  execFileSync(process.execPath, [join(repositoryRoot, "production/scripts/create-post.mjs"), "--slug", nextSlug, "--date", date], { cwd: repositoryRoot, stdio: "pipe" });
+  const nextName = readdirSync(monthDirectory).find((name) => name.endsWith(`-${nextSlug}`));
+  assert.ok(nextName);
+  const nextPostDirectory = join(monthDirectory, nextName);
+  const nextProps = JSON.parse(readFileSync(join(nextPostDirectory, "video-props.json"), "utf8"));
+  assert.notEqual(nextProps.colorSet, props.colorSet);
   rmSync(postDirectory, { recursive: true });
+  rmSync(nextPostDirectory, { recursive: true });
 });

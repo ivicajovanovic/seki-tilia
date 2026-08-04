@@ -6,6 +6,7 @@ import { basename, extname, join, relative, resolve, sep } from "node:path";
 const args = process.argv.slice(2);
 const postArgumentIndex = args.indexOf("--post");
 const postArgument = postArgumentIndex === -1 ? undefined : args[postArgumentIndex + 1];
+const skipLocalProductionHistory = args.includes("--skip-local-production-history");
 
 if (!postArgument) {
   console.error("Koristi: node production/scripts/check-post.mjs --post productions/GGGG/MM/001-GGGG-MM-DD-naziv");
@@ -61,6 +62,16 @@ const hasAudioStream = (path) => {
   } catch {
     return false;
   }
+};
+const probeAudioLevels = (path) => {
+  const result = spawnSync("ffmpeg", ["-hide_banner", "-i", path, "-vn", "-af", "volumedetect", "-f", "null", "-"], { encoding: "utf8" });
+  const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
+  const meanMatch = output.match(/mean_volume:\s*(-?\d+(?:\.\d+)?)\s*dB/i);
+  const maxMatch = output.match(/max_volume:\s*(-?\d+(?:\.\d+)?)\s*dB/i);
+  return {
+    meanVolume: meanMatch ? Number(meanMatch[1]) : null,
+    maxVolume: maxMatch ? Number(maxMatch[1]) : null,
+  };
 };
 const inspectVisualMetadata = (path) => {
   const media = probeMedia(path);
@@ -133,6 +144,8 @@ const colorPalette = readJson(palettePath, "brand/color-palette.json");
 const paletteColors = Array.isArray(colorPalette?.colors) ? colorPalette.colors : [];
 const paletteIds = new Set(paletteColors.map((color) => color?.id).filter((id) => typeof id === "string"));
 const paletteHexById = new Map(paletteColors.map((color) => [color?.id, color?.hex]));
+const paletteSetList = Array.isArray(colorPalette?.paletteSets) ? colorPalette.paletteSets : [];
+const paletteSets = new Map(paletteSetList.filter((set) => typeof set?.id === "string").map((set) => [set.id, new Set(Array.isArray(set.colors) ? set.colors : [])]));
 const safeTextPairList = Array.isArray(colorPalette?.safeTextPairs) ? colorPalette.safeTextPairs : [];
 const safeTextPairs = new Set(safeTextPairList.map((pair) => `${pair?.foreground}|${pair?.background}`));
 const approvedLogoBackgrounds = new Set(Array.isArray(colorPalette?.approvedLogoBackgrounds) ? colorPalette.approvedLogoBackgrounds : []);
@@ -172,10 +185,36 @@ for (const pair of safeTextPairList) {
     errors.push(`safeTextPairs odnos ${pair.foreground}|${pair.background} nema tačan bezbedan kontrast.`);
   }
 }
+if (paletteSets.size < 2 || paletteSets.size !== paletteSetList.length) errors.push("color-palette.json mora imati najmanje dva jedinstvena paletteSets seta.");
+const paletteMembership = new Map();
+for (const [setId, setColors] of paletteSets) {
+  if (setColors.size === 0) errors.push(`paletteSets.${setId} mora sadržati najmanje jednu boju.`);
+  for (const colorId of setColors) {
+    if (!paletteIds.has(colorId)) errors.push(`paletteSets.${setId} navodi nepostojeću boju ${colorId}.`);
+    const memberships = paletteMembership.get(colorId) ?? [];
+    memberships.push(setId);
+    paletteMembership.set(colorId, memberships);
+  }
+}
+for (const colorId of paletteIds) {
+  const memberships = paletteMembership.get(colorId) ?? [];
+  if (memberships.length !== 1) errors.push(`Boja ${colorId} mora pripadati tačno jednom paletteSets setu.`);
+}
+for (const pair of safeTextPairList) {
+  const foregroundSet = paletteMembership.get(pair?.foreground)?.[0];
+  const backgroundSet = paletteMembership.get(pair?.background)?.[0];
+  if (foregroundSet && backgroundSet && foregroundSet !== backgroundSet) errors.push(`safeTextPairs ne sme mešati setove: ${pair.foreground}|${pair.background}.`);
+}
 if (rendererThemes.size < 2 || rendererThemes.size !== rendererThemeList.length) errors.push("color-palette.json mora imati najmanje dve jedinstvene rendererThemes teme.");
+for (const setId of paletteSets.keys()) {
+  if (!rendererThemeList.some((theme) => theme?.colorSet === setId)) errors.push(`paletteSets.${setId} mora imati najmanje jednu rendererThemes temu.`);
+}
 for (const theme of rendererThemeList) {
-  for (const field of ["background", "surface", "dark", "accent", "secondary", "stage", "logoBackground"]) {
+  const themeSet = paletteSets.get(theme?.colorSet);
+  if (!themeSet) errors.push(`rendererThemes.${theme?.id ?? "unknown"}.colorSet mora koristiti postojeći paletteSets set.`);
+  for (const field of ["background", "surface", "dark", "accent", "secondary", "stage", "ink", "logoBackground"]) {
     if (!paletteIds.has(theme?.[field])) errors.push(`rendererThemes.${theme?.id ?? "unknown"}.${field} mora koristiti boju iz palete.`);
+    else if (themeSet && !themeSet.has(theme[field])) errors.push(`rendererThemes.${theme?.id ?? "unknown"}.${field} meša boju van seta ${theme.colorSet}.`);
   }
   if (!logoVariantFiles[theme?.logoVariant]) errors.push(`rendererThemes.${theme?.id ?? "unknown"}.logoVariant mora biti on-light ili on-dark.`);
   if (!safeTextPairs.has(`${theme?.dark}|${theme?.background}`)) errors.push(`rendererThemes.${theme?.id ?? "unknown"} nema bezbedan odnos dark/background.`);
@@ -204,7 +243,7 @@ const getDesignRecords = () => {
   }
 
   const productionsDirectory = resolve(repositoryRoot, "productions");
-  if (!existsSync(productionsDirectory)) return [...recordsById.values()];
+  if (skipLocalProductionHistory || !existsSync(productionsDirectory)) return [...recordsById.values()];
   for (const year of readdirSync(productionsDirectory, { withFileTypes: true })) {
     if (!year.isDirectory()) continue;
     const yearDirectory = join(productionsDirectory, year.name);
@@ -219,12 +258,13 @@ const getDesignRecords = () => {
           const direction = JSON.parse(readFileSync(directionPath, "utf8"));
           const postInputPath = join(monthDirectory, post.name, "input.json");
           const postInput = existsSync(postInputPath) ? JSON.parse(readFileSync(postInputPath, "utf8")) : null;
-          if (direction?.signature) recordsById.set(post.name, {
+          if (postInput?.status === "spremno-za-ljudsku-proveru" && direction?.signature) recordsById.set(post.name, {
             id: post.name,
             signature: direction.signature,
             contentApproach: postInput?.contentApproach,
             designInterventionKey: Array.isArray(direction?.designInterventions) ? [...direction.designInterventions].sort().join("|") : null,
-            motionTreatment: direction?.motionTreatment
+            motionTreatment: direction?.motionTreatment,
+            colorSet: direction?.colorSet ?? rendererThemes.get(direction?.colorScheme)?.colorSet
           });
         } catch {
           warnings.push(`Preskočen je neispravan design-direction.json u paketu ${post.name}.`);
@@ -361,7 +401,7 @@ if (requestedFormats.includes("reels")) {
   } else if (!existsSync(resolve(repositoryRoot, "video-renderer/public", videoProps.audioTrack.trim()))) {
     errors.push(`Izabrani audioTrack ne postoji u video-renderer/public/${videoProps.audioTrack.trim()}.`);
   }
-  if (!Number.isFinite(videoProps?.audioVolume) || videoProps.audioVolume < 0 || videoProps.audioVolume > 1) errors.push("video-props.json audioVolume mora biti broj između 0 i 1.");
+  if (!Number.isFinite(videoProps?.audioVolume) || videoProps.audioVolume < 0.75 || videoProps.audioVolume > 1) errors.push("video-props.json audioVolume mora biti broj između 0.75 i 1 kako bi muzika bila jasno čujna.");
 }
 if (designDirection?.logoSurface !== "none") errors.push("Originalni znak logoa se koristi bez pravougaone podloge.");
 if (designDirection?.palettePlan === undefined) {
@@ -387,6 +427,13 @@ if (designDirection?.palettePlan === undefined) {
   if (!rendererTheme) errors.push("design-direction.json colorScheme mora koristiti temu iz color-palette.json rendererThemes.");
   if (videoProps?.colorScheme !== colorScheme) errors.push("video-props.json colorScheme mora odgovarati design-direction.json colorScheme vrednosti.");
   if (rendererTheme) {
+    if (designDirection?.colorSet !== rendererTheme.colorSet || videoProps?.colorSet !== rendererTheme.colorSet) {
+      errors.push(`colorSet u video-props.json i design-direction.json mora odgovarati temi ${colorScheme}: ${rendererTheme.colorSet}.`);
+    }
+    const selectedSet = paletteSets.get(rendererTheme.colorSet);
+    for (const field of ["background", "surface", "textForeground", "textBackground", "accent", "logoBackground"]) {
+      if (selectedSet && !selectedSet.has(palettePlan?.[field])) errors.push(`palettePlan.${field} meša boju van izabranog seta ${rendererTheme.colorSet}.`);
+    }
     const expectedPalettePlan = {
       background: rendererTheme.background,
       surface: rendererTheme.surface,
@@ -407,6 +454,10 @@ if (!Array.isArray(designDirection?.typography?.weights) || designDirection.typo
 }
 
 const recentRecords = getDesignRecords().filter((record) => record?.id !== basename(postDirectory)).sort((a, b) => String(a.id).localeCompare(String(b.id))).slice(-3);
+const latestColorRecord = recentRecords.at(-1);
+if (designDirection?.colorSet && latestColorRecord?.colorSet === designDirection.colorSet) {
+  errors.push(`colorSet mora da se smenjuje između objava; prethodna objava ${latestColorRecord.id} već koristi set ${designDirection.colorSet}.`);
+}
 if (designDirection?.signature && recentRecords.some((record) => record.signature === designDirection.signature)) {
   errors.push(`Design signature ponavlja jednu od poslednje tri objave: ${recentRecords.filter((record) => record.signature === designDirection.signature).map((record) => record.id).join(", ")}.`);
 }
@@ -452,6 +503,11 @@ if (requestedFormats.includes("reels")) {
     errors.push("Finalni Reels mora biti 1080x1920 i trajati približno 12 sekundi.");
   } else if (!hasAudioStream(reelsPath)) {
     errors.push("Finalni Reels mora sadržati audio stream.");
+  } else {
+    const audioLevels = probeAudioLevels(reelsPath);
+    if (!Number.isFinite(audioLevels.meanVolume) || !Number.isFinite(audioLevels.maxVolume) || audioLevels.meanVolume < -20 || audioLevels.maxVolume < -10) {
+      errors.push("Finalni Reels ima audio stream, ali muzička podloga nije dovoljno čujna (minimum: mean -20 dB i peak -10 dB).");
+    }
   }
 }
 
@@ -614,6 +670,9 @@ for (const family of ["offer-orbit", "type-stage", "gallery-shelf"]) {
 }
 if (!renderer.includes("<Sequence") || !renderer.includes("PromoHook") || !renderer.includes('data-qa="reels-hook"') || !renderer.includes('data-qa="reels-closing"') || !renderer.includes("motionTreatment") || !renderer.includes("HeroScene")) {
   errors.push("Renderer nema stvarni višescenski Reels tok sa čisim HeroScene tranzicijama (bez preklapanja u 8. i 9. sekundi).");
+}
+if (!renderer.includes('from "@remotion/media"') || !renderer.includes("trimBefore={30 * fps}") || renderer.includes("pillPulse") || renderer.includes("limePulse") || renderer.includes("scale: bgScale")) {
+  errors.push("Renderer mora koristiti čujnu MP3 podlogu i stabilan tekst bez pulsiranja nakon ulazne animacije.");
 }
 if (/\b(?:drop-shadow|box-shadow|shadow|blur)\b/i.test(renderer)) errors.push("Renderer ne sme koristiti senke ili blur.");
 for (const qaRole of ["product-stage", "product", "podium", "headline", "cta-footer"]) {

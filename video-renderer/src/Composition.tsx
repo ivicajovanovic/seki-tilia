@@ -1,7 +1,8 @@
 import React from "react";
 import { loadFont } from "@remotion/fonts";
 import { Activity, CheckCircle2, HeartHandshake, MapPin, ShieldCheck, Sparkles } from "lucide-react";
-import { AbsoluteFill, Audio as RemotionAudio, cancelRender, Composition, continueRender, delayRender, Easing, Img, interpolate, Sequence, spring, staticFile, Still, useCurrentFrame, useVideoConfig } from "remotion";
+import { Audio as RemotionAudio } from "@remotion/media";
+import { AbsoluteFill, cancelRender, Composition, continueRender, delayRender, Easing, Img, interpolate, Sequence, spring, staticFile, Still, useCurrentFrame, useVideoConfig } from "remotion";
 import colorPalette from "../../brand/color-palette.json";
 
 type DesignVariant = "product-atelier" | "editorial-split" | "minimal-offer" | "product-card" | "premium-product-stage" | "offer-orbit" | "type-stage" | "gallery-shelf";
@@ -59,7 +60,7 @@ const paletteStyle = (schemeId = "calm-studio") => {
     "--palette-accent": paletteHex(theme.accent),
     "--palette-secondary": paletteHex(theme.secondary),
     "--palette-stage": paletteHex(theme.stage),
-    "--palette-ink": paletteHex("black-is-back"),
+    "--palette-ink": paletteHex(theme.ink),
   } as React.CSSProperties;
 };
 
@@ -133,8 +134,8 @@ const CleanPodium: React.FC<{ story: boolean; width?: number; bottom?: number; t
     <div data-qa="podium" style={{ bottom: pb, height: topH + ph, left: "50%", position: "absolute", translate: "-50% 0", width: pw, zIndex: 2 }}>
       <div style={{ background: `linear-gradient(104deg, ${colors.petrol} 0%, ${colors.podiumFront} 24%, ${colors.podiumTop} 52%, ${colors.stageTaupe} 76%, ${colors.petrol} 100%)`, bottom: -frontExtension, height: ph + (topH / 2) + frontExtension, left: 0, position: "absolute", width: pw, zIndex: 2 }} />
       <div style={{ background: `linear-gradient(114deg, ${colors.stageTaupe} 0%, ${colors.podiumFront} 25%, ${colors.podiumTop} 52%, ${colors.cream} 66%, ${colors.stageTaupe} 100%)`, borderRadius: "50%", height: topH, left: 0, position: "absolute", top: 0, width: pw, zIndex: 3 }} />
-      <div style={{ borderTop: "3px solid rgba(255, 255, 255, 0.86)", borderRadius: "50%", height: topH, left: 0, position: "absolute", top: 0, width: pw, zIndex: 5 }} />
-      <div style={{ borderTop: "2px solid rgba(28, 59, 66, 0.28)", borderRadius: "50%", height: topH * 0.66, left: pw * 0.10, position: "absolute", top: topH * 0.19, width: pw * 0.80, zIndex: 4 }} />
+      <div style={{ borderTop: `3px solid ${colors.cream}`, borderRadius: "50%", height: topH, left: 0, opacity: 0.86, position: "absolute", top: 0, width: pw, zIndex: 5 }} />
+      <div style={{ borderTop: `2px solid ${colors.petrol}`, borderRadius: "50%", height: topH * 0.66, left: pw * 0.10, opacity: 0.28, position: "absolute", top: topH * 0.19, width: pw * 0.80, zIndex: 4 }} />
     </div>
   );
 };
@@ -163,8 +164,8 @@ const BenefitIconsRow: React.FC<{ benefits?: BenefitItem[]; layout?: "grid" | "l
           const itemSpring = animated ? spring({ frame: Math.max(0, frame - (34 + idx * 8)), fps: 30, config: { damping: 14, stiffness: 90 } }) : 1;
           const floatY = animated ? Math.sin(frame * 0.06 + idx * 1.2) * 4 : 0;
           return (
-            <div key={idx} style={{ alignItems: "center", display: "flex", flexDirection: "column", gap: story ? 12 : 9, opacity: itemSpring, textAlign: "center", translate: `0 ${interpolate(itemSpring, [0, 1], [20, 0]) + floatY}px` }}>
-              <div style={{ alignItems: "center", backgroundColor: colors.cream, border: `1.5px solid ${colors.petrol}`, borderRadius: "50%", display: "flex", height: iconBoxSize, justifyContent: "center", width: iconBoxSize }}>
+            <div key={idx} style={{ alignItems: "center", display: "flex", flexDirection: "column", gap: story ? 12 : 9, opacity: itemSpring, textAlign: "center", translate: `0 ${interpolate(itemSpring, [0, 1], [20, 0])}px` }}>
+              <div style={{ alignItems: "center", backgroundColor: colors.cream, border: `1.5px solid ${colors.petrol}`, borderRadius: "50%", display: "flex", height: iconBoxSize, justifyContent: "center", translate: `0 ${floatY}px`, width: iconBoxSize }}>
                 {renderIcon(item.icon, iconSize)}
               </div>
               <div style={{ color: colors.petrol, fontSize: story ? 18 : 13, fontWeight: 800, letterSpacing: 0.2, lineHeight: 1.25, textTransform: "uppercase" }}>{item.label}</div>
@@ -184,8 +185,8 @@ const BenefitIconsRow: React.FC<{ benefits?: BenefitItem[]; layout?: "grid" | "l
         const itemSpring = animated ? spring({ frame: Math.max(0, frame - (34 + idx * 8)), fps: 30, config: { damping: 14, stiffness: 90 } }) : 1;
         const floatY = animated ? Math.sin(frame * 0.06 + idx * 1.2) * 4 : 0;
         return (
-          <div key={idx} style={{ alignItems: "center", display: "flex", gap: story ? 16 : 12, opacity: itemSpring, translate: `0 ${interpolate(itemSpring, [0, 1], [20, 0]) + floatY}px` }}>
-            <div style={{ alignItems: "center", backgroundColor: colors.cream, border: `2px solid ${colors.stageTaupe}`, borderRadius: "50%", display: "flex", height: iconBoxSize, justifyContent: "center", width: iconBoxSize }}>
+          <div key={idx} style={{ alignItems: "center", display: "flex", gap: story ? 16 : 12, opacity: itemSpring, translate: `0 ${interpolate(itemSpring, [0, 1], [20, 0])}px` }}>
+            <div style={{ alignItems: "center", backgroundColor: colors.cream, border: `2px solid ${colors.stageTaupe}`, borderRadius: "50%", display: "flex", height: iconBoxSize, justifyContent: "center", translate: `0 ${floatY}px`, width: iconBoxSize }}>
               {renderIcon(item.icon, iconSize)}
             </div>
             <div style={{ color: colors.petrol, fontSize: story ? 26 : 19, fontWeight: 700, lineHeight: 1.2 }}>{item.label}</div>
@@ -270,6 +271,7 @@ const useSpringEntrance = (animated: boolean, delayFrames: number, config = { da
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   if (!animated) return 1;
+  if (frame >= delayFrames + 45) return 1;
   return spring({
     frame: Math.max(0, frame - delayFrames),
     fps,
@@ -355,7 +357,6 @@ const PremiumProductStage: React.FC<VideoProps & { animated?: boolean }> = ({ ey
   // Continuous micro-motion for holding phase
   const floatY = animated ? Math.sin(frame * 0.05) * 6 : 0;
   const breathScale = animated ? 1 + Math.sin(frame * 0.04) * 0.015 : 1;
-  const pillPulse = animated ? 1 + Math.cos(frame * 0.06) * 0.02 : 1;
 
   return (
     <AbsoluteFill style={{ backgroundColor: colors.cream, color: colors.petrol, fontFamily: brandFontFamily, overflow: "hidden" }}>
@@ -377,7 +378,7 @@ const PremiumProductStage: React.FC<VideoProps & { animated?: boolean }> = ({ ey
           <div style={{ display: "flex", flexDirection: "column", gap: isStory ? 20 : 14, justifyContent: "space-between", paddingBottom: isStory ? 12 : 8, paddingTop: isStory ? 24 : 12, position: "relative", zIndex: 6 }}>
             <div style={{ display: "flex", flexDirection: "column", gap: isStory ? 20 : 14 }}>
               <div data-qa="headline" style={{ fontSize: isStory ? 104 : 92, fontWeight: 800, letterSpacing: isStory ? -5 : -4, lineHeight: 0.88, maxWidth: "100%", opacity: headlineSpring, translate: `0 ${interpolate(headlineSpring, [0, 1], [30, 0])}px`, whiteSpace: "pre-line" }}>{headline}</div>
-              <div style={{ opacity: offerSpring, scale: pillPulse, transformOrigin: "left center", translate: `0 ${interpolate(offerSpring, [0, 1], [20, 0])}px` }}>
+              <div style={{ opacity: offerSpring, translate: `0 ${interpolate(offerSpring, [0, 1], [20, 0])}px` }}>
                 <OfferPill label={offerLabel} size={isStory ? 42 : 32} />
               </div>
               <div style={{ fontSize: isStory ? 32 : 24, fontWeight: 600, lineHeight: 1.2, maxWidth: "90%", opacity: headlineSpring }}>{supportingText}</div>
@@ -483,8 +484,8 @@ const VerticalSpotlight: React.FC<{ story: boolean; variant: "atelier" | "type" 
     <div aria-hidden="true" style={{ bottom: story ? 235 : 165, height: diameter, position: "absolute", right: offset, width: diameter, zIndex: 1 }}>
       <div style={{ background: `radial-gradient(circle at 37% 30%, ${colors.cream} 0%, ${colors.beige} 54%, ${colors.stageTaupe} 100%)`, borderRadius: "50%", height: "100%", position: "absolute", width: "100%" }} />
       <div style={{ border: `${story ? 11 : 8}px solid ${colors.lime}`, borderRadius: "50%", height: "84%", position: "absolute", right: story ? -82 : -60, top: story ? -62 : -48, width: "84%" }} />
-      <div style={{ border: `${story ? 3 : 2}px solid rgba(28, 59, 66, 0.20)`, borderRadius: "50%", height: "65%", left: story ? 72 : 54, position: "absolute", top: story ? 102 : 76, width: "65%" }} />
-      <div style={{ background: "linear-gradient(110deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.68) 48%, rgba(255,255,255,0) 100%)", borderRadius: "50%", height: "26%", left: "15%", position: "absolute", top: "12%", width: "68%" }} />
+      <div style={{ border: `${story ? 3 : 2}px solid ${colors.petrol}`, borderRadius: "50%", height: "65%", left: story ? 72 : 54, opacity: 0.20, position: "absolute", top: story ? 102 : 76, width: "65%" }} />
+      <div style={{ background: `linear-gradient(110deg, transparent 0%, ${colors.cream} 48%, transparent 100%)`, borderRadius: "50%", height: "26%", left: "15%", opacity: 0.68, position: "absolute", top: "12%", width: "68%" }} />
     </div>
   );
 };
@@ -550,7 +551,6 @@ const MinimalOffer: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow, 
 
   const floatY = animated ? Math.sin(frame * 0.05) * 6 : 0;
   const breathScale = animated ? 1 + Math.sin(frame * 0.04) * 0.015 : 1;
-  const pillPulse = animated ? 1 + Math.cos(frame * 0.06) * 0.025 : 1;
 
   return (
     <AbsoluteFill style={{ backgroundColor: colors.cream, color: colors.petrol, fontFamily: brandFontFamily, overflow: "hidden" }}>
@@ -565,7 +565,7 @@ const MinimalOffer: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow, 
         </div>
         <div style={{ alignItems: "center", display: "flex", gap: isStory ? 34 : 24, justifyContent: "space-between", position: "relative" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: isStory ? 24 : 16, maxWidth: "48%", opacity: offerSpring, translate: `0 ${interpolate(offerSpring, [0, 1], [20, 0])}px` }}>
-            <div style={{ scale: pillPulse, transformOrigin: "left center" }}>
+            <div>
               <OfferPill label={offerLabel} size={isStory ? 44 : 32} />
             </div>
             <div style={{ fontSize: isStory ? 34 : 25, fontWeight: 600, lineHeight: 1.17 }}>{supportingText}</div>
@@ -754,7 +754,7 @@ const OfferOrbit: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow, he
           <div style={{ alignSelf: "start", display: "flex", flexDirection: "column", gap: isStory ? 22 : 16, maxWidth: isStory ? "78%" : "100%", opacity: headlineSpring, paddingTop: isStory ? 12 : 52, position: "relative", translate: `${interpolate(headlineSpring, [0, 1], [-34, 0], { extrapolateRight: "clamp" })}px 0`, zIndex: 7 }}>
             <div data-qa="headline" style={{ fontSize: isStory ? 102 : 84, fontWeight: 800, letterSpacing: isStory ? -5 : -3.8, lineHeight: 0.88, whiteSpace: "pre-line" }}>{headline}</div>
             <div style={{ fontSize: isStory ? 31 : 24, fontWeight: 600, lineHeight: 1.2, maxWidth: isStory ? "88%" : "92%" }}>{supportingText}</div>
-            <div style={{ opacity: offerSpring, scale: animated ? 1 + Math.sin(frame * 0.055) * 0.018 : 1, transformOrigin: "left center", translate: `${interpolate(offerSpring, [0, 1], [-22, 0], { extrapolateRight: "clamp" })}px 0` }}>
+            <div style={{ opacity: offerSpring, translate: `${interpolate(offerSpring, [0, 1], [-22, 0], { extrapolateRight: "clamp" })}px 0` }}>
               <OfferPill label={offerLabel} size={isStory ? 42 : 32} />
             </div>
           </div>
@@ -847,7 +847,8 @@ const Variant: React.FC<VideoProps & { animated?: boolean }> = (props) => {
 const PromoHook: React.FC<VideoProps & { durationInFrames: number }> = ({ durationInFrames, eyebrow, headline, offerLabel, locationLine, motionTreatment = "staged-reveal" }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const hookSpring = spring({ frame: Math.max(0, frame - (motionTreatment === "detail-cutaway" ? 8 : 2)), fps, config: { damping: 14, stiffness: motionTreatment === "offer-build" ? 72 : 85 } });
+  const hookDelay = motionTreatment === "detail-cutaway" ? 8 : 2;
+  const hookSpring = frame >= hookDelay + 45 ? 1 : spring({ frame: Math.max(0, frame - hookDelay), fps, config: { damping: 14, stiffness: motionTreatment === "offer-build" ? 72 : 85 } });
   const opacity = interpolate(frame, [0, fps * 0.4, Math.max(fps * 0.4, durationInFrames - 18), durationInFrames], [0, 1, 1, 0], { easing: easeOut, extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const lead = motionTreatment === "offer-build" ? offerLabel : motionTreatment === "location-close" ? (locationLine ?? "AU Šeki-Tilia apoteke") : eyebrow;
   const horizontalEntrance = motionTreatment === "editorial-pan" || motionTreatment === "detail-cutaway";
@@ -858,14 +859,13 @@ const PromoHook: React.FC<VideoProps & { durationInFrames: number }> = ({ durati
   const isDetailCutaway = motionTreatment === "detail-cutaway";
   const isEditorialPan = motionTreatment === "editorial-pan";
 
-  // Continuous background zoom & bar pulse during Hook
-  const bgScale = interpolate(frame, [0, 75], isOfferBuild ? [1.035, 1] : [1, 1.04], { extrapolateRight: "clamp" });
+  // Tekst ostaje stabilan nakon ulaska; samo dekorativna linija nastavlja mikro-pokret.
   const barPulse = 1 + Math.sin(frame * 0.08) * 0.03;
   const cutawayTravel = interpolate(frame, [0, 75], [0, -38], { extrapolateRight: "clamp" });
   const editorialTravel = interpolate(frame, [0, 75], [34, -22], { extrapolateRight: "clamp" });
 
   return (
-    <AbsoluteFill data-qa="reels-hook" style={{ backgroundColor: isLocationClose ? colors.cream : colors.petrol, color: isLocationClose ? colors.petrol : colors.cream, fontFamily: brandFontFamily, opacity, overflow: "hidden", padding: "132px 84px", scale: bgScale }}>
+    <AbsoluteFill data-qa="reels-hook" style={{ backgroundColor: isLocationClose ? colors.cream : colors.petrol, color: isLocationClose ? colors.petrol : colors.cream, fontFamily: brandFontFamily, opacity, overflow: "hidden", padding: "132px 84px" }}>
       {isOfferBuild && <div aria-hidden="true" style={{ backgroundColor: colors.lime, bottom: 0, height: "38%", left: 0, position: "absolute", right: 0 }} />}
       {isDetailCutaway && <div aria-hidden="true" style={{ backgroundColor: colors.stageTaupe, height: "100%", position: "absolute", right: cutawayTravel - 30, top: 0, width: 330 }} />}
       {isEditorialPan && <div aria-hidden="true" style={{ border: `9px solid ${colors.lime}`, borderRadius: "50%", height: 760, position: "absolute", right: editorialTravel - 260, top: 370, width: 760 }} />}
@@ -874,8 +874,8 @@ const PromoHook: React.FC<VideoProps & { durationInFrames: number }> = ({ durati
         <div style={{ color: isLocationClose ? colors.petrol : colors.lime, fontSize: isOfferBuild ? 50 : 34, fontWeight: 800, letterSpacing: isOfferBuild ? -1 : 3.4, maxWidth: 760 }}>{lead}</div>
         <LogoMark background={isLocationClose ? "light" : "dark"} size={70} />
       </div>
-      <div style={{ bottom: isOfferBuild ? 650 : isLocationClose ? 560 : 480, fontSize: isOfferBuild ? 106 : isDetailCutaway ? 112 : 126, fontWeight: 800, left: 84, letterSpacing: -7, lineHeight: 0.88, maxWidth: isDetailCutaway ? 680 : 850, position: "absolute", translate: horizontalEntrance ? `${titleTranslate}px 0` : `0 ${titleTranslate}px`, whiteSpace: "pre-line", zIndex: 2 }}>{headline}</div>
-      <div style={{ backgroundColor: isLocationClose ? colors.petrol : colors.lime, bottom: isOfferBuild ? 565 : isLocationClose ? 472 : 398, height: 8, left: 84, position: "absolute", scale: `${barPulse} 1`, transformOrigin: "left center", width: interpolate(lineProgress, [0, 1], [0, isEditorialPan ? 520 : 360]), zIndex: 2 }} />
+      <div style={{ bottom: isOfferBuild ? 790 : isLocationClose ? 560 : 480, fontSize: isOfferBuild ? 106 : isDetailCutaway ? 112 : 126, fontWeight: 800, left: 84, letterSpacing: -7, lineHeight: 0.88, maxWidth: isDetailCutaway ? 680 : 850, position: "absolute", translate: horizontalEntrance ? `${titleTranslate}px 0` : `0 ${titleTranslate}px`, whiteSpace: "pre-line", zIndex: 2 }}>{headline}</div>
+      <div style={{ backgroundColor: isLocationClose ? colors.petrol : colors.lime, bottom: isOfferBuild ? 735 : isLocationClose ? 472 : 398, height: 8, left: 84, position: "absolute", scale: `${barPulse} 1`, transformOrigin: "left center", width: interpolate(lineProgress, [0, 1], [0, isEditorialPan ? 520 : 360]), zIndex: 2 }} />
     </AbsoluteFill>
   );
 };
@@ -888,12 +888,12 @@ const Closing: React.FC<Pick<VideoProps, "cta" | "imageSrc" | "locationLine" | "
   const isOfferBuild = motionTreatment === "offer-build";
   const logoSpring = spring({ frame: Math.max(0, frame - (isLocationClose ? 10 : 2)), fps, config: { damping: 14, stiffness: 85 } });
   const productSpring = spring({ frame: Math.max(0, frame - (isOfferBuild ? 14 : 6)), fps, config: { damping: 14, stiffness: 80, mass: 0.8 } });
-  const textSpring = spring({ frame: Math.max(0, frame - (isLocationClose ? 2 : 12)), fps, config: { damping: 16, stiffness: 90 } });
+  const textDelay = isLocationClose ? 2 : 12;
+  const textSpring = frame >= textDelay + 45 ? 1 : spring({ frame: Math.max(0, frame - textDelay), fps, config: { damping: 16, stiffness: 90 } });
 
   // Continuous float and breath in Closing scene
   const floatY = Math.sin(frame * 0.05) * 6;
   const breathScale = 1 + Math.sin(frame * 0.04) * 0.015;
-  const limePulse = 1 + Math.cos(frame * 0.06) * 0.025;
   const isDuplicateCta = cta.trim().toLowerCase() === offerLabel.trim().toLowerCase();
 
   return (
@@ -920,7 +920,7 @@ const Closing: React.FC<Pick<VideoProps, "cta" | "imageSrc" | "locationLine" | "
           <LogoMark background="dark" size={110} />
         </div>
         <div style={{ fontSize: 94, fontWeight: 800, letterSpacing: -4 }}>AU Šeki-Tilia</div>
-        <div style={{ color: colors.lime, fontSize: 52, fontWeight: 800, scale: limePulse, transformOrigin: "left center" }}>{offerLabel}</div>
+        <div style={{ color: colors.lime, fontSize: 52, fontWeight: 800 }}>{offerLabel}</div>
         {!isDuplicateCta && <div style={{ fontSize: 48, fontWeight: 700, lineHeight: 1.14 }}>{cta}</div>}
         <LocationMarker label={locationLine} size={34} />
       </div>
@@ -939,14 +939,8 @@ const HeroScene: React.FC<VideoProps & { durationInFrames: number }> = ({ durati
     [0, 1, 1, 0],
     { easing: easeOut, extrapolateLeft: "clamp", extrapolateRight: "clamp" }
   );
-  const treatment = props.motionTreatment ?? "staged-reveal";
-  const progress = interpolate(frame, [0, durationInFrames], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const translateX = treatment === "detail-cutaway" ? interpolate(progress, [0, 1], [-18, 14]) : treatment === "editorial-pan" ? interpolate(progress, [0, 1], [28, -12]) : 0;
-  const translateY = treatment === "staged-reveal" ? interpolate(progress, [0, 1], [16, -4]) : 0;
-  const scale = treatment === "offer-build" ? interpolate(progress, [0, 1], [0.985, 1.01]) : treatment === "location-close" ? interpolate(progress, [0, 1], [1.012, 1]) : 1;
-
   return (
-    <div style={{ height: "100%", opacity, position: "absolute", scale, translate: `${translateX}px ${translateY}px`, width: "100%" }}>
+    <div style={{ height: "100%", opacity, position: "absolute", width: "100%" }}>
       <Variant {...props} animated />
     </div>
   );
@@ -961,14 +955,15 @@ const motionPlans: Record<MotionTreatment, { hookDuration: number; heroFrom: num
 };
 
 export const SekiTiliaPromo: React.FC<VideoProps> = (props) => {
+  const { fps } = useVideoConfig();
   const plan = motionPlans[props.motionTreatment ?? "staged-reveal"];
   const rawTrack = props.audioTrack?.trim() || "paper-sun-parade.mp3";
   const audioSrc = rawTrack.startsWith("mp3/") ? rawTrack : `mp3/${rawTrack}`;
-  const volume = props.audioVolume ?? 0.8;
+  const volume = props.audioVolume ?? 0.9;
 
   return (
     <AbsoluteFill style={paletteStyle(props.colorScheme)}>
-      <RemotionAudio src={staticFile(audioSrc)} volume={volume} />
+      <RemotionAudio src={staticFile(audioSrc)} trimBefore={30 * fps} volume={volume} />
       <Sequence durationInFrames={plan.hookDuration} premountFor={30}><PromoHook {...props} durationInFrames={plan.hookDuration} /></Sequence>
       <Sequence from={plan.heroFrom} durationInFrames={plan.heroDuration} premountFor={30}><HeroScene {...props} durationInFrames={plan.heroDuration} /></Sequence>
       <Sequence from={plan.closingFrom} durationInFrames={plan.closingDuration} premountFor={30}><Closing {...props} /></Sequence>

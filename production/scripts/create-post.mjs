@@ -7,8 +7,11 @@ const scriptDirectory = dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = resolve(scriptDirectory, "../..");
 const colorPalette = JSON.parse(readFileSync(join(repositoryRoot, "brand/color-palette.json"), "utf8"));
 const rendererThemes = Array.isArray(colorPalette?.rendererThemes) ? colorPalette.rendererThemes : [];
-if (rendererThemes.length === 0) {
-  console.error("brand/color-palette.json mora sadržati najmanje jednu rendererThemes temu.");
+const paletteSets = Array.isArray(colorPalette?.paletteSets) ? colorPalette.paletteSets : [];
+const paletteSetIds = paletteSets.map((set) => set?.id).filter((id) => typeof id === "string");
+const rendererThemeMap = new Map(rendererThemes.map((theme) => [theme.id, theme]));
+if (rendererThemes.length === 0 || paletteSetIds.length < 2 || rendererThemes.some((theme) => !paletteSetIds.includes(theme?.colorSet)) || paletteSetIds.some((setId) => !rendererThemes.some((theme) => theme.colorSet === setId))) {
+  console.error("brand/color-palette.json mora sadržati najmanje dva paletteSets seta i rendererThemes teme vezane za njih.");
   process.exit(1);
 }
 const args = process.argv.slice(2);
@@ -90,7 +93,47 @@ const availableAudioTracks = [
   "mp3/paper-sun-parade-upbeat.mp3"
 ];
 const selectedAudioTrack = availableAudioTracks[randomInt(availableAudioTracks.length)];
-const selectedColorTheme = rendererThemes[randomInt(rendererThemes.length)];
+const readyColorRecords = [];
+const productionsDirectory = join(repositoryRoot, "productions");
+if (existsSync(productionsDirectory)) {
+  for (const yearEntry of readdirSync(productionsDirectory, { withFileTypes: true })) {
+    if (!yearEntry.isDirectory()) continue;
+    const yearDirectory = join(productionsDirectory, yearEntry.name);
+    for (const monthEntry of readdirSync(yearDirectory, { withFileTypes: true })) {
+      if (!monthEntry.isDirectory()) continue;
+      const existingMonthDirectory = join(yearDirectory, monthEntry.name);
+      for (const postEntry of readdirSync(existingMonthDirectory, { withFileTypes: true })) {
+        if (!postEntry.isDirectory()) continue;
+        const existingPostDirectory = join(existingMonthDirectory, postEntry.name);
+        const inputPath = join(existingPostDirectory, "input.json");
+        const directionPath = join(existingPostDirectory, "generated/design-direction.json");
+        if (!existsSync(inputPath) || !existsSync(directionPath)) continue;
+        try {
+          const existingInput = JSON.parse(readFileSync(inputPath, "utf8"));
+          const existingDirection = JSON.parse(readFileSync(directionPath, "utf8"));
+          if (existingInput?.status !== "spremno-za-ljudsku-proveru") continue;
+          const themeSet = rendererThemeMap.get(existingDirection?.colorScheme)?.colorSet;
+          const planColors = Object.values(existingDirection?.palettePlan ?? {});
+          const inferredSet = paletteSets.find((set) => planColors.some((color) => set.colors.includes(color)))?.id;
+          const colorSet = paletteSetIds.includes(existingDirection?.colorSet)
+            ? existingDirection.colorSet
+            : paletteSetIds.includes(themeSet)
+              ? themeSet
+              : inferredSet;
+          if (colorSet) readyColorRecords.push({ colorSet, id: postEntry.name });
+        } catch {
+          // Neispravan ili nedovršen lokalni paket ne utiče na sledeći izbor boja.
+        }
+      }
+    }
+  }
+}
+const lastColorSet = readyColorRecords.sort((a, b) => a.id.localeCompare(b.id)).at(-1)?.colorSet;
+const selectedColorSet = lastColorSet && paletteSetIds.includes(lastColorSet)
+  ? paletteSetIds[(paletteSetIds.indexOf(lastColorSet) + 1) % paletteSetIds.length]
+  : paletteSetIds[randomInt(paletteSetIds.length)];
+const eligibleThemes = rendererThemes.filter((theme) => theme.colorSet === selectedColorSet);
+const selectedColorTheme = eligibleThemes[randomInt(eligibleThemes.length)];
 
 writeFileSync(join(postDirectory, "video-props.json"), JSON.stringify({
   eyebrow: "",
@@ -106,7 +149,8 @@ writeFileSync(join(postDirectory, "video-props.json"), JSON.stringify({
   designVariant: "",
   motionTreatment: "",
   audioTrack: selectedAudioTrack,
-  audioVolume: 0.8,
+  audioVolume: 0.9,
+  colorSet: selectedColorSet,
   colorScheme: selectedColorTheme.id
 }, null, 2) + "\n");
 writeFileSync(join(postDirectory, "generated", "design-direction.json"), JSON.stringify({
@@ -119,6 +163,7 @@ writeFileSync(join(postDirectory, "generated", "design-direction.json"), JSON.st
   designInterventions: [],
   freshInterventionNote: null,
   motionTreatment: null,
+  colorSet: selectedColorSet,
   colorScheme: selectedColorTheme.id,
   formatAdaptations: { feed: null, story: null, reels: null },
   formatPlan: {

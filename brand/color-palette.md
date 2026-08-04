@@ -4,7 +4,11 @@ Izvori su [paleta.jpg](../paleta.jpg) i početna vizuelna beleška [boje-dodatak
 
 ## Obavezan izbor boja
 
-Pri otvaranju paketa sistem nasumično bira `colorScheme` iz šest bezbednih `rendererThemes`. Agent proverava da li tema odgovara proizvodu i može je nasumično zameniti drugom kompatibilnom temom. `colorScheme` mora biti isti u `video-props.json` i `generated/design-direction.json`, a `palettePlan` mora doslovno odgovarati izabranoj temi. Ukupno je dostupno dvanaest tonova; samostalna kombinacija je dozvoljena tek kada se doda kao proverena `rendererThemes` tema.
+Boje su podeljene u dva strogo nezavisna seta. `legacy` sadrži prvobitnih devet tonova, a `alternative` isključivo Abyssal Teal, Matcha i Desert Khaki. Jedna objava koristi samo jedan set. Nije dozvoljeno uzeti pozadinu iz jednog, a tekst, akcenat, površinu, ikonu, geometriju ili gradijent iz drugog seta.
+
+Sistem pri otvaranju paketa bira set suprotan setu poslednje objave spremne za ljudsku proveru. Ako istorija još ne postoji, početni set se bira nasumično. Zatim nasumično bira kompatibilan `colorScheme` samo unutar tog seta. `colorSet` i `colorScheme` moraju biti isti u `video-props.json` i `generated/design-direction.json`, a `palettePlan` mora doslovno odgovarati temi i ostati unutar izabranog seta. Agent može zameniti temu samo drugom temom iz istog automatski određenog seta.
+
+Originalni logo se nikada ne prebojava, pa njegove sopstvene boje nisu predmet ograničenja seta. Isto važi za stvarne boje proizvoda i izvorne fotografije. Ovaj izuzetak ne dozvoljava uvođenje boja drugog seta u dizajnirane površine ili elemente.
 
 Za normalan tekst, CTA, cenu, datum, naslov ili funkcionalnu ikonicu potrebna je kontrastna vrednost od najmanje 4,5:1. Parovi u `largeTextOnlyPairs` dozvoljeni su samo za krupan naslov ili krupnu dekorativnu reč, nikada za pomoćni tekst, CTA ili sitnu informaciju.
 

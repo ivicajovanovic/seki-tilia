@@ -11,6 +11,7 @@
   "dependencies": {
     "@remotion/cli": "4.0.494",
     "@remotion/fonts": "^4.0.494",
+    "@remotion/media": "4.0.494",
     "@remotion/tailwind-v4": "4.0.494",
     "lucide-react": "^1.25.0",
     "react": "19.2.3",
