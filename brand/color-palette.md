@@ -1,6 +1,6 @@
 # Operativna paleta
 
-Izvori su [paleta.jpg](../paleta.jpg) i [boje-dodatak.jpg](../public/boje-dodatak.jpg). Drugi izvor dodaje Abyssal Teal `#2C3638`, Matcha `#D0D1AF` i Desert Khaki `#DBCCB7`; prvobitnih devet boja ostaje neizmenjeno. `brand/color-palette.json` je mašinski čitljiv izvor istine.
+Izvori su [paleta.jpg](../paleta.jpg) i početna vizuelna beleška [boje-dodatak.jpg](../public/boje-dodatak.jpg). Korisnik je naknadno potvrdio važeće vrednosti: Abyssal Teal `#063F48`, Matcha `#BDCCA5` i Desert Khaki `#F8E4C9`. Ove vrednosti imaju prednost nad starim natpisima na JPG-u; prvobitnih devet boja ostaje neizmenjeno. `brand/color-palette.json` je mašinski čitljiv izvor istine.
 
 ## Obavezan izbor boja
 

@@ -11,7 +11,7 @@
 - Svaki naredni paket mora proći kompletan tok i ne sme ponoviti sadržajni ili vizuelni pristup prethodna tri paketa.
 - Klijentske činjenice i materijale dostavljaju stručna lica. Sistem i dalje zahteva izvor uz svaku zdravstvenu ili produktnu tvrdnju, ali ne uvodi poseban interni stručni approval gate.
 - Svaki zahtev proizvodi Feed, Story i Reels. Reels uvek koristi nasumično izabranu odobrenu numeru, a početna tema boja se nasumično bira među šest bezbednih renderer tema.
-- Operativna paleta sada ima dvanaest tonova. Prvobitnih devet je zadržano, a dodati su Abyssal Teal `#2C3638`, Matcha `#D0D1AF` i Desert Khaki `#DBCCB7`.
+- Operativna paleta sada ima dvanaest tonova. Prvobitnih devet je zadržano, a važeće dodatne vrednosti su Abyssal Teal `#063F48`, Matcha `#BDCCA5` i Desert Khaki `#F8E4C9`.
 
 ## Obavezan početak rada
 
