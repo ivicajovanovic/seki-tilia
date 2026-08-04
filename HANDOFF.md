@@ -1,13 +1,14 @@
 # Handoff: AU Šeki-Tilia produkcioni sistem
 
-**Ažurirano:** 31. jul 2026.
-**Status:** framework je čist i spreman za prvi stvarni, potvrđeni brief. Završni materijal se nikada ne objavljuje automatski.
+**Ažurirano:** 4. avgust 2026.
+**Status:** sistem ima dva paketa spremna za ljudsku proveru i ažuriran logo-sistem. Završni materijal se nikada ne objavljuje automatski.
 
 ## Trenutno stanje
 
-- Nema lokalnih test-objava, rendera ni job asseta. `productions/` je prazan, a `brand/design-history.json` počinje bez zapisa.
+- Postoje dva paketa sa statusom `SPREMNO ZA LJUDSKU PROVERU`: `001-2026-07-31-enterobiotik-akcija` i `002-2026-07-31-multivitamin-akcija`. Njihovi finali i review dokazi su u pripadajućim paketima; aktivne pripremljene kopije asseta su pod `video-renderer/public/jobs/`.
+- `brand/design-history.json` i dalje nema evidencije. Pre sledeće objave proveriti i ažurirati istoriju prema stvarnim paketima, kako bi se sprovodilo pravilo sveže intervencije.
 - Renderer, brend pravila, paleta, odobrene reference, pre-flight i tok nezavisnog pregleda su deo framework-a.
-- Svaki prvi stvarni paket mora proći kompletan tok. Ne postoje raniji renderi koji služe kao uzor ili dokaz za novu objavu.
+- Svaki naredni paket mora proći kompletan tok i ne sme ponoviti sadržajni ili vizuelni pristup prethodna tri paketa.
 
 ## Obavezan početak rada
 
@@ -24,7 +25,7 @@ node production/scripts/create-post.mjs --slug "kratak-naziv-objave"
 ## Vizuelni ugovor
 
 - Nema senki ni zamućenja, vektorskih ni rasterskih.
-- Originalni logo nema belu, krem ni drugu pravougaonu podlogu. Postavlja se samo na kontrolisanu tamnu pozadinu; naziv lanca mora biti čitljiv i dovoljno velik.
+- Originalni logo nema belu, krem ni drugu pravougaonu podlogu. Za svetlu kontrolisanu pozadinu koristi se `logos/logo-tamniji.svg`, a za tamnu `logos/logo-svetliji.svg`. Renderer istu logiku primenjuje kroz `LogoMark` komponentu. Stari `logo1`, `logo2` i `logo3` fajlovi više ne postoje.
 - Transparentni proizvod ostaje slobodan, dominantan element, bez rama, kartice i pravougaone podloge.
 - Kada postoji podijum, proizvod mora vidljivo stajati na njegovoj gornjoj ravni. Prednja masa podijuma ulazi iza footera, dovoljno je široka i ima izražen vektorski gradijent.
 - Pravougaoni strukturni elementi imaju oštre uglove. Grafika i video koriste jednu smislenu Lucide ikonu, osim čiste tekstualne objave.
