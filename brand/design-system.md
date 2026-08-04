@@ -5,7 +5,7 @@ Ovaj dokument pretvara brend vodič i vizuelne reference u operativna pravila za
 ## Nepromenjivi elementi
 
 - Koristi se samo originalni logo iz `logos/`. Znak se nikada ne prebojava, rasteže niti postavlja direktno na limeta, fotografsku ili drugu nekontrolisanu podlogu.
-- Znak bez naziva (`logo3.svg`) koristi se bez bele, krem ili druge pravougaone kartice. `logoSurface` je obavezno `"none"`; kompozicija mora obezbediti kontrolisan kontrast tako da oba originalna dela znaka, petrol i limeta, ostanu vidljiva.
+- Znak bez naziva koristi se bez bele, krem ili druge pravougaone kartice. Za svetlu kontrolisanu pozadinu koristi se `logo-tamniji.svg`, a za tamnu `logo-svetliji.svg`. `logoSurface` je obavezno `"none"`; kompozicija mora obezbediti kontrolisan kontrast tako da oba originalna dela znaka, petrol i limeta, ostanu vidljiva.
 - Jedina porodica teksta na AU Šeki-Tilia vizualima je **Manrope**. Naslov koristi 700 ili 800, a ostali tekst 400, 500 ili 600. Renderer eksplicitno učitava oba potrebna latin podskupa iste Manrope porodice i ne koristi zamenski font.
 - Paleta ima devet odobrenih tonova iz `brand/color-palette.json`. Agent bira kombinaciju prema briefu i beleži je u `palettePlan`; jedan vizual koristi najviše jedan dominantan akcenat i ne pretvara limetu u pozadinu za logo. Tekst, CTA i funkcionalne ikonice koriste samo parove iz `safeTextPairs`, dok logo koristi isključivo `approvedLogoBackgrounds`.
 - Obavezni elementi ostaju čitljivi na punoj veličini i u približno 25% prikazu telefona: logo, glavna poruka, ponuda, proizvod i CTA kada postoje.

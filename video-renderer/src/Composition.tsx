@@ -198,7 +198,7 @@ const BrandFooter: React.FC<{
           <div style={{ alignItems: "center", display: "flex", gap: story ? 16 : 12 }}>
             <div style={{ backgroundColor: colors.lime, height: story ? 48 : 36, width: story ? 4 : 3 }} />
             <div style={{ alignItems: "center", display: "flex", gap: story ? 10 : 8 }}>
-              <LogoMark size={story ? 58 : 46} />
+              <LogoMark background="dark" size={story ? 58 : 46} />
               <div style={{ display: "flex", flexDirection: "column" }}>
                 <div style={{ fontSize: story ? 36 : 28, fontWeight: 800, letterSpacing: 0.2, lineHeight: 1.08 }}>AU Šeki-Tilia</div>
                 <div style={{ fontSize: story ? 18 : 15, fontWeight: 500, letterSpacing: 1, opacity: 0.65, textTransform: "lowercase" }}>apoteka</div>
@@ -220,7 +220,12 @@ const DotPattern: React.FC<{ story: boolean; cols?: number; rows?: number; color
   </div>
 );
 
-const LogoMark: React.FC<{ size: number }> = ({ size }) => <Img src={staticFile("assets/logo-mark.svg")} style={{ height: size, width: size }} />;
+const LogoMark: React.FC<{ background?: "light" | "dark"; size: number }> = ({ background = "light", size }) => (
+  <Img
+    src={staticFile(background === "dark" ? "assets/logo-svetliji.svg" : "assets/logo-tamniji.svg")}
+    style={{ height: size, width: size }}
+  />
+);
 
 /** Physics-based spring entrance helper */
 const useSpringEntrance = (animated: boolean, delayFrames: number, config = { damping: 14, stiffness: 85, mass: 0.8 }) => {
@@ -562,7 +567,7 @@ const ProductCard: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow, h
             <div style={{ fontSize: isStory ? 30 : 23, fontWeight: 800, letterSpacing: isStory ? 3.2 : 2.5, textTransform: "uppercase" }}>{eyebrow}</div>
             <div style={{ backgroundColor: colors.lime, height: isStory ? 4 : 3, width: isStory ? 200 : 155 }} />
           </div>
-          <LogoMark size={isStory ? 68 : 54} />
+          <LogoMark background="dark" size={isStory ? 68 : 54} />
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: isStory ? 18 : 12, marginTop: isStory ? 42 : 30, opacity: headlineSpring, translate: `0 ${interpolate(headlineSpring, [0, 1], [30, 0])}px` }}>
           <div style={{ fontSize: isStory ? 96 : 74, fontWeight: 800, letterSpacing: -4, lineHeight: 0.95, maxWidth: "78%" }}>{headline}</div>
@@ -611,7 +616,7 @@ const GalleryShelf: React.FC<VideoProps & { animated?: boolean }> = ({ eyebrow, 
             <div style={{ fontSize: isStory ? 27 : 21, fontWeight: 800, letterSpacing: isStory ? 3.2 : 2.5, textTransform: "uppercase" }}>{eyebrow}</div>
             <div style={{ backgroundColor: colors.lime, height: isStory ? 5 : 4, width: isStory ? 220 : 160 }} />
           </div>
-          <LogoMark size={isStory ? 62 : 48} />
+          <LogoMark background="dark" size={isStory ? 62 : 48} />
         </div>
         <div style={{ display: "grid", flex: 1, gridTemplateColumns: isStory ? "1fr" : "59% 41%", minHeight: 0, paddingTop: isStory ? 38 : 58 }}>
           <div style={{ color: colors.cream, maxWidth: isStory ? "74%" : "92%", minWidth: 0, opacity: headlineSpring, order: isStory ? 0 : 2, paddingTop: isStory ? 0 : 18, position: "relative", translate: `0 ${interpolate(headlineSpring, [0, 1], [30, 0])}px`, zIndex: 5 }}>
@@ -725,7 +730,7 @@ const PromoHook: React.FC<VideoProps> = ({ eyebrow, headline, offerLabel, motion
     <AbsoluteFill data-qa="reels-hook" style={{ backgroundColor: colors.petrol, color: colors.cream, fontFamily: brandFontFamily, opacity, overflow: "hidden", padding: "132px 84px", scale: bgScale }}>
       <div style={{ alignItems: "center", display: "flex", justifyContent: "space-between", position: "relative", zIndex: 2 }}>
         <div style={{ color: colors.lime, fontSize: 34, fontWeight: 800, letterSpacing: 3.4 }}>{lead}</div>
-        <LogoMark size={70} />
+        <LogoMark background="dark" size={70} />
       </div>
       <div style={{ bottom: 480, fontSize: 126, fontWeight: 800, left: 84, letterSpacing: -7, lineHeight: 0.88, maxWidth: 850, position: "absolute", translate: horizontalEntrance ? `${titleTranslate}px 0` : `0 ${titleTranslate}px`, whiteSpace: "pre-line", zIndex: 2 }}>{headline}</div>
       <div style={{ backgroundColor: colors.lime, bottom: 398, height: 8, left: 84, position: "absolute", scale: `${barPulse} 1`, transformOrigin: "left center", width: interpolate(lineProgress, [0, 1], [0, 360]), zIndex: 2 }} />
@@ -733,7 +738,7 @@ const PromoHook: React.FC<VideoProps> = ({ eyebrow, headline, offerLabel, motion
   );
 };
 
-const Closing: React.FC<Pick<VideoProps, "cta" | "imageSrc" | "locationLine" | "offerLabel" | "productShape">> = ({ offerLabel, cta, imageSrc, locationLine, productShape }) => {
+const Closing: React.FC<Pick<VideoProps, "cta" | "imageSrc" | "locationLine" | "offerLabel" | "productShape">> = ({ offerLabel, cta, imageSrc, locationLine }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const opacity = interpolate(frame, [0, fps * 0.35], [0, 1], { easing: easeOut, extrapolateLeft: "clamp", extrapolateRight: "clamp" });
@@ -768,7 +773,7 @@ const Closing: React.FC<Pick<VideoProps, "cta" | "imageSrc" | "locationLine" | "
       )}
       <div style={{ display: "flex", flexDirection: "column", gap: 34, maxWidth: 720, position: "relative", translate: `0 ${interpolate(textSpring, [0, 1], [30, 0])}px`, zIndex: 3 }}>
         <div style={{ opacity: logoSpring, translate: `0 ${interpolate(logoSpring, [0, 1], [20, 0])}px` }}>
-          <LogoMark size={110} />
+          <LogoMark background="dark" size={110} />
         </div>
         <div style={{ fontSize: 94, fontWeight: 800, letterSpacing: -4 }}>AU Šeki-Tilia</div>
         <div style={{ color: colors.lime, fontSize: 52, fontWeight: 800, scale: limePulse, transformOrigin: "left center" }}>{offerLabel}</div>

@@ -22,9 +22,8 @@
     "body": "Manrope"
   },
   "logos": {
-    "primary": "../logos/logo1.svg",
-    "horizontal": "../logos/logo2.svg",
-    "mark": "../logos/logo3.svg"
+    "onLightBackground": "../logos/logo-tamniji.svg",
+    "onDarkBackground": "../logos/logo-svetliji.svg"
   },
   "locations": [
     {

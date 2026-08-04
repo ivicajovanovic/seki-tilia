@@ -39,11 +39,10 @@ Manrope je jedina tipografska porodica za ovaj brend. Ne koristiti generički po
 
 Originali se nalaze u `logos/`:
 
-- `logo1.svg` — vertikalna puna verzija;
-- `logo2.svg` — horizontalna verzija;
-- `logo3.svg` — znak, bez naziva.
+- `logo-tamniji.svg` — tamnija varijanta znaka, isključivo za svetle kontrolisane pozadine;
+- `logo-svetliji.svg` — svetlija varijanta znaka, isključivo za tamne kontrolisane pozadine.
 
-Za avatar profila koristi se `logo3.svg`. Za feed se koristi znak ili puna verzija, zavisno od slobodnog prostora. Logo se postavlja bez bele, krem ili druge pravougaone kartice oko znaka. Njegov neposredni deo kompozicije mora imati kontrolisan kontrast, tako da oba originalna dela znaka, petrol i limeta, ostanu čitljiva. Logo nikada ne sme biti rastegnut, obojen drugom bojom ili postavljen preko nečitljive fotografije, limeta polja ili druge nekontrolisane podloge.
+Za avatar profila koristi se varijanta koja odgovara pozadini profila. Za feed se koristi odgovarajuća varijanta znaka prema neposrednoj pozadini. Logo se postavlja bez bele, krem ili druge pravougaone kartice oko znaka. Njegov neposredni deo kompozicije mora imati kontrolisan kontrast, tako da oba originalna dela znaka, petrol i limeta, ostanu čitljiva. Logo nikada ne sme biti rastegnut, obojen drugom bojom ili postavljen preko nečitljive fotografije, limeta polja ili druge nekontrolisane podloge.
 
 ## Vizuelni princip
 
