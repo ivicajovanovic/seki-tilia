@@ -26,30 +26,37 @@ Ovaj sistem se koristi za objave tipa `akcija` i za produktne promocije sa potvr
 
 ### Komunikaciona hijerarhija
 
-Svaki promo `video-props.json` koristi eksplicitne slotove. Za akciju su `primaryMessage`, `secondaryMessage`, `retailMessage` i `brandSignature` obavezni; `supportMessage` postoji samo kada je njegova činjenica potvrđena.
+Svaki promo `video-props.json` koristi eksplicitne slotove. Za akciju su `primaryMessage`, `secondaryMessage`, `productDetailMessage`, `deadlineMessage`, `retailMessage` i `brandSignature` obavezni; `supportMessage` postoji samo kada je njegova činjenica potvrđena.
 
 1. `primaryMessage`: potvrđena akcija ili ponuda. To je najveći kontrast i prvi element čitanja.
 2. `secondaryMessage`: naziv proizvoda ili kategorije.
-3. `supportMessage`: kratak, potvrđen benefit ili praktično objašnjenje.
-4. `retailMessage`: potvrđeni rok ili neutralna dostupnost.
-5. `brandSignature`: originalni znak i naziv lanca, bez podloge.
+3. `productDetailMessage`: jedna ili dve kratke, proverljive informacije sa ambalaže ili iz potvrđenog izvora, na primer pakovanje i sastav. Ne sme biti izvedena zdravstvena korist.
+4. `deadlineMessage`: potvrđeni rok akcije, odvojen od informacije o proizvodu.
+5. `retailMessage`: neutralna dostupnost u mreži apoteka.
+6. `brandSignature`: originalni znak i naziv lanca, bez podloge.
 
 Naslov koji opisuje rutinu, kategoriju ili korist nikada ne sme preuzeti ulogu `primaryMessage` kada je tema potvrđena akcija. Na vizualu postoje najviše dva dominantna fokusa: ponuda i proizvod.
 
 ### Dva master rasporeda
 
-- `PromoFeed45`, aktiviran kroz `promoLayout: "auto"` za 1080×1350, koristi 12-kolonsku logiku sa levom marginom 52px, zaštićenom tekstualnom zonom, product-stageom i compact footerom od 180px. Čitanje je levo ka desno: poruka i proizvod.
-- `PromoStory916`, aktiviran kroz isti `promoLayout: "auto"` za 1080×1920, nije rastegnuti Feed: poruka je gore, proizvod je vertikalno centralan, a CTA završetak je podignut. Kritični sadržaj ne ulazi u gornjih 220px ni donjih 260px Story UI zone.
+- `PromoFeed45`, aktiviran kroz `promoLayout: "auto"` za 1080×1350, koristi 12-kolonsku logiku sa levom marginom 52px, zaštićenom tekstualnom zonom, product-stageom i footerom od 196px. Čitanje je levo ka desno: ponuda, identitet proizvoda, činjenica sa ambalaže, proizvod, rok i CTA.
+- `PromoStory916`, aktiviran kroz isti `promoLayout: "auto"` za 1080×1920, nije rastegnuti Feed: poruka je gore, proizvod je vertikalno centralan, a CTA završetak je podignut. Kritični sadržaj ne ulazi u gornjih 196px ni donjih 260px Story UI zone. Čak i kada je u props-ima naveden horizontalni promo layout, vertikalni format mora rutirati u ovaj master, nikada u rastegnuti Feed.
 - `product-dominant-sticker` je zaseban treći master za situacije kada ambalaža ima prepoznatljivu siluetu i dovoljan kvalitet za veliku skalu. Proizvod je prvi fokus, a kratka potvrđena promo oznaka je sekundarni sticker, bez dodira sa proizvodom ili tekstom. Zahteva `imageSrc`, četiri ključna promo slota i layoutId vrednosti `product-dominant-sticker-feed`, `product-dominant-sticker-story` i `product-dominant-sticker-reel`.
 
 Isti kampanjski sistem zadržava Manrope, izolovan `colorSet`, bedž, tretman proizvoda i footer. Menjaju se osa čitanja, količina praznog prostora, položaj hero proizvoda i CTA, pa Feed i Story ne smeju biti mehanički rastegnuta kopija.
+
+### Jedan kandidat po koraku
+
+Za jedan korak workflow-a postoji samo jedan nameran kandidat: `generated/feed-1080x1350.png`, zatim `generated/story-1080x1920.png`, pa jedan `generated/reels-1080x1920.mp4`. Agent ne pravi paralelne dizajnerske opcije, alternativne Story/Reels kadrove ni test-render serije za izbor; unutrašnja korekcija prepisuje isti radni izlaz. Tri obavezna Reels ključna kadra služe isključivo proveri jednog MP4-a.
 
 ### Komponente i granice copy-ja
 
 - Eyebrow: jedna uppercase linija, niska težina, najviše 28 karaktera.
 - Promo bedž: kratka pill oznaka, najviše 14 karaktera i 45% širine kompozicije. Nije UI dugme.
 - Secondary poruka: najviše dva reda u Feed-u, tri u Story-ju.
-- Support poruka: najviše 65 karaktera i dva reda.
+- Product detail: najviše 72 karaktera i dva reda, sa neutralnom Lucide `Info` ikonom koja označava podatak sa ambalaže.
+- Rok: najviše 32 karaktera i jedan red uz semantičku Lucide kalendarsku ikonu.
+- Support poruka: najviše 65 karaktera i dva reda, samo kada je njena činjenica potvrđena.
 - Footer CTA: najviše 40 karaktera. Retail red: najviše 55 karaktera.
 - Brand signature: originalan logo bez kartice i naziv lanca, podređen ponudi i proizvodu.
 
@@ -57,13 +64,13 @@ Spacing koristi samo skalu 8, 12, 16, 24, 32, 40, 56 i 72px. Razmak eyebrow–gl
 
 ### Product hero i pozadinska podrška
 
-Product hero zauzima približno 35–50% hero zone i nikada ne ulazi u zonu teksta. Za transparentan PNG ostaje slobodan, bez pravougaonog rama ili kartice. Podijum se koristi samo kada kompoziciji daje jasno uzemljenje: gornja ravan se vidi ispod proizvoda, prednja masa se može nastaviti iza footera, a dubina dolazi iz geometrije i vektorskog gradijenta, nikada iz senke ili blura.
+Product hero zauzima najmanje 45% visine Feed-a i najmanje 38% visine Story/Reels Hero kadra kada to kvalitet izvora dopušta, i nikada ne ulazi u zonu teksta. Za transparentan PNG ostaje slobodan, bez pravougaonog rama ili kartice. Podijum se koristi samo kada kompoziciji daje jasno uzemljenje: gornja ravan se vidi ispod proizvoda, prednja masa se može nastaviti iza footera, a dubina dolazi iz geometrije i vektorskog gradijenta, nikada iz senke ili blura.
 
 Pozadina je podrška, ne treći fokus: dozvoljeni su najviše jedan disk ili oval i jedna akcentna linija. Ne smeju značajno ulaziti u headline zonu niti imati jači kontrast od proizvoda.
 
 ### Footer, CTA i safe zone
 
-Feed koristi `CompactFooter` visine do 18% formata, sa jednim CTA-om, jednom semantičkom Lucide ikonom i brend-završetkom. Story koristi `SafeZoneFooter`, kraći blok podignut iznad donje UI zone. Footer informiše, ali nikada ne nadjačava ponudu ili proizvod, niti zaklanja sadržaj.
+Feed koristi `CompactFooter` visine do 18% formata, sa jednim CTA-om, jednom semantičkom Lucide ikonom i brend-završetkom. Feed CTA je najmanje 32px, naziv lanca 26px, a znak 54px. Story koristi footer od 200px **strogo vezan za donju ivicu formata**, sa CTA-om najmanje 38px, nazivom lanca 30px i znakom 64px. Story safe prostor je samo 160px na vrhu i 220px neposredno iznad footera, bez dodatnog praznog pojasa ispod footera. Footer informiše, ali nikada ne nadjačava ponudu ili proizvod, niti zaklanja sadržaj.
 
 ### Promo QA pre izvoza
 
@@ -79,6 +86,8 @@ Pre izvoza proveri sledeće. Ako dve ili više stavki nisu prolazne, uradi korek
 8. Feed i Story očigledno pripadaju istoj kampanji, ali koriste različit raspored.
 9. Ne postoje više od dva dominantna fokusa.
 10. Grafika jasno prodaje potvrđenu ponudu, a ne samo estetski prikazuje proizvod.
+11. Feed, Story i Reels Hero prikazuju ponudu, identitet proizvoda, najmanje jednu potvrđenu informaciju o proizvodu, rok, dostupnost i čitljiv brend-završetak.
+12. Na umanjenom 25% prikazu proizvod, logo, naziv lanca, CTA i ikone ostaju optički veliki i odmah čitljivi.
 
 ### Layout architecture i optička kontrola
 

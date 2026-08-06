@@ -49,6 +49,8 @@ Paket se ne izrađuje u jednom prolazu. Agent završava samo jedan korak, šalje
 3. **Reels:** samo nakon odobrenog Story-ja, `generated/reels-1080x1920.mp4` i tri ključna kadra.
 4. **Finalizacija:** samo nakon odobrenog Reels-a, kopiranje odobrenih izlaza u `final/`.
 
+U svakom koraku agent radi samo **jedan izlaz po formatu**: jedan Feed, jedan Story ili jedan Reels. Ne generišu se varijante, alternativni kadrovi ni audit-renderi za izbor. Ako je potrebna korekcija, agent je radi nad istom namernom kompozicijom i prepisuje radni izlaz pre slanja korisniku; tri Reels ključna kadra ostaju obavezni dokaz jednog videa, ne tri opcije.
+
 Posle svakog od prva tri koraka agent, tek nakon korisnikovog izričitog odobrenja, evidentira gate i izveštaj:
 
 ```bash

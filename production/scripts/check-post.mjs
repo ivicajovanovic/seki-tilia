@@ -316,13 +316,13 @@ if (!Array.isArray(input?.requestedFormats) || requestedFormats.length === 0) {
 for (const field of ["eyebrow", "headline", "supportingText", "offerLabel", "cta"]) {
   if (!videoProps?.[field]?.trim()) errors.push(`video-props.json: prazno polje ${field}.`);
 }
-const promoLimits = { eyebrow: 28, primaryMessage: 14, secondaryMessage: 65, supportMessage: 65, retailMessage: 55, cta: 40 };
+const promoLimits = { eyebrow: 28, primaryMessage: 14, secondaryMessage: 65, supportMessage: 65, productDetailMessage: 72, deadlineMessage: 32, retailMessage: 55, cta: 40 };
 for (const [field, max] of Object.entries(promoLimits)) {
   if (videoProps?.[field] && videoProps[field].trim().length > max) errors.push(`video-props.json: ${field} prelazi limit od ${max} karaktera za promo sistem.`);
 }
 if (videoProps?.promoLayout && !supportedPromoLayouts.has(videoProps.promoLayout)) errors.push("video-props.json koristi nepodržan promoLayout.");
 if (input?.postType === "akcija") {
-  for (const field of ["primaryMessage", "secondaryMessage", "retailMessage", "brandSignature"]) {
+  for (const field of ["primaryMessage", "secondaryMessage", "productDetailMessage", "deadlineMessage", "retailMessage", "brandSignature"]) {
     if (!videoProps?.[field]?.trim()) errors.push(`Akcijska objava mora popuniti promo slot ${field}.`);
   }
   if (!videoProps?.promoLayout) errors.push("Akcijska objava mora koristiti eksplicitni promoLayout (preporučeno: auto).");
@@ -712,11 +712,11 @@ if (/\b(?:drop-shadow|box-shadow|shadow|blur)\b/i.test(renderer)) errors.push("R
 for (const qaRole of ["product-stage", "product", "podium", "headline", "cta-footer"]) {
   if (!renderer.includes(`data-qa="${qaRole}"`)) errors.push(`Renderer nema obaveznu QA ulogu ${qaRole}.`);
 }
-for (const promoAnchor of ["promo-feed-template", "promo-story-template", "promo-primary", "promo-support-shape"]) {
+for (const promoAnchor of ["promo-feed-template", "promo-story-template", "promo-primary", "promo-product-detail", "promo-deadline", "promo-support-shape"]) {
   if (!renderer.includes(`data-qa="${promoAnchor}"`)) errors.push(`Renderer nema promo sistemsku komponentu ${promoAnchor}.`);
 }
-if (!renderer.includes("const promoTokens") || !renderer.includes("PromoFeed45") || !renderer.includes("PromoStory916") || !renderer.includes('data-qa="product-dominant-sticker-template"') || !renderer.includes('data-qa="sticker-product-stage"') || !renderer.includes('data-qa="promo-sticker"') || !renderer.includes('promoLayout === "product-dominant-sticker"') || !renderer.includes("return <ProductDominantSticker")) {
-  errors.push("Renderer nema kompletne promo master kompozicije sa tokenima, uključujući product-dominant-sticker.");
+if (!renderer.includes("const promoTokens") || !renderer.includes("PromoFeed45") || !renderer.includes("PromoStory916") || renderer.includes("footerTop") || !renderer.includes('data-qa="reels-product-detail"') || !renderer.includes('props.promoLayout === "feed-left-product-right"') || !renderer.includes('height > 1500 ? <PromoStory916') || !renderer.includes('data-qa="product-dominant-sticker-template"') || !renderer.includes('data-qa="sticker-product-stage"') || !renderer.includes('data-qa="promo-sticker"') || !renderer.includes('promoLayout === "product-dominant-sticker"') || !renderer.includes("return <ProductDominantSticker")) {
+  errors.push("Renderer nema kompletne promo mastere sa informacijama o proizvodu, footerom vezanim za dno, sigurnim vertikalnim rutiranjem i product-dominant-sticker varijantom.");
 }
 const roundedRectangleLines = renderer
   .split("\n")
