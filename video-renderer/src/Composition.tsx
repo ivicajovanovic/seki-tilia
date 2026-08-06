@@ -60,10 +60,13 @@ const colors = {
   aqua: "var(--palette-secondary)",
 };
 
+const promoLightBackground = `linear-gradient(180deg, color-mix(in srgb, ${colors.cream} 80%, black) 0%, ${colors.cream} 52%, color-mix(in srgb, ${colors.cream} 75%, white) 100%)`;
+const promoDarkBackground = `linear-gradient(180deg, color-mix(in srgb, ${colors.petrol} 80%, black) 0%, ${colors.petrol} 52%, color-mix(in srgb, ${colors.petrol} 75%, white) 100%)`;
+
 /** Shared, measurable rules for promotional Feed and Story layouts. */
 const promoTokens = {
   spacing: { xs: 8, sm: 12, md: 16, lg: 24, xl: 32, xxl: 40, page: 56, section: 72 },
-  feed: { textAxis: 52, textWidth: 440, productAxis: "74%", logoAxis: 1028, top: 312, heroBottom: 196, footer: 196 },
+  feed: { textAxis: 52, textWidth: 480, productAxis: "74%", logoAxis: 1028, top: 312, heroBottom: 196, footer: 196 },
   story: { textAxis: 72, textWidth: 820, productAxis: "50%", logoAxis: 1008, safeTop: 160, safeBottom: 220, heroTop: 500, heroBottom: 1720, footer: 200 },
   copy: { eyebrow: 28, badge: 14, descriptor: 65, detail: 72, deadline: 32, footerPrimary: 40, footerSecondary: 55 },
 } as const;
@@ -881,9 +884,9 @@ const PromoProductDetail: React.FC<{ detail: string; story: boolean }> = ({ deta
 const PromoDeadline: React.FC<{ deadline: string; story: boolean }> = ({ deadline, story }) => {
   if (!deadline) return null;
   return (
-    <div data-qa="promo-deadline" style={{ alignItems: "center", display: "flex", gap: story ? 12 : 10 }}>
-      <CalendarDays color={colors.petrol} size={story ? 28 : 24} strokeWidth={2.25} />
-      <div style={{ fontSize: story ? 26 : 23, fontWeight: 800, lineHeight: 1.08 }}>{deadline}</div>
+    <div data-qa="promo-deadline" style={{ alignItems: "center", backgroundColor: colors.cream, border: `2px solid ${colors.petrol}`, borderRadius: 999, boxSizing: "border-box", display: "flex", gap: story ? 14 : 12, padding: story ? "14px 22px" : "12px 18px", width: "fit-content" }}>
+      <CalendarDays color={colors.petrol} size={story ? 34 : 29} strokeWidth={2.25} />
+      <div style={{ fontSize: story ? 32 : 28, fontWeight: 800, lineHeight: 1.08 }}>{deadline}</div>
     </div>
   );
 };
@@ -903,25 +906,25 @@ const PromoProductHero: React.FC<{ imageSrc?: string; imageBackground?: VideoPro
   const breathScale = animated ? 1 + Math.sin(frame * 0.04) * 0.012 : 1;
   return (
     <div data-qa="product-stage" style={{ bottom: 0, insetInline: 0, position: "absolute", top: 0, zIndex: 4 }}>
-      <div style={{ bottom: story ? 240 : 0, height: story ? (dominant ? 900 : 800) : (dominant ? 860 : 800), left: story ? promoTokens.story.productAxis : promoTokens.feed.productAxis, position: "absolute", translate: "-50% 0", width: story ? (dominant ? 820 : 780) : (dominant ? 720 : 640) }}>
+      <div style={{ bottom: story ? 174 : 0, height: story ? (dominant ? 900 : 800) : (dominant ? 860 : 800), left: story ? promoTokens.story.productAxis : promoTokens.feed.productAxis, position: "absolute", translate: "-50% 0", width: story ? (dominant ? 820 : 780) : (dominant ? 720 : 640) }}>
         <PromoSupportShape story={story} />
-        <CleanPodium story={story} width={story ? 680 : 540} bottom={story ? -220 : -96} treatment="hero" />
-        <ProductImage imageSrc={imageSrc} style={{ bottom: story ? 56 : 84, height: imageBackground === "transparent" ? (tall ? (dominant ? "94%" : "91%") : (dominant ? "86%" : "82%")) : (dominant ? "80%" : "75%"), left: "50%", maxWidth: "90%", objectPosition: "center bottom", opacity: product, position: "absolute", scale: interpolate(product, [0, 1], [0.92, 1]) * breathScale, translate: `-50% ${interpolate(product, [0, 1], [44, 0], { extrapolateRight: "clamp" }) + floatY}px`, zIndex: 5 }} />
+        <CleanPodium story={story} width={story ? 680 : 540} bottom={story ? -330 : -96} treatment="hero" />
+        <ProductImage imageSrc={imageSrc} style={{ bottom: story ? -10 : 84, height: imageBackground === "transparent" ? (tall ? (dominant ? "94%" : "91%") : (dominant ? "86%" : "82%")) : (dominant ? "80%" : "75%"), left: "50%", maxWidth: "90%", objectPosition: "center bottom", opacity: product, position: "absolute", scale: interpolate(product, [0, 1], [0.92, 1]) * breathScale, translate: `-50% ${interpolate(product, [0, 1], [44, 0], { extrapolateRight: "clamp" }) + floatY}px`, zIndex: 5 }} />
       </div>
     </div>
   );
 };
 
 const PromoFooter: React.FC<{ cta: string; retail: string; brand: string; story: boolean }> = ({ cta, retail, brand, story }) => (
-  <div data-qa="cta-footer" style={{ alignItems: "center", backgroundColor: colors.petrol, bottom: 0, boxSizing: "border-box", color: colors.cream, display: "grid", gridTemplateColumns: story ? "66px minmax(0, 1fr) 290px" : "56px minmax(0, 1fr) 250px", height: story ? promoTokens.story.footer : promoTokens.feed.footer, columnGap: story ? 18 : 16, left: 0, padding: story ? "26px 72px" : "24px 52px", position: "absolute", right: 0, zIndex: 20 }}>
-    <MapPin color={colors.lime} size={story ? 40 : 34} strokeWidth={2.1} />
+  <div data-qa="cta-footer" style={{ alignItems: "center", backgroundColor: colors.petrol, borderTop: `6px solid ${colors.lime}`, bottom: 0, boxSizing: "border-box", color: colors.cream, display: "grid", gridTemplateColumns: story ? "76px minmax(0, 1fr) 334px" : "64px minmax(0, 1fr) 290px", height: story ? promoTokens.story.footer : promoTokens.feed.footer, columnGap: story ? 20 : 18, left: 0, padding: story ? "26px 72px" : "24px 52px", position: "absolute", right: 0, zIndex: 20 }}>
+    <MapPin color={colors.lime} size={story ? 44 : 38} strokeWidth={2.1} />
     <div style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: 0 }}>
       <div style={{ fontSize: story ? 38 : 32, fontWeight: 800, lineHeight: 1.08 }}>{cut(cta, promoTokens.copy.footerPrimary)}</div>
       <div style={{ fontSize: story ? 24 : 20, fontWeight: 600, lineHeight: 1.15, opacity: 0.82 }}>{retail}</div>
     </div>
     <div style={{ alignItems: "center", display: "flex", gap: 8, justifyContent: "flex-end", textAlign: "right" }}>
-      <LogoMark background="dark" size={story ? 64 : 54} />
-      <div style={{ fontSize: story ? 30 : 26, fontWeight: 800, lineHeight: 1.05 }}>{brand}</div>
+      <LogoMark background="dark" size={story ? 77 : 65} />
+      <div style={{ fontSize: story ? 36 : 31, fontWeight: 800, lineHeight: 1.05 }}>{brand}</div>
     </div>
   </div>
 );
@@ -931,12 +934,12 @@ const PromoFeed45: React.FC<VideoProps & { animated?: boolean }> = (props) => {
   const intro = useSpringEntrance(Boolean(props.animated), 0);
   const headline = useSpringEntrance(Boolean(props.animated), 8);
   return (
-    <AbsoluteFill data-qa="promo-feed-template" style={{ backgroundColor: colors.cream, color: colors.petrol, fontFamily: brandFontFamily, overflow: "hidden" }}>
+    <AbsoluteFill data-qa="promo-feed-template" style={{ background: promoLightBackground, color: colors.petrol, fontFamily: brandFontFamily, overflow: "hidden" }}>
       <div style={{ boxSizing: "border-box", height: promoTokens.feed.top, left: promoTokens.feed.textAxis, position: "absolute", top: 0, width: promoTokens.feed.textWidth, zIndex: 6 }}>
         <div style={{ fontSize: 24, fontWeight: 800, letterSpacing: 2.4, marginTop: 48, opacity: intro, textTransform: "uppercase", whiteSpace: "nowrap" }}>{cut(props.eyebrow, promoTokens.copy.eyebrow)}</div>
-        <div style={{ display: "flex", flexDirection: "column", gap: promoTokens.spacing.md, marginTop: 26, opacity: headline }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: promoTokens.spacing.lg, marginTop: 34, opacity: headline }}>
           <PromoBadge label={primary} story={false} />
-          <div data-qa="headline" style={{ fontSize: 62, fontWeight: 800, letterSpacing: -3.2, lineHeight: 0.9, maxHeight: 180, overflow: "hidden", whiteSpace: "pre-line" }}>{secondary}</div>
+          <div data-qa="headline" style={{ fontSize: 74, fontWeight: 800, letterSpacing: -3.8, lineHeight: 0.92, maxHeight: 220, overflow: "hidden", whiteSpace: "pre-line" }}>{secondary}</div>
           <PromoProductDetail detail={detail || support} story={false} />
           <PromoDeadline deadline={deadline} story={false} />
         </div>
@@ -952,12 +955,12 @@ const PromoStory916: React.FC<VideoProps & { animated?: boolean }> = (props) => 
   const intro = useSpringEntrance(Boolean(props.animated), 0);
   const headline = useSpringEntrance(Boolean(props.animated), 8);
   return (
-    <AbsoluteFill data-qa="promo-story-template" style={{ backgroundColor: colors.cream, color: colors.petrol, fontFamily: brandFontFamily, overflow: "hidden" }}>
+    <AbsoluteFill data-qa="promo-story-template" style={{ background: promoLightBackground, color: colors.petrol, fontFamily: brandFontFamily, overflow: "hidden" }}>
       <div style={{ boxSizing: "border-box", left: promoTokens.story.textAxis, position: "absolute", top: promoTokens.story.safeTop, width: promoTokens.story.textWidth, zIndex: 6 }}>
         <div style={{ fontSize: 28, fontWeight: 800, letterSpacing: 3, opacity: intro, textAlign: "center", textTransform: "uppercase", whiteSpace: "nowrap" }}>{cut(props.eyebrow, promoTokens.copy.eyebrow)}</div>
-        <div style={{ alignItems: "center", display: "flex", flexDirection: "column", gap: promoTokens.spacing.lg, marginTop: 30, textAlign: "center" }}>
+        <div style={{ alignItems: "center", display: "flex", flexDirection: "column", gap: promoTokens.spacing.xl, marginTop: 38, textAlign: "center" }}>
           <PromoBadge label={primary} story />
-          <div data-qa="headline" style={{ fontSize: 86, fontWeight: 800, letterSpacing: -4.2, lineHeight: 0.9, maxHeight: 224, maxWidth: "92%", opacity: headline, overflow: "hidden", whiteSpace: "pre-line" }}>{secondary}</div>
+          <div data-qa="headline" style={{ fontSize: 103, fontWeight: 800, letterSpacing: -5, lineHeight: 0.9, maxHeight: 290, maxWidth: "92%", opacity: headline, overflow: "hidden", whiteSpace: "pre-line" }}>{secondary}</div>
           <PromoProductDetail detail={detail || support} story />
           <PromoDeadline deadline={deadline} story />
         </div>
@@ -978,7 +981,7 @@ const ProductDominantSticker: React.FC<VideoProps & { animated?: boolean }> = (p
   const stageTop = story ? 620 : 230;
   const stageBottom = story ? 472 : 230;
   return (
-    <AbsoluteFill data-qa="product-dominant-sticker-template" style={{ backgroundColor: colors.cream, color: colors.petrol, fontFamily: brandFontFamily, overflow: "hidden" }}>
+    <AbsoluteFill data-qa="product-dominant-sticker-template" style={{ background: promoLightBackground, color: colors.petrol, fontFamily: brandFontFamily, overflow: "hidden" }}>
       <div style={{ left: story ? promoTokens.story.textAxis : promoTokens.feed.textAxis, position: "absolute", top: story ? promoTokens.story.safeTop : 52, width: story ? promoTokens.story.textWidth : promoTokens.feed.textWidth, zIndex: 6 }}>
         <div style={{ fontSize: story ? 24 : 20, fontWeight: 800, letterSpacing: story ? 3 : 2.4, opacity: intro, textTransform: "uppercase", whiteSpace: "nowrap" }}>{cut(props.eyebrow, promoTokens.copy.eyebrow)}</div>
         <div style={{ marginTop: story ? 28 : 24, maxWidth: story ? 560 : 380, opacity: text }}>
@@ -1045,12 +1048,12 @@ const PromoHook: React.FC<VideoProps & { durationInFrames: number }> = ({ durati
   const editorialTravel = interpolate(frame, [0, 75], [34, -22], { extrapolateRight: "clamp" });
 
   return (
-    <AbsoluteFill data-qa="reels-hook" style={{ backgroundColor: isLocationClose ? colors.cream : colors.petrol, color: isLocationClose ? colors.petrol : colors.cream, fontFamily: brandFontFamily, opacity, overflow: "hidden", padding: "132px 84px" }}>
+    <AbsoluteFill data-qa="reels-hook" style={{ background: isLocationClose ? promoLightBackground : promoDarkBackground, color: isLocationClose ? colors.petrol : colors.cream, fontFamily: brandFontFamily, opacity, overflow: "hidden", padding: "132px 84px" }}>
       {isDetailCutaway && <div aria-hidden="true" style={{ backgroundColor: colors.stageTaupe, height: "100%", position: "absolute", right: cutawayTravel - 30, top: 0, width: 330 }} />}
       {isEditorialPan && <div aria-hidden="true" style={{ border: `9px solid ${colors.lime}`, borderRadius: "50%", height: 760, position: "absolute", right: editorialTravel - 260, top: 370, width: 760 }} />}
       {isLocationClose && <div aria-hidden="true" style={{ background: `linear-gradient(145deg, ${colors.petrol} 0%, ${colors.aqua} 100%)`, borderRadius: "50%", height: 760, position: "absolute", right: -520, top: 420, width: 760 }} />}
       <div style={{ alignItems: "center", display: "flex", justifyContent: "space-between", position: "relative", zIndex: 2 }}>
-        <div style={{ color: isLocationClose ? colors.petrol : colors.lime, fontSize: isOfferBuild ? 48 : 34, fontWeight: 800, letterSpacing: isOfferBuild ? -1 : 3.4, lineHeight: 1.05, maxWidth: isOfferBuild ? 560 : 760 }}>{lead}</div>
+        <div style={{ color: isLocationClose ? colors.petrol : colors.lime, fontSize: isOfferBuild ? 58 : 34, fontWeight: 800, letterSpacing: isOfferBuild ? -1.5 : 3.4, lineHeight: 1.05, maxWidth: isOfferBuild ? 620 : 760 }}>{lead}</div>
         <LogoMark background={isLocationClose ? "light" : "dark"} size={70} />
       </div>
       <div style={{ bottom: isOfferBuild ? undefined : isLocationClose ? 560 : 480, color: isOfferBuild ? colors.lime : undefined, fontSize: isOfferBuild ? 112 : isDetailCutaway ? 112 : 126, fontWeight: 800, left: 84, letterSpacing: -7, lineHeight: 0.88, maxWidth: isOfferBuild ? 520 : isDetailCutaway ? 680 : 850, position: "absolute", top: isOfferBuild ? 520 : undefined, translate: horizontalEntrance ? `${titleTranslate}px 0` : `0 ${titleTranslate}px`, whiteSpace: "pre-line", zIndex: 2 }}>{isOfferBuild ? primary : title}</div>
@@ -1096,7 +1099,7 @@ const Closing: React.FC<Pick<VideoProps, "cta" | "imageSrc" | "locationLine" | "
   const isDuplicateCta = cta.trim().toLowerCase() === primary.trim().toLowerCase();
 
   return (
-    <AbsoluteFill data-qa="reels-closing" style={{ backgroundColor: colors.petrol, color: colors.cream, fontFamily: brandFontFamily, opacity, overflow: "hidden", padding: "220px 88px 260px" }}>
+    <AbsoluteFill data-qa="reels-closing" style={{ background: promoDarkBackground, color: colors.cream, fontFamily: brandFontFamily, opacity, overflow: "hidden", padding: "220px 88px 260px" }}>
       {imageSrc && (
         <div style={{ bottom: 230, height: 840, position: "absolute", right: 24, width: 480, zIndex: 2 }}>
           <ProductImage
@@ -1116,9 +1119,9 @@ const Closing: React.FC<Pick<VideoProps, "cta" | "imageSrc" | "locationLine" | "
       )}
       <div data-qa="promo-closing-stack" style={{ display: "flex", flexDirection: "column", gap: 20, maxWidth: 500, position: "relative", translate: `${interpolate(textSpring, [0, 1], [motionTreatment === "editorial-pan" ? -50 : 0, 0])}px ${interpolate(textSpring, [0, 1], [isLocationClose ? -20 : 30, 0])}px`, zIndex: 3 }}>
         <div style={{ opacity: logoSpring, translate: `0 ${interpolate(logoSpring, [0, 1], [20, 0])}px` }}>
-          <LogoMark background="dark" size={128} />
+          <LogoMark background="dark" size={154} />
         </div>
-        <div style={{ fontSize: 68, fontWeight: 800, letterSpacing: -3, lineHeight: 0.96 }}>{brand}</div>
+        <div style={{ fontSize: 82, fontWeight: 800, letterSpacing: -3.6, lineHeight: 0.96 }}>{brand}</div>
         <div style={{ fontSize: 40, fontWeight: 800, lineHeight: 1.06 }}>{cut(secondaryMessage, 44)}</div>
         <div data-qa="promo-primary" style={{ color: colors.lime, fontSize: 78, fontWeight: 800, letterSpacing: -3.8, lineHeight: 0.9, maxHeight: 140, overflow: "hidden" }}>{cut(primary, promoTokens.copy.badge)}</div>
         {productDetailMessage?.trim() && <div data-qa="promo-product-detail" style={{ fontSize: 31, fontWeight: 700, lineHeight: 1.12 }}>{cut(productDetailMessage, promoTokens.copy.detail)}</div>}

@@ -55,22 +55,22 @@ Za jedan korak workflow-a postoji samo jedan nameran kandidat: `generated/feed-1
 - Promo bedž: kratka pill oznaka, najviše 14 karaktera i 45% širine kompozicije. Nije UI dugme.
 - Secondary poruka: najviše dva reda u Feed-u, tri u Story-ju.
 - Product detail: najviše 72 karaktera i dva reda, sa neutralnom Lucide `Info` ikonom koja označava podatak sa ambalaže.
-- Rok: najviše 32 karaktera i jedan red uz semantičku Lucide kalendarsku ikonu.
+- Rok: najviše 32 karaktera i jedan red uz semantičku Lucide kalendarsku ikonu, u većem kontrastnom pill modulu sa zaobljenim krajevima.
 - Support poruka: najviše 65 karaktera i dva reda, samo kada je njena činjenica potvrđena.
 - Footer CTA: najviše 40 karaktera. Retail red: najviše 55 karaktera.
 - Brand signature: originalan logo bez kartice i naziv lanca, podređen ponudi i proizvodu.
 
-Spacing koristi samo skalu 8, 12, 16, 24, 32, 40, 56 i 72px. Razmak eyebrow–glavna poruka je 24–32px, glavna–support 12–16px, support–bedž 24px, a hero–footer 24–40px.
+Spacing koristi samo skalu 8, 12, 16, 24, 32, 40, 56 i 72px. Razmak eyebrow–promo bedž je najmanje 34px u Feed-u i 38px u Story-ju, a svaki red u gornjem informativnom bloku ima najmanje 24px razmaka. Feed headline ima 74px, a Story headline 103px, osim kada bi to proizvelo preklapanje sa proizvodom, kada se prioritet daje razdvajanju zona.
 
 ### Product hero i pozadinska podrška
 
 Product hero zauzima najmanje 45% visine Feed-a i najmanje 38% visine Story/Reels Hero kadra kada to kvalitet izvora dopušta, i nikada ne ulazi u zonu teksta. Za transparentan PNG ostaje slobodan, bez pravougaonog rama ili kartice. Podijum se koristi samo kada kompoziciji daje jasno uzemljenje: gornja ravan se vidi ispod proizvoda, prednja masa se može nastaviti iza footera, a dubina dolazi iz geometrije i vektorskog gradijenta, nikada iz senke ili blura.
 
-Pozadina je podrška, ne treći fokus: dozvoljeni su najviše jedan disk ili oval i jedna akcentna linija. Ne smeju značajno ulaziti u headline zonu niti imati jači kontrast od proizvoda.
+Pozadina je podrška, ne treći fokus: dozvoljeni su najviše jedan disk ili oval i jedna akcentna linija. Koristi isti ton iz aktivne teme u glatkom vertikalnom gradijentu, tamnijem gore i svetlijem dole, bez prelaska u drugi `colorSet`. Ne smeju značajno ulaziti u headline zonu niti imati jači kontrast od proizvoda.
 
 ### Footer, CTA i safe zone
 
-Feed koristi `CompactFooter` visine do 18% formata, sa jednim CTA-om, jednom semantičkom Lucide ikonom i brend-završetkom. Feed CTA je najmanje 32px, naziv lanca 26px, a znak 54px. Story koristi footer od 200px **strogo vezan za donju ivicu formata**, sa CTA-om najmanje 38px, nazivom lanca 30px i znakom 64px. Story safe prostor je samo 160px na vrhu i 220px neposredno iznad footera, bez dodatnog praznog pojasa ispod footera. Footer informiše, ali nikada ne nadjačava ponudu ili proizvod, niti zaklanja sadržaj.
+Feed koristi `CompactFooter` visine do 18% formata, sa jednim CTA-om, jednom semantičkom Lucide ikonom i brend-završetkom. Footer je od ostatka kadra uvek odvojen jasnom svetlozelenom linijom. Feed CTA je najmanje 32px, naziv lanca 31px, a znak 65px. Story koristi footer od 200px **strogo vezan za donju ivicu formata**, sa CTA-om najmanje 38px, nazivom lanca 36px i znakom 77px. Story safe prostor je samo 160px na vrhu i 220px neposredno iznad footera, bez dodatnog praznog pojasa ispod footera. Footer informiše, ali nikada ne nadjačava ponudu ili proizvod, niti zaklanja sadržaj.
 
 ### Promo QA pre izvoza
 
@@ -88,6 +88,8 @@ Pre izvoza proveri sledeće. Ako dve ili više stavki nisu prolazne, uradi korek
 10. Grafika jasno prodaje potvrđenu ponudu, a ne samo estetski prikazuje proizvod.
 11. Feed, Story i Reels Hero prikazuju ponudu, identitet proizvoda, najmanje jednu potvrđenu informaciju o proizvodu, rok, dostupnost i čitljiv brend-završetak.
 12. Na umanjenom 25% prikazu proizvod, logo, naziv lanca, CTA i ikone ostaju optički veliki i odmah čitljivi.
+13. Gornji tekstualni blok ima jasan vertikalni ritam, rok je veći i zatvoren u svoj pill, a footer ima svetlozelenu razdvojnu liniju.
+14. Feed, Story i Reels koriste glatki gradijent iz istog aktivnog tona, tamniji na vrhu i svetliji na dnu.
 
 ### Layout architecture i optička kontrola
 
