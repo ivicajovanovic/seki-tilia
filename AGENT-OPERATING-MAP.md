@@ -22,17 +22,12 @@ Kada se dokumenti razlikuju, prednost imaju najnovije korisnikovo uputstvo, zati
 
 ## Obavezan tok rada
 
-1. Pročitaj ovaj dokument, zatim `AGENTS.md` i sve dokumente koje on navodi.
-2. Otvori novi paket komandom `node production/scripts/create-post.mjs --slug "kratak-naziv"`.
-3. Doslovno sačuvaj korisnikov brief u `brief.md`, a originale bez izmene u `source/`. Nerazvrstani privatni materijal može privremeno biti u `client-assets/inbox/`, ali ne ostaje tamo nakon otvaranja paketa.
-4. Popuni `input.json`: potvrđene činjenice, izvore, sva tri obavezna formata, `contentApproach` i `copyFreshnessNote`.
-5. Za lokalnu objavu proveri `brand/brand-config.json`; za sve zdravstvene i produktne tvrdnje proveri izvor ili ih izostavi.
-6. Za produktni vizual pokreni `inspect-assets.mjs` i otvori svetli/tamni pregled. Umereno slabiji klijentov asset odobri kao `approved-with-limitations`, dokumentuj `qualityLimitations` i prilagodi kompoziciju; blokiraj samo kritične defekte iz `blockingDefects`. Svaka korišćena pripremljena kopija mora biti vezana hashom.
-7. Pregledaj sve četiri odobrene reference i poslednje tri evidentirane objave. Izaberi familiju tek nakon `familyFit` provere i popuni `generated/design-direction.json`, uključujući stvarno korišćene `referenceFiles`, dve stvarne intervencije, strukturisani `formatPlan`, formatne adaptacije i Reels ritam.
-8. Napiši sadržaj prema `production/copy-playbook.md`, a tekst za grafiku i `video-props.json` prema potvrđenim činjenicama. Akcija zahteva mehaniku, vrednost, rok i izvor. Kada postoji Reels, `motionTreatment` mora doslovno odgovarati vrednosti u `design-direction.json`.
-9. Napravi prvi draft i sprovedi najmanje jednu stvarnu vizuelnu korekciju. Za korisnu informaciju ili navigaciju koristi odgovarajuću Lucide ikonu, ne dekorativnu.
-10. Pokreni `prepare-visual-review.mjs`, otvori obe comparison table, sve finalne slike, tri Reels ključna kadra i MP4. Popuni `quality-review.json`; nezavisni reviewer mora imati drugi `reviewerId` od `authorId` i raditi direktno nad sirovim artefaktima. Zatim sažmi nalaz u `review.md`.
-11. Pokreni `node production/scripts/check-post.mjs --post productions/GGGG/MM/<id>` i ispravi svaku blokadu pre statusa `SPREMNO ZA LJUDSKU PROVERU`.
+1. Pročitaj ovaj dokument, zatim `AGENTS.md` i sve dokumente koje on navodi. Otvori novi paket, sačuvaj brief/originale, proveri assete i popuni potvrđene činjenice pre prvog produkcionog koraka.
+2. **Korak 1, tekst i Feed:** pripremi caption, tekst za grafiku, props i samo Feed render u `generated/`. Agent korisniku šalje tačno jednu rečenicu izveštaja i ne radi Story dok korisnik izričito ne odobri nastavak. Posle odobrenja evidentira ga: `node production/scripts/advance-post-stage.mjs --post <paket> --approve text-and-feed --report "Jedna rečenica."`.
+3. **Korak 2, Story:** prilagodi odobreni sistem samo za Story i renderuj ga u `generated/`. Agent opet šalje jednu rečenicu izveštaja i čeka izričito odobrenje, zatim evidentira korak sa `--approve story`.
+4. **Korak 3, Reels:** tek nakon odobrenog Story-ja izradi Reels, njegove ključne kadrove i MP4 u `generated/`. Agent šalje jednu rečenicu izveštaja i čeka izričito odobrenje, zatim evidentira korak sa `--approve video`.
+5. **Korak 4, finalizacija:** tek nakon sva tri odobrenja pokreni `node production/scripts/finalize-post.mjs --post <paket>`. Komanda kopira odobren caption, Feed, Story i Reels iz `generated/` u `final/`.
+6. Posle finalizacije uradi obavezni finalni pregled, `prepare-visual-review.mjs`, nezavisan pregled i `check-post.mjs`. Ne menja se sadržaj posle generisanja hash dokaza bez novog pregleda.
 
 ## Pravilo sveže intervencije
 

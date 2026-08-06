@@ -64,6 +64,15 @@ writeFileSync(join(postDirectory, "input.json"), JSON.stringify({
   id,
   date,
   status: "brief-primljen",
+  workflow: {
+    currentStep: "text-and-feed",
+    steps: {
+      "text-and-feed": { status: "pending", report: null, approvedAt: null },
+      story: { status: "pending", report: null, approvedAt: null },
+      video: { status: "pending", report: null, approvedAt: null },
+      finalization: { status: "pending", finalizedAt: null }
+    }
+  },
   postType: null,
   product: null,
   contentApproach: null,

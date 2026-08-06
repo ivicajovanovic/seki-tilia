@@ -46,6 +46,8 @@ Pravougaoni paneli, kartice, podloge proizvoda, footeri i okviri moraju imati o�
 
 ## Kada korisnik pošalje materijale za novu objavu
 
+**Obavezni workflow gate:** Objava se izrađuje u tri produkciona koraka i četvrtoj finalizaciji: (1) tekst i Feed, (2) Story, (3) Reels, (4) kopiranje u `final/`. Posle svakog od prva tri koraka agent daje korisniku tačno jednu rečenicu izveštaja i bez izričitog odobrenja korisnika ne započinje sledeći korak. Odobrenje se evidentira samo posle korisnikove potvrde kroz `node production/scripts/advance-post-stage.mjs --post <paket> --approve <text-and-feed|story|video> --report "Jedna rečenica."`. Tek po sva tri odobrenja agent pokreće `node production/scripts/finalize-post.mjs --post <paket>`, koji kopira odobrene radne izlaze iz `generated/` u `final/`.
+
 1. Otvori novi folder komandom `node production/scripts/create-post.mjs --slug "kratak-naziv"` (po potrebi dodaj `--date GGGG-MM-DD`).
 2. Doslovno sačuvaj korisnikov brief u `brief.md`; izvorne slike stavi u `source/` bez menjanja originala. Sve radne rendere, pregledačke slike i sistemske testove čuvaj isključivo u tom paketu, pod `generated/`; ne ostavljaj ih u `/tmp` ili van `productions/`.
 3. Popuni `input.json`, a zatim napravi predlog sadržaja prema `production/copy-playbook.md`: caption, tekst za grafike i `video-props.json`.

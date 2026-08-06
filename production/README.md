@@ -40,6 +40,26 @@ Pre lokalnih objava proveriti `brand/brand-config.json` i koristiti samo potvrđ
 
 Fotografije apoteka se lokalno čuvaju u `client-assets/locations/<id-lokacije>/`. Fotografije proizvoda, briefovi i finalni materijali za konkretnu objavu idu u njen `source/` folder. Ni jedna od tih datoteka se ne objavljuje na GitHub-u po podrazumevanom pravilu.
 
+## Obavezni koraci sa ljudskim odobrenjem
+
+Paket se ne izrađuje u jednom prolazu. Agent završava samo jedan korak, šalje korisniku tačno jednu rečenicu izveštaja i čeka izričito odobrenje za sledeći korak.
+
+1. **Tekst i Feed:** caption, copy u props-ima i `generated/feed-1080x1350.png`.
+2. **Story:** samo nakon odobrenog Feed-a, `generated/story-1080x1920.png`.
+3. **Reels:** samo nakon odobrenog Story-ja, `generated/reels-1080x1920.mp4` i tri ključna kadra.
+4. **Finalizacija:** samo nakon odobrenog Reels-a, kopiranje odobrenih izlaza u `final/`.
+
+Posle svakog od prva tri koraka agent, tek nakon korisnikovog izričitog odobrenja, evidentira gate i izveštaj:
+
+```bash
+node production/scripts/advance-post-stage.mjs --post productions/.../<id> --approve text-and-feed --report "Jedna rečenica izveštaja."
+node production/scripts/advance-post-stage.mjs --post productions/.../<id> --approve story --report "Jedna rečenica izveštaja."
+node production/scripts/advance-post-stage.mjs --post productions/.../<id> --approve video --report "Jedna rečenica izveštaja."
+node production/scripts/finalize-post.mjs --post productions/.../<id>
+```
+
+Radni izlazi ostaju u `generated/` dok `finalize-post.mjs` ne potvrdi sva tri odobrenja. Pre-flight blokira nov paket čiji workflow nije završen.
+
 ## Režim za AI slike
 
 Podrazumevani režim je **direct-generation**: agent dostupnim generatorom slika pravi potreban originalni vizual, čuva/uvezuje ga uz paket objave i koristi ga u grafici i videu.

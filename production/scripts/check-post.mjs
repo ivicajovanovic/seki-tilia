@@ -349,6 +349,17 @@ if (input?.postType === "akcija" && input?.confirmedOffer?.mechanic && videoProp
 if (!caption) warnings.push("Caption još nije sačuvan u generated/caption.md ili final/caption.md.");
 if (input?.status !== "spremno-za-ljudsku-proveru") errors.push("input.json status nije spremno-za-ljudsku-proveru.");
 if (!review.includes("Status: SPREMNO ZA LJUDSKU PROVERU")) errors.push("review.md nema status SPREMNO ZA LJUDSKU PROVERU.");
+if (input?.workflow) {
+  const workflowSteps = input.workflow.steps;
+  for (const step of ["text-and-feed", "story", "video"]) {
+    if (workflowSteps?.[step]?.status !== "approved" || !workflowSteps?.[step]?.report?.trim()) {
+      errors.push(`Workflow korak ${step} nema evidentirano korisničko odobrenje i jednorečenični izveštaj.`);
+    }
+  }
+  if (input.workflow.currentStep !== "completed" || workflowSteps?.finalization?.status !== "completed") {
+    errors.push("Paket mora završiti četvrti workflow korak, kopiranje iz generated/ u final/, pre pre-flight provere.");
+  }
+}
 if (!existsSync(visualDesignSkillPath)) errors.push("Nedostaje obavezni agent-skills-required/visual-design/SKILL.md.");
 if (videoProps?.designVariant === "premium-product-stage" && !videoProps?.imageSrc?.trim()) {
   errors.push("premium-product-stage zahteva imageSrc, jer proizvod mora biti glavni vizuelni element scene.");
