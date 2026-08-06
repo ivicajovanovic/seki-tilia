@@ -151,7 +151,13 @@ writeFileSync(join(postDirectory, "video-props.json"), JSON.stringify({
   audioTrack: selectedAudioTrack,
   audioVolume: 0.9,
   colorSet: selectedColorSet,
-  colorScheme: selectedColorTheme.id
+  colorScheme: selectedColorTheme.id,
+  primaryMessage: "",
+  secondaryMessage: "",
+  supportMessage: "",
+  retailMessage: "",
+  brandSignature: "AU Šeki-Tilia",
+  promoLayout: "auto"
 }, null, 2) + "\n");
 writeFileSync(join(postDirectory, "generated", "design-direction.json"), JSON.stringify({
   family: null,

@@ -20,6 +20,80 @@ Ovaj dokument pretvara brend vodič i vizuelne reference u operativna pravila za
 - Podijum mora imati jasno čitljivu gornjoku ravan na kojoj proizvod optički stoji stabilno i bez lebđenja. Prednja masa podijuma se produžava iza footera tako da footer preseca njen donji deo, nikada ne ostavlja podijum da visi u praznini. Dubina se dobija samo izraženim vektorskim gradijentima i geometrijom, bez senki ili blur-a.
 - Senke i zamućenja nisu dozvoljeni ni kao vektorski CSS/SVG efekat ni kao rasterski dodatak. Naziv lanca „AU Šeki-Tilia” u brend-footeru mora imati veću i jasniju tipografsku ulogu od pomoćnog reda, i ostati čitljiv na prikazu telefona.
 
+## Promo graphics system
+
+Ovaj sistem se koristi za objave tipa `akcija` i za produktne promocije sa potvrđenom ponudom. Njegova svrha je brzo razumevanje ponude na telefonu: promocija ima prednost nad dekorativnim copy-jem.
+
+### Komunikaciona hijerarhija
+
+Svaki promo `video-props.json` koristi eksplicitne slotove. Za akciju su `primaryMessage`, `secondaryMessage`, `retailMessage` i `brandSignature` obavezni; `supportMessage` postoji samo kada je njegova činjenica potvrđena.
+
+1. `primaryMessage`: potvrđena akcija ili ponuda. To je najveći kontrast i prvi element čitanja.
+2. `secondaryMessage`: naziv proizvoda ili kategorije.
+3. `supportMessage`: kratak, potvrđen benefit ili praktično objašnjenje.
+4. `retailMessage`: potvrđeni rok ili neutralna dostupnost.
+5. `brandSignature`: originalni znak i naziv lanca, bez podloge.
+
+Naslov koji opisuje rutinu, kategoriju ili korist nikada ne sme preuzeti ulogu `primaryMessage` kada je tema potvrđena akcija. Na vizualu postoje najviše dva dominantna fokusa: ponuda i proizvod.
+
+### Dva master rasporeda
+
+- `PromoFeed45`, aktiviran kroz `promoLayout: "auto"` za 1080×1350, koristi 12-kolonsku logiku sa levom marginom 52px, zaštićenom tekstualnom zonom, product-stageom i compact footerom od 180px. Čitanje je levo ka desno: poruka i proizvod.
+- `PromoStory916`, aktiviran kroz isti `promoLayout: "auto"` za 1080×1920, nije rastegnuti Feed: poruka je gore, proizvod je vertikalno centralan, a CTA završetak je podignut. Kritični sadržaj ne ulazi u gornjih 220px ni donjih 260px Story UI zone.
+- `product-dominant-sticker` je zaseban treći master za situacije kada ambalaža ima prepoznatljivu siluetu i dovoljan kvalitet za veliku skalu. Proizvod je prvi fokus, a kratka potvrđena promo oznaka je sekundarni sticker, bez dodira sa proizvodom ili tekstom. Zahteva `imageSrc`, četiri ključna promo slota i layoutId vrednosti `product-dominant-sticker-feed`, `product-dominant-sticker-story` i `product-dominant-sticker-reel`.
+
+Isti kampanjski sistem zadržava Manrope, izolovan `colorSet`, bedž, tretman proizvoda i footer. Menjaju se osa čitanja, količina praznog prostora, položaj hero proizvoda i CTA, pa Feed i Story ne smeju biti mehanički rastegnuta kopija.
+
+### Komponente i granice copy-ja
+
+- Eyebrow: jedna uppercase linija, niska težina, najviše 28 karaktera.
+- Promo bedž: kratka pill oznaka, najviše 14 karaktera i 45% širine kompozicije. Nije UI dugme.
+- Secondary poruka: najviše dva reda u Feed-u, tri u Story-ju.
+- Support poruka: najviše 65 karaktera i dva reda.
+- Footer CTA: najviše 40 karaktera. Retail red: najviše 55 karaktera.
+- Brand signature: originalan logo bez kartice i naziv lanca, podređen ponudi i proizvodu.
+
+Spacing koristi samo skalu 8, 12, 16, 24, 32, 40, 56 i 72px. Razmak eyebrow–glavna poruka je 24–32px, glavna–support 12–16px, support–bedž 24px, a hero–footer 24–40px.
+
+### Product hero i pozadinska podrška
+
+Product hero zauzima približno 35–50% hero zone i nikada ne ulazi u zonu teksta. Za transparentan PNG ostaje slobodan, bez pravougaonog rama ili kartice. Podijum se koristi samo kada kompoziciji daje jasno uzemljenje: gornja ravan se vidi ispod proizvoda, prednja masa se može nastaviti iza footera, a dubina dolazi iz geometrije i vektorskog gradijenta, nikada iz senke ili blura.
+
+Pozadina je podrška, ne treći fokus: dozvoljeni su najviše jedan disk ili oval i jedna akcentna linija. Ne smeju značajno ulaziti u headline zonu niti imati jači kontrast od proizvoda.
+
+### Footer, CTA i safe zone
+
+Feed koristi `CompactFooter` visine do 18% formata, sa jednim CTA-om, jednom semantičkom Lucide ikonom i brend-završetkom. Story koristi `SafeZoneFooter`, kraći blok podignut iznad donje UI zone. Footer informiše, ali nikada ne nadjačava ponudu ili proizvod, niti zaklanja sadržaj.
+
+### Promo QA pre izvoza
+
+Pre izvoza proveri sledeće. Ako dve ili više stavki nisu prolazne, uradi korekciju i ponovi render pregled.
+
+1. Potvrđena ponuda je prva stvar koju osoba vidi.
+2. Proizvod je drugi dominantan fokus i jasno je prepoznatljiv.
+3. Secondary poruka jasno imenuje proizvod ili kategoriju.
+4. Support shape usmerava pažnju, bez takmičenja sa hero proizvodom.
+5. Footer prenosi jednu praktičnu informaciju bez krađe pažnje.
+6. Logo, CTA i kritični tekst ostaju van Story UI overlap zona.
+7. Tekst je čitljiv na približno 25% prikazu telefona.
+8. Feed i Story očigledno pripadaju istoj kampanji, ali koriste različit raspored.
+9. Ne postoje više od dva dominantna fokusa.
+10. Grafika jasno prodaje potvrđenu ponudu, a ne samo estetski prikazuje proizvod.
+
+### Layout architecture i optička kontrola
+
+Promo masteri koriste tri ose: levu tekstualnu osu, internu osu product-stagea i desnu osu brand/footer kolone. Svaki sadržajni element vezuje se za jednu od njih. Gornji znak se ne prikazuje u promo masterima, jer je puna brand signature već deo strogo poravnatog footera.
+
+- Dozvoljena je jedna primarna masa, jedna sekundarna masa i najviše jedan jak akcent. Product-stage je po pravilu primaran, tekstualna poruka sekundarna, a promo bedž jedini jak akcent. Footer i support geometrija ostaju vizuelno tiši.
+- Slojevi su uvek: pozadina, support shape, product hero sa podijumom, pa eventualni foreground akcent. Support shape, proizvod i podijum čine jednu `ProductHero` komponentu i dele internu centralnu osu.
+- Support shape je jedan disk ili oval, sa najviše jednim akcentnim potezom. Centar mu je vezan za proizvod, ne ulazi u tekstualnu zonu i crop na ivici, kada postoji, mora biti očigledno nameran.
+- Svaki susedni odnos mora biti jasno razdvojen, jasno preklopljen ili poravnat. Slučajne tangencije između teksta, oblika, proizvoda, podijuma, footera i ivice kadra nisu dozvoljene.
+- Naslovni blok ima ograničenu širinu i visinu: do dva reda u Feed-u, do tri u Story-ju. Ručno prilagodi prelom ako je odnos najdužeg i najkraćeg reda ekstreman ili ako poslednji red ostaje izolovano kratak.
+- Vertikalni ritam koristi malu distancu unutar tekstualne grupe, srednju između poruke i product-stagea i veliku pre footera. Praznina je planirani deo ritma, ne preostali prostor.
+- Footer koristi jedinstvenu trokolonsku mrežu `ikona | poruka | brand`, ujednačen padding i optički poravnate baseline. Ima samo jedan funkcionalni akcent, a ne zasebni vizuelni događaj.
+
+U pregledu finala proveri i grayscale prikaz: primarna masa mora ostati prva, sekundarna druga, a footer i support shape ne smeju se izjednačiti sa hero sadržajem.
+
 ## Dizajnerske familije
 
 Za akcije, novitete i proizvode postoje različite kompozicione familije. Izaberi onu koja najbolje odgovara briefu, proizvodu i poslednjim objavama.
