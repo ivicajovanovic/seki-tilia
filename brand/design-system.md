@@ -70,7 +70,7 @@ Pozadina je podrška, ne treći fokus: dozvoljeni su najviše jedan disk ili ova
 
 ### Footer, CTA i safe zone
 
-Feed koristi `CompactFooter` visine do 18% formata, sa jednim CTA-om, jednom semantičkom Lucide ikonom i brend-završetkom. Footer je od ostatka kadra uvek odvojen jasnom svetlozelenom linijom. Feed CTA je najmanje 32px, naziv lanca 31px, a znak 65px. Story koristi footer od 200px **strogo vezan za donju ivicu formata**, sa CTA-om najmanje 38px, nazivom lanca 36px i znakom 77px. Story safe prostor je samo 160px na vrhu i 220px neposredno iznad footera, bez dodatnog praznog pojasa ispod footera. Footer informiše, ali nikada ne nadjačava ponudu ili proizvod, niti zaklanja sadržaj.
+Feed koristi `CompactFooter` visine do 18% formata, sa jednim CTA-om, jednom semantičkom Lucide ikonom i brend-završetkom. Footer je od ostatka kadra uvek odvojen jasnom svetlozelenom linijom. Feed CTA je najmanje 32px, naziv lanca 31px, a znak 65px. Story koristi footer od 200px **strogo vezan za donju ivicu formata**, sa CTA-om najmanje 38px, nazivom lanca 36px i znakom 77px. Story safe prostor je 112px na vrhu i 220px neposredno iznad footera, bez dodatnog praznog pojasa ispod footera. Gornji informativni blok ostaje visoko, a visoki transparentni proizvod se uvećava i vertikalno oslanja na vidljivu gornju ravan podijuma. Footer informiše, ali nikada ne nadjačava ponudu ili proizvod, niti zaklanja sadržaj.
 
 ### Promo QA pre izvoza
 

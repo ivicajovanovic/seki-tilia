@@ -67,7 +67,7 @@ const promoDarkBackground = `linear-gradient(180deg, color-mix(in srgb, ${colors
 const promoTokens = {
   spacing: { xs: 8, sm: 12, md: 16, lg: 24, xl: 32, xxl: 40, page: 56, section: 72 },
   feed: { textAxis: 52, textWidth: 480, productAxis: "74%", logoAxis: 1028, top: 312, heroBottom: 196, footer: 196 },
-  story: { textAxis: 72, textWidth: 820, productAxis: "50%", logoAxis: 1008, safeTop: 160, safeBottom: 220, heroTop: 500, heroBottom: 1720, footer: 200 },
+  story: { textAxis: 72, textWidth: 820, productAxis: "50%", logoAxis: 1008, safeTop: 112, safeBottom: 220, heroTop: 500, heroBottom: 1720, footer: 200 },
   copy: { eyebrow: 28, badge: 14, descriptor: 65, detail: 72, deadline: 32, footerPrimary: 40, footerSecondary: 55 },
 } as const;
 
@@ -909,7 +909,7 @@ const PromoProductHero: React.FC<{ imageSrc?: string; imageBackground?: VideoPro
       <div style={{ bottom: story ? 174 : 0, height: story ? (dominant ? 900 : 800) : (dominant ? 860 : 800), left: story ? promoTokens.story.productAxis : promoTokens.feed.productAxis, position: "absolute", translate: "-50% 0", width: story ? (dominant ? 820 : 780) : (dominant ? 720 : 640) }}>
         <PromoSupportShape story={story} />
         <CleanPodium story={story} width={story ? 680 : 540} bottom={story ? -330 : -96} treatment="hero" />
-        <ProductImage imageSrc={imageSrc} style={{ bottom: story ? -10 : 84, height: imageBackground === "transparent" ? (tall ? (dominant ? "94%" : "91%") : (dominant ? "86%" : "82%")) : (dominant ? "80%" : "75%"), left: "50%", maxWidth: "90%", objectPosition: "center bottom", opacity: product, position: "absolute", scale: interpolate(product, [0, 1], [0.92, 1]) * breathScale, translate: `-50% ${interpolate(product, [0, 1], [44, 0], { extrapolateRight: "clamp" }) + floatY}px`, zIndex: 5 }} />
+        <ProductImage imageSrc={imageSrc} style={{ bottom: story ? -50 : 84, height: imageBackground === "transparent" ? (tall ? (dominant ? "98%" : "91%") : (dominant ? "86%" : "82%")) : (dominant ? "80%" : "75%"), left: "50%", maxWidth: "90%", objectPosition: "center bottom", opacity: product, position: "absolute", scale: interpolate(product, [0, 1], [0.92, 1]) * breathScale, translate: `-50% ${interpolate(product, [0, 1], [44, 0], { extrapolateRight: "clamp" }) + floatY}px`, zIndex: 5 }} />
       </div>
     </div>
   );

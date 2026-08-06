@@ -12,6 +12,7 @@ Ovaj dokument je početna tačka rada u repou AU Šeki-Tilia. Služi da agent od
 | Plan sadržaja | `brand/content-framework.md` | rubriku, format i ulogu objave u seriji |
 | Potvrđeni podaci o ograncima | `brand/brand-config.json` | adresu, telefon i radno vreme samo za lokalnu objavu |
 | Copy i bezbednost | `production/copy-playbook.md`, `production/content-safety-rules.md` | caption, CTA, hashtagove, tvrdnje i blokade |
+| Obavezni copywriting skill | `agent-skills-required/copywriting/SKILL.md` | jasnoću, konkretnu vrednost, aktivan CTA i redakturu copy-ja u svim formatima |
 | Životni ciklus materijala | `production/artifact-lifecycle.md` | privremeni ulaz, aktivni paket, arhiva i bezbedno uklanjanje |
 | Dizajnerski sistem i varijacije | `brand/design-system.md` | familiju, `signature`, svežu intervenciju i proveru poslednje tri objave |
 | Obavezni vizuelni skill | `agent-skills-required/visual-design/SKILL.md` | art direkciju, kompoziciju, obradu i pregled rendera |
@@ -23,7 +24,7 @@ Kada se dokumenti razlikuju, prednost imaju najnovije korisnikovo uputstvo, zati
 ## Obavezan tok rada
 
 1. Pročitaj ovaj dokument, zatim `AGENTS.md` i sve dokumente koje on navodi. Otvori novi paket, sačuvaj brief/originale, proveri assete i popuni potvrđene činjenice pre prvog produkcionog koraka.
-2. **Korak 1, tekst i Feed:** pripremi caption, tekst za grafiku, props i tačno jedan Feed render u `generated/`. Nema paralelnih varijanti, alternativnih kadrova ni audit-rendera: agent bira jednu namernu kompoziciju i koriguje je pre zamene istog izlaznog fajla. Agent korisniku šalje tačno jednu rečenicu izveštaja i ne radi Story dok korisnik izričito ne odobri nastavak. Posle odobrenja evidentira ga: `node production/scripts/advance-post-stage.mjs --post <paket> --approve text-and-feed --report "Jedna rečenica."`.
+2. **Korak 1, tekst i Feed:** pre copy-ja pročitaj obavezni lokalni copywriting skill, zatim pripremi caption, tekst za grafiku, props i tačno jedan Feed render u `generated/`. Nema paralelnih varijanti, alternativnih kadrova ni audit-rendera: agent bira jednu namernu kompoziciju i koriguje je pre zamene istog izlaznog fajla. Agent korisniku šalje tačno jednu rečenicu izveštaja i ne radi Story dok korisnik izričito ne odobri nastavak. Posle odobrenja evidentira ga: `node production/scripts/advance-post-stage.mjs --post <paket> --approve text-and-feed --report "Jedna rečenica."`.
 3. **Korak 2, Story:** prilagodi odobreni sistem samo za Story i renderuj tačno jedan Story izlaz u `generated/`; bez varijanti ili paralelnih rendera. Agent opet šalje jednu rečenicu izveštaja i čeka izričito odobrenje, zatim evidentira korak sa `--approve story`.
 4. **Korak 3, Reels:** tek nakon odobrenog Story-ja izradi tačno jedan Reels MP4 i njegov obavezni set od tri ključna kadra u `generated/`; kadrovi su dokazi jednog videa, ne varijante. Agent šalje jednu rečenicu izveštaja i čeka izričito odobrenje, zatim evidentira korak sa `--approve video`.
 5. **Korak 4, finalizacija:** tek nakon sva tri odobrenja pokreni `node production/scripts/finalize-post.mjs --post <paket>`. Komanda kopira odobren caption, Feed, Story i Reels iz `generated/` u `final/`.

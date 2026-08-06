@@ -2,6 +2,17 @@
 
 Ovo su radna pravila za LLM agente i ljudsku redakturu. Cilj nije da tekst zvuči kao reklama, već da jasno, korisno i mirno poveže lokalnu apoteku sa konkretnom potrebom osobe koja čita.
 
+## Obavezni copywriting postupak
+
+Pre svakog novog ili izmenjenog copy-ja agent obavezno čita `agent-skills-required/copywriting/SKILL.md`. Postupak važi za caption, on-canvas copy, headline, hook, CTA, Story tekst, Reels tekst i titlove.
+
+1. Najpre iz potvrđenog briefa izdvaja jednu akciju koju osoba treba da preduzme, jednu konkretnu vrednost i samo proverene činjenice.
+2. Piše jasno pre kreativnog: jedna ideja po bloku, aktivne i kratke rečenice, konkretan naziv proizvoda, akcije ili dostupnosti umesto praznih marketinških izraza.
+3. Proverava da CTA navodi radnju i ono što osoba dobija, ali za zdravstveno osetljive kategorije ostaje nenametljiv, na primer „Pogledajte ponudu u najbližoj apoteci.”
+4. Pre izlaza uklanja žargon, pasiv, neproverene koristi, senzacionalizam, veštačku hitnost, uzvičnike i obećanja ishoda.
+
+Bezbednosna pravila, potvrđene činjenice, pravilni srpski jezik i ton AU Šeki-Tilija imaju prednost nad svime iz copywriting skilla. „Benefit” se ne izvodi iz opšteg znanja kada proizvod pripada suplementima, medicinskim sredstvima ili zdravstvenoj kategoriji: može se koristiti samo potvrđena neutralna činjenica, rutina ili dostupnost.
+
 ## Principi na kojima zasnivamo copy
 
 1. **Kontekst pre prodaje.** Prva rečenica mora odmah reći zašto je objava korisna: šta je stiglo, koja je potvrđena akcija ili na koju rutinu/situaciju se odnosi.
