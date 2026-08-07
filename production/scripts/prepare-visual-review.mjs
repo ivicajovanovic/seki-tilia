@@ -17,7 +17,6 @@ if (!postArgument) {
 
 const postDirectory = resolve(postArgument);
 const generatedDirectory = join(postDirectory, "generated");
-const finalDirectory = join(postDirectory, "final");
 const inputPath = join(postDirectory, "input.json");
 const propsPath = join(postDirectory, "video-props.json");
 const directionPath = join(generatedDirectory, "design-direction.json");
@@ -44,24 +43,28 @@ if (requestedFormats.length !== supportedFormats.size || requestedFormats.some((
   process.exit(1);
 }
 const artifactsByFormat = {
-  feed: [{ key: "feed", path: join(finalDirectory, "feed-1080x1350.png") }],
-  story: [{ key: "story", path: join(finalDirectory, "story-1080x1920.png") }],
+  feed: [{ key: "feed", path: join(generatedDirectory, "feed-1080x1350.png") }],
+  story: [{ key: "story", path: join(generatedDirectory, "story-1080x1920.png") }],
   reels: [
     { key: "reelsIntro", path: join(generatedDirectory, "reels-intro.png") },
     { key: "reelsOffer", path: join(generatedDirectory, "reels-offer.png") },
     { key: "reelsClosing", path: join(generatedDirectory, "reels-closing.png") },
-    { key: "reelsMp4", path: join(finalDirectory, "reels-1080x1920.mp4"), comparison: false },
+    { key: "reelsMp4", path: join(generatedDirectory, "reels-1080x1920.mp4"), comparison: false },
   ],
 };
 const requestedArtifacts = requestedFormats.flatMap((format) => artifactsByFormat[format]);
 const comparisonArtifacts = requestedArtifacts.filter((artifact) => artifact.comparison !== false);
 const primaryArtifact = comparisonArtifacts[0];
-const revisionArtifact = requestedFormats.includes("feed")
-  ? { key: "feedDraft", path: join(generatedDirectory, "feed-draft.png"), before: "generated/feed-draft.png", after: "final/feed-1080x1350.png" }
-  : requestedFormats.includes("story")
-    ? { key: "storyDraft", path: join(generatedDirectory, "story-draft.png"), before: "generated/story-draft.png", after: "final/story-1080x1920.png" }
-    : { key: "reelsIntroDraft", path: join(generatedDirectory, "reels-intro-draft.png"), before: "generated/reels-intro-draft.png", after: "generated/reels-intro.png" };
+const revisionCandidates = [
+  { key: "feedDraft", path: join(generatedDirectory, "feed-draft.png"), before: "generated/feed-draft.png", after: "final/feed-1080x1350.png" },
+  { key: "storyDraft", path: join(generatedDirectory, "story-draft.png"), before: "generated/story-draft.png", after: "final/story-1080x1920.png" },
+  { key: "reelsIntroDraft", path: join(generatedDirectory, "reels-intro-draft.png"), before: "generated/reels-intro-draft.png", after: "generated/reels-intro.png" },
+  { key: "reelsOfferDraft", path: join(generatedDirectory, "reels-offer-draft.png"), before: "generated/reels-offer-draft.png", after: "generated/reels-offer.png" },
+  { key: "reelsClosingDraft", path: join(generatedDirectory, "reels-closing-draft.png"), before: "generated/reels-closing-draft.png", after: "generated/reels-closing.png" },
+];
+const revisionArtifact = revisionCandidates.find((candidate) => existsSync(candidate.path)) ?? revisionCandidates[0];
 const rendererPath = join(repositoryRoot, "video-renderer/src/Composition.tsx");
+const reelV2RendererPath = join(repositoryRoot, "video-renderer/src/ReelV2.tsx");
 const rendererCssPath = join(repositoryRoot, "video-renderer/src/index.css");
 const referenceManifestPath = join(repositoryRoot, "brand/design-references/references.json");
 if (!existsSync(referenceManifestPath)) {
@@ -81,6 +84,7 @@ const reviewPath = join(generatedDirectory, "quality-review.json");
 
 const coreSystemPaths = [
   rendererPath,
+  reelV2RendererPath,
   rendererCssPath,
   referenceManifestPath,
   join(repositoryRoot, "brand/brand-config.json"),
@@ -148,6 +152,7 @@ const renderHashes = {
   videoProps: hash(propsPath),
   designDirection: hash(directionPath),
   renderer: hash(rendererPath),
+  reelV2Renderer: hash(reelV2RendererPath),
   rendererCss: hash(rendererCssPath),
   referenceManifest: hash(referenceManifestPath),
   brandConfig: hash(join(repositoryRoot, "brand/brand-config.json")),

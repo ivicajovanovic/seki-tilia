@@ -4,6 +4,7 @@ import { Activity, CalendarDays, CheckCircle2, HeartHandshake, Info, MapPin, Shi
 import { Audio as RemotionAudio } from "@remotion/media";
 import { AbsoluteFill, cancelRender, Composition, continueRender, delayRender, Easing, Img, interpolate, Sequence, spring, staticFile, Still, useCurrentFrame, useVideoConfig } from "remotion";
 import colorPalette from "../../brand/color-palette.json";
+import {ReelV2, ReelV2PropsSchema, reelV2DefaultProps} from "./ReelV2";
 
 type DesignVariant = "product-atelier" | "editorial-split" | "minimal-offer" | "product-card" | "premium-product-stage" | "offer-orbit" | "type-stage" | "gallery-shelf";
 type MotionTreatment = "staged-reveal" | "offer-build" | "detail-cutaway" | "editorial-pan" | "location-close";
@@ -1196,6 +1197,7 @@ export const SekiTiliaPost: React.FC<VideoProps> = (props) => <AbsoluteFill styl
 export const MyComposition: React.FC = () => (
   <>
     <Composition id="SekiTiliaPromo" component={SekiTiliaPromo} durationInFrames={450} fps={30} width={1080} height={1920} defaultProps={{ eyebrow: "Novitet u ponudi", headline: "Pažljivo izabrano za vašu rutinu.", supportingText: "Uskoro stižu konkretne informacije i fotografije proizvoda.", offerLabel: "Saznajte više u apoteci", offerKind: "none", cta: "Posetite najbližu AU Šeki-Tilia apoteku.", locationLine: "AU Šeki-Tilia", productShape: "compact", designVariant: "product-atelier", motionTreatment: "staged-reveal", footerStyle: "brand-full", colorScheme: "calm-studio" }} />
+    <Composition id="SekiTiliaReelV2" component={ReelV2} durationInFrames={240} fps={24} width={1080} height={1920} schema={ReelV2PropsSchema} defaultProps={reelV2DefaultProps} />
     <Still id="SekiTiliaFeed" component={SekiTiliaPost} width={1080} height={1350} defaultProps={{ eyebrow: "Novitet u ponudi", headline: "Pažljivo izabrano za vašu rutinu.", supportingText: "Uskoro stižu konkretne informacije i fotografije proizvoda.", offerLabel: "Saznajte više u apoteci", offerKind: "none", cta: "Posetite AU Šeki-Tilia.", locationLine: "AU Šeki-Tilia", productShape: "compact", designVariant: "product-atelier", footerStyle: "brand-full", colorScheme: "calm-studio" }} />
     <Still id="SekiTiliaStory" component={SekiTiliaPost} width={1080} height={1920} defaultProps={{ eyebrow: "Novitet u ponudi", headline: "Pažljivo izabrano za vašu rutinu.", supportingText: "Uskoro stižu konkretne informacije i fotografije proizvoda.", offerLabel: "Saznajte više u apoteci", offerKind: "none", cta: "Posetite AU Šeki-Tilia.", locationLine: "AU Šeki-Tilia", productShape: "compact", designVariant: "product-atelier", footerStyle: "brand-full", colorScheme: "calm-studio" }} />
   </>

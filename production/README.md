@@ -102,15 +102,26 @@ Za svaku grafičku i video objavu koristi se najmanje jedna semantička ikona iz
 
 ## Renderovanje grafika i videa
 
-Iz foldera `video-renderer/` agent koristi `video-props.json` iz foldera objave.
+Renderer koristi `video-props.json` iz foldera objave.
 
 Za Reels `audioTrack` je obavezan, `audioVolume` je između 0.75 i 1, a renderer učitava numeru od njenog početka i ponavlja je do kraja videa. Pre-flight meri glasnoću finalnog MP4 fajla i blokira tih ili praktično nečujan audio. Tekst sme da se pomera ili skalira samo tokom ulazne i izlazne animacije; nakon pojavljivanja ostaje stabilan, dok kontinuirani pokret nose proizvod i dekorativni elementi.
+
+Podrazumevani `videoTemplate` je `reel-v1`. Samo kada korisnik eksplicitno traži stil `reel-v2`, postavi `input.requestedVideoStyle`, `video-props.videoTemplate` i `design-direction.videoTemplate` na `reel-v2`. Popuni `video-props.reelV2` poljima `brandLabel`, `kicker`, `title`, `subtitle`, `infoLabel`, `infoLines`, `listLabel`, `listItems`, `contactLabel`, `contactLines` i `imageFit`, koristeći isključivo aktuelni brief. Ovaj template traje 10 sekundi pri 24 fps, koristi jedan kumulativni kadar i slobodan proizvod bez postolja; tekst ulazi čistim slide-up/fade pokretom bez trail kopija ili treperenja, a lokacijski akcenat je outline ikona sa vidljivim centrom. Njegova motion gramatika ne predstavlja dozvolu za kopiranje sadržaja referentnog videa.
+
+Iz foldera `video-renderer/` renderuju se statične grafike:
 
 ```bash
 npx remotion still SekiTiliaFeed ../productions/.../final/feed-1080x1350.png --props=../productions/.../video-props.json
 npx remotion still SekiTiliaStory ../productions/.../final/story-1080x1920.png --props=../productions/.../video-props.json
-npx remotion render SekiTiliaPromo ../productions/.../final/reels-1080x1920.mp4 --props=../productions/.../video-props.json
 ```
+
+Iz korena repoa renderuje se Reels:
+
+```bash
+node production/scripts/render-reels.mjs --post productions/.../
+```
+
+`render-reels.mjs` automatski bira `SekiTiliaPromo` za `reel-v1`, odnosno zasebnu kompoziciju `SekiTiliaReelV2` samo kada je `videoTemplate` eksplicitno postavljen na `reel-v2`, i generiše jedan MP4 plus tri dokazna kadra.
 
 Za pregled i uređivanje šablona:
 

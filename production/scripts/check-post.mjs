@@ -23,6 +23,7 @@ const supportedContentApproaches = new Set(["offer-first", "product-context", "r
 const supportedDesignInterventions = new Set(["reading-order", "product-placement", "offer-treatment", "scene-depth", "image-crop", "type-composition", "cta-footer", "icon-role", "motion-rhythm"]);
 const supportedMotionTreatments = new Set(["staged-reveal", "offer-build", "detail-cutaway", "editorial-pan", "location-close"]);
 const supportedFormats = new Set(["feed", "story", "reels"]);
+const supportedVideoTemplates = new Set(["reel-v1", "reel-v2"]);
 const supportedAudioTracks = new Set([
   "mp3/clear-path.mp3",
   "mp3/clear-path-ambient.mp3",
@@ -362,6 +363,21 @@ if (videoProps?.imageSrc?.trim() && !supportedProductShapes.has(videoProps?.prod
   errors.push("video-props.json mora navesti productShape kao wide, compact ili tall kada koristi proizvod.");
 }
 if (!supportedOfferKinds.has(videoProps?.offerKind)) errors.push("video-props.json mora navesti podržan offerKind.");
+const videoTemplate = videoProps?.videoTemplate ?? "reel-v1";
+if (!supportedVideoTemplates.has(videoTemplate)) errors.push("video-props.json koristi nepodržan videoTemplate.");
+if (videoTemplate === "reel-v2") {
+  if (input?.requestedVideoStyle !== "reel-v2") errors.push("reel-v2 se aktivira samo kada input.json beleži eksplicitan korisnički zahtev requestedVideoStyle: reel-v2.");
+  if (designDirection?.videoTemplate !== "reel-v2") errors.push("design-direction.json mora potvrditi videoTemplate: reel-v2.");
+  const reelV2 = videoProps?.reelV2;
+  for (const field of ["brandLabel", "kicker", "title", "infoLabel", "listLabel", "contactLabel"]) {
+    if (!reelV2?.[field]?.trim()) errors.push(`reel-v2 zahteva popunjeno polje reelV2.${field} iz aktuelnog briefa.`);
+  }
+  for (const [field, minimum, maximum] of [["infoLines", 1, 2], ["listItems", 1, 4], ["contactLines", 1, 3]]) {
+    const values = reelV2?.[field];
+    if (!Array.isArray(values) || values.length < minimum || values.length > maximum || values.some((value) => typeof value !== "string" || !value.trim())) errors.push(`reel-v2 polje reelV2.${field} mora imati ${minimum}–${maximum} nepraznih stavki iz aktuelnog briefa.`);
+  }
+}
+if (input?.requestedVideoStyle === "reel-v2" && videoTemplate !== "reel-v2") errors.push("Eksplicitno zatražen reel-v2 mora biti izabran u video-props.json.");
 if (input?.postType === "akcija" && ["deadline", "none"].includes(videoProps?.offerKind)) errors.push("Akcijska objava ne sme koristiti rok kao zamenu za konkretnu mehaniku ponude.");
 if (input?.postType === "akcija" && input?.confirmedOffer?.mechanic && videoProps?.offerKind !== input.confirmedOffer.mechanic) errors.push("offerKind mora odgovarati potvrđenoj mehanici akcije.");
 
@@ -552,8 +568,11 @@ if (requestedFormats.includes("reels")) {
   const reelsPath = resolve(postDirectory, "final/reels-1080x1920.mp4");
   const reelsMedia = existsSync(reelsPath) ? probeMedia(reelsPath) : null;
   const reelsDuration = Number(reelsMedia?.formatDuration ?? reelsMedia?.duration);
-  if (!reelsMedia || Number(reelsMedia.width) !== 1080 || Number(reelsMedia.height) !== 1920 || !Number.isFinite(reelsDuration) || reelsDuration < 11.5 || reelsDuration > 12.5) {
-    errors.push("Finalni Reels mora biti 1080x1920 i trajati približno 12 sekundi.");
+  const durationInRange = videoTemplate === "reel-v2"
+    ? reelsDuration >= 9.8 && reelsDuration <= 10.2
+    : reelsDuration >= 11.5 && reelsDuration <= 15.2;
+  if (!reelsMedia || Number(reelsMedia.width) !== 1080 || Number(reelsMedia.height) !== 1920 || !Number.isFinite(reelsDuration) || !durationInRange) {
+    errors.push(videoTemplate === "reel-v2" ? "Finalni reel-v2 mora biti 1080x1920 i trajati približno 10 sekundi." : "Finalni Reels mora biti 1080x1920 i trajati između približno 12 i 15 sekundi.");
   } else if (!hasAudioStream(reelsPath)) {
     errors.push("Finalni Reels mora sadržati audio stream.");
   } else {
@@ -629,17 +648,21 @@ for (const criterion of requiredQualityCriteria) {
 }
 if (!qualityReview?.weakestArea?.trim()) errors.push("quality-review.json mora imenovati najslabiju preostalu oblast.");
 if (!qualityReview?.revisionEvidence?.issueFound?.trim() || !qualityReview?.revisionEvidence?.changeMade?.trim()) errors.push("Mora biti dokumentovana najmanje jedna stvarna korekcija između drafta i finala.");
-const expectedRevision = requestedFormats.includes("feed")
-  ? { before: "generated/feed-draft.png", after: "final/feed-1080x1350.png", hashKey: "feedDraft" }
-  : requestedFormats.includes("story")
-    ? { before: "generated/story-draft.png", after: "final/story-1080x1920.png", hashKey: "storyDraft" }
-    : { before: "generated/reels-intro-draft.png", after: "generated/reels-intro.png", hashKey: "reelsIntroDraft" };
-if (qualityReview?.revisionEvidence?.before !== expectedRevision.before || qualityReview?.revisionEvidence?.after !== expectedRevision.after) errors.push(`Dokaz revizije mora porediti ${expectedRevision.before} sa ${expectedRevision.after}.`);
+const supportedRevisions = [
+  { before: "generated/feed-draft.png", after: "final/feed-1080x1350.png", hashKey: "feedDraft" },
+  { before: "generated/story-draft.png", after: "final/story-1080x1920.png", hashKey: "storyDraft" },
+  { before: "generated/reels-intro-draft.png", after: "generated/reels-intro.png", hashKey: "reelsIntroDraft" },
+  { before: "generated/reels-offer-draft.png", after: "generated/reels-offer.png", hashKey: "reelsOfferDraft" },
+  { before: "generated/reels-closing-draft.png", after: "generated/reels-closing.png", hashKey: "reelsClosingDraft" },
+];
+const expectedRevision = supportedRevisions.find((candidate) => qualityReview?.revisionEvidence?.before === candidate.before && qualityReview?.revisionEvidence?.after === candidate.after) ?? supportedRevisions[0];
+if (!supportedRevisions.some((candidate) => qualityReview?.revisionEvidence?.before === candidate.before && qualityReview?.revisionEvidence?.after === candidate.after)) errors.push("Dokaz revizije mora porediti podržani draft sa odgovarajućim finalnim artefaktom.");
 const beforePath = qualityReview?.revisionEvidence?.before ? resolve(postDirectory, qualityReview.revisionEvidence.before) : null;
 const afterPath = qualityReview?.revisionEvidence?.after ? resolve(postDirectory, qualityReview.revisionEvidence.after) : null;
 if (!beforePath || !afterPath || !inside(postDirectory, beforePath) || !inside(postDirectory, afterPath) || !existsSync(beforePath) || !existsSync(afterPath) || hashFile(beforePath) === hashFile(afterPath)) errors.push("Draft i final moraju postojati i imati različite hasheve kao dokaz iteracije.");
 if (qualityReview?.independentReview?.performed !== true || qualityReview?.independentReview?.verdict !== "meets-reference-bar" || !qualityReview?.independentReview?.reviewerId?.trim() || qualityReview.independentReview.reviewerId === designDirection?.authorId || qualityReview?.independentReview?.rawArtifactOnly !== true || !qualityReview?.independentReview?.method?.trim() || !qualityReview?.independentReview?.notes?.trim()) errors.push("Nezavisni pregled mora imati drugog reviewerId autora, pregled sirovih artefakata i pozitivan referentni verdict.");
 const rendererPath = resolve(repositoryRoot, "video-renderer/src/Composition.tsx");
+const reelV2RendererPath = resolve(repositoryRoot, "video-renderer/src/ReelV2.tsx");
 const rendererCssPath = resolve(repositoryRoot, "video-renderer/src/index.css");
 for (const [key, relativePath] of [
   ...requestedFormats.flatMap((format) => (renderRequirements[format] ?? []).map((entry) => [entry.hashKey, entry.path])),
@@ -670,6 +693,7 @@ for (const logoFile of Object.values(logoVariantFiles)) {
 }
 const systemHashPaths = [
   ["renderer", rendererPath],
+  ["reelV2Renderer", reelV2RendererPath],
   ["rendererCss", rendererCssPath],
   ["referenceManifest", referenceManifestPath],
   ["brandConfig", resolve(repositoryRoot, "brand/brand-config.json")],
@@ -693,6 +717,7 @@ for (const [key, absolutePath] of [
 }
 
 const renderer = existsSync(rendererPath) ? readFileSync(rendererPath, "utf8") : "";
+const reelV2Renderer = existsSync(reelV2RendererPath) ? readFileSync(reelV2RendererPath, "utf8") : "";
 const rendererCss = existsSync(rendererCssPath) ? readFileSync(rendererCssPath, "utf8") : "";
 if (!renderer.includes("AUSekiManrope") || !renderer.includes("loadFont") || !renderer.includes('staticFile("assets/manrope-latin.woff2")') || !renderer.includes('staticFile("assets/manrope-latin-ext.woff2")') || renderer.includes("Arial")) {
   errors.push("Renderer nema obavezno učitavanje punog Manrope fonta bez fallbacka.");
@@ -727,6 +752,21 @@ if (!renderer.includes("<Sequence") || !renderer.includes("PromoHook") || !rende
 if (!renderer.includes('from "@remotion/media"') || !renderer.includes("<RemotionAudio loop") || !renderer.includes("volume={volume}") || renderer.includes("trimBefore=") || renderer.includes("pillPulse") || renderer.includes("limePulse") || renderer.includes("scale: bgScale")) {
   errors.push("Renderer mora koristiti čujnu MP3 podlogu i stabilan tekst bez pulsiranja nakon ulazne animacije.");
 }
+if (!renderer.includes('id="SekiTiliaReelV2"') || !reelV2Renderer.includes('data-qa="reel-v2-template"') || !reelV2Renderer.includes("const MotionReveal") || !reelV2Renderer.includes("panelEntrance") || !reelV2Renderer.includes("pinEntrance") || !reelV2Renderer.includes("<RemotionAudio loop")) {
+  errors.push("Renderer nema kompletan zaseban reel-v2 template sa kumulativnim reveal ritmom, panelom, spring ikonom i muzičkom podlogom.");
+}
+const reelV2MotionRevealStart = reelV2Renderer.indexOf("const MotionReveal");
+const reelV2MotionRevealEnd = reelV2Renderer.indexOf("const StaticPaper", reelV2MotionRevealStart);
+const reelV2MotionReveal = reelV2MotionRevealStart === -1 ? "" : reelV2Renderer.slice(reelV2MotionRevealStart, reelV2MotionRevealEnd === -1 ? undefined : reelV2MotionRevealEnd);
+if (!reelV2MotionReveal.includes("opacity: progress") || !reelV2MotionReveal.includes("translate:") || /trail|aria-hidden|\.map\(/.test(reelV2MotionReveal)) {
+  errors.push("reel-v2 tekst mora koristiti jedan čist slide-up/fade sloj bez trail kopija ili treperenja.");
+}
+if (/reel-v2-(?:hero-)?podium|podiumEntrance|postolj/i.test(reelV2Renderer)) errors.push("reel-v2 proizvod mora ostati slobodan bez postolja ili podijuma.");
+if (!reelV2Renderer.includes('<MapPin color={palette.accent} fill="none" size={158}') || !reelV2Renderer.includes('strokeWidth={2.6}')) errors.push("reel-v2 veliki lokacijski akcenat mora biti outline MapPin sa vidljivim centrom.");
+if (!reelV2Renderer.includes('staticFile(src.replace(/^\\//, ""))')) errors.push("reel-v2 mora normalizovati vodeću kosu crtu pre staticFile učitavanja /jobs/ asseta.");
+if (!reelV2Renderer.includes("const titleFontSize") || !reelV2Renderer.includes("const kickerFontSize") || !reelV2Renderer.includes('data-qa="reel-v2-logo"')) errors.push("reel-v2 mora zadržati adaptivnu tipografiju i vidljiv originalni logo.");
+if (!reelV2Renderer.includes('data-qa="reel-v2-info-panel"') || !reelV2Renderer.includes("width: 520")) errors.push("reel-v2 informativni panel mora ostati odvojen od produktne zone.");
+if (/\b(?:drop-shadow|box-shadow|shadow|blur)\b/i.test(reelV2Renderer)) errors.push("reel-v2 ne sme koristiti senke ili CSS zamućenje.");
 if (/\b(?:drop-shadow|box-shadow|shadow|blur)\b/i.test(renderer)) errors.push("Renderer ne sme koristiti senke ili blur.");
 for (const qaRole of ["product-stage", "product", "podium", "headline", "cta-footer"]) {
   if (!renderer.includes(`data-qa="${qaRole}"`)) errors.push(`Renderer nema obaveznu QA ulogu ${qaRole}.`);

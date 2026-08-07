@@ -78,6 +78,7 @@ writeFileSync(join(postDirectory, "input.json"), JSON.stringify({
   contentApproach: null,
   copyFreshnessNote: null,
   captionMode: "universal",
+  requestedVideoStyle: null,
   clientFacts: [],
   claims: [],
   confirmedOffer: {
@@ -160,6 +161,7 @@ writeFileSync(join(postDirectory, "video-props.json"), JSON.stringify({
   motionTreatment: "",
   audioTrack: selectedAudioTrack,
   audioVolume: 0.9,
+  videoTemplate: "reel-v1",
   colorSet: selectedColorSet,
   colorScheme: selectedColorTheme.id,
   primaryMessage: "",
@@ -179,6 +181,7 @@ writeFileSync(join(postDirectory, "generated", "design-direction.json"), JSON.st
   designInterventions: [],
   freshInterventionNote: null,
   motionTreatment: null,
+  videoTemplate: "reel-v1",
   colorSet: selectedColorSet,
   colorScheme: selectedColorTheme.id,
   formatAdaptations: { feed: null, story: null, reels: null },

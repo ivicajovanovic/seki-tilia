@@ -155,14 +155,17 @@ const makeFixture = () => {
 
   for (const [source, target] of [
     ["feed.png", join(final, "feed-1080x1350.png")],
+    ["feed.png", join(generated, "feed-1080x1350.png")],
     ["draft.png", join(generated, "feed-draft.png")],
     ["story.png", join(final, "story-1080x1920.png")],
+    ["story.png", join(generated, "story-1080x1920.png")],
     ["intro.png", join(generated, "reels-intro.png")],
     ["offer.png", join(generated, "reels-offer.png")],
     ["closing.png", join(generated, "reels-closing.png")],
     ["reference-comparison.png", join(generated, "reference-comparison.png")],
     ["format-comparison.png", join(generated, "format-comparison.png")],
     ["reels.mp4", join(final, "reels-1080x1920.mp4")],
+    ["reels.mp4", join(generated, "reels-1080x1920.mp4")],
   ]) copyFileSync(join(mediaCache, source), target);
 
   const paths = {
@@ -179,6 +182,7 @@ const makeFixture = () => {
     videoProps: join(postDirectory, "video-props.json"),
     designDirection: join(generated, "design-direction.json"),
     renderer: join(repositoryRoot, "video-renderer/src/Composition.tsx"),
+    reelV2Renderer: join(repositoryRoot, "video-renderer/src/ReelV2.tsx"),
     rendererCss: join(repositoryRoot, "video-renderer/src/index.css"),
     referenceManifest: referenceManifestPath,
     brandConfig: join(repositoryRoot, "brand/brand-config.json"),
@@ -435,6 +439,23 @@ test("renderer drži tekst stabilnim i koristi čujni MP3 segment", () => {
   assert.doesNotMatch(renderer.slice(heroStart, heroEnd), /translateX|translateY|const scale/);
 });
 
+test("reel-v2 zaključava naučene korekcije bez postolja, treperenja i praznog pina", () => {
+  const renderer = readFileSync(join(repositoryRoot, "video-renderer/src/ReelV2.tsx"), "utf8");
+  const revealStart = renderer.indexOf("const MotionReveal");
+  const revealEnd = renderer.indexOf("const StaticPaper", revealStart);
+  const reveal = renderer.slice(revealStart, revealEnd);
+  assert.match(reveal, /opacity: progress/);
+  assert.match(reveal, /translate:/);
+  assert.doesNotMatch(reveal, /trail|aria-hidden|\.map\(/);
+  assert.doesNotMatch(renderer, /reel-v2-(?:hero-)?podium|podiumEntrance|postolj/i);
+  assert.match(renderer, /<MapPin color=\{palette\.accent\} fill="none" size=\{158\} strokeWidth=\{2\.6\}/);
+  assert.match(renderer, /staticFile\(src\.replace\(\/\^\\\/\/, ""\)\)/);
+  assert.match(renderer, /const titleFontSize/);
+  assert.match(renderer, /const kickerFontSize/);
+  assert.match(renderer, /data-qa="reel-v2-logo"/);
+  assert.match(renderer, /data-qa="reel-v2-info-panel"[\s\S]*?width: 520/);
+});
+
 test("logoVariant mora odgovarati neposrednoj logo pozadini", () => {
   const fixture = makeFixture();
   fixture.direction.logoVariant = "on-light";
@@ -465,6 +486,15 @@ test("colorSet mora odgovarati izabranoj renderer temi", () => {
   assert.match(runBlocked(fixture.postDirectory), /mora odgovarati temi calm-studio: legacy/);
 });
 
+test("reel-v2 je blokiran bez eksplicitnog korisničkog zahteva", () => {
+  const fixture = makeFixture();
+  fixture.videoProps.videoTemplate = "reel-v2";
+  fixture.direction.videoTemplate = "reel-v2";
+  writeJson(join(fixture.postDirectory, "video-props.json"), fixture.videoProps);
+  writeJson(join(fixture.generated, "design-direction.json"), fixture.direction);
+  assert.match(runBlocked(fixture.postDirectory), /reel-v2.*eksplicitan/i);
+});
+
 test("create-post nasumično bira dozvoljenu muziku i colorScheme", () => {
   const slug = `audio-rotation-${process.pid}`;
   const date = "2099-12-31";
@@ -476,6 +506,7 @@ test("create-post nasumično bira dozvoljenu muziku i colorScheme", () => {
   const props = JSON.parse(readFileSync(join(postDirectory, "video-props.json"), "utf8"));
   const tracks = ["mp3/clear-path.mp3", "mp3/clear-path-ambient.mp3", "mp3/open-sky-drift.mp3", "mp3/open-sky-drift-chill.mp3", "mp3/paper-sun-parade.mp3", "mp3/paper-sun-parade-upbeat.mp3"];
   const direction = JSON.parse(readFileSync(join(postDirectory, "generated/design-direction.json"), "utf8"));
+  const input = JSON.parse(readFileSync(join(postDirectory, "input.json"), "utf8"));
   const palette = JSON.parse(readFileSync(join(repositoryRoot, "brand/color-palette.json"), "utf8"));
   assert.ok(tracks.includes(props.audioTrack));
   assert.equal(props.audioVolume, 0.9);
@@ -486,6 +517,9 @@ test("create-post nasumično bira dozvoljenu muziku i colorScheme", () => {
   assert.equal(selectedTheme.colorSet, props.colorSet);
   assert.ok([selectedTheme.background, selectedTheme.surface, selectedTheme.dark, selectedTheme.accent, selectedTheme.secondary, selectedTheme.stage, selectedTheme.ink, selectedTheme.logoBackground].every((color) => selectedSet.colors.includes(color)));
   assert.equal(direction.colorScheme, props.colorScheme);
+  assert.equal(props.videoTemplate, "reel-v1");
+  assert.equal(direction.videoTemplate, "reel-v1");
+  assert.equal(input.requestedVideoStyle, null);
   assert.equal(direction.palettePlan.rationale, null);
   assert.equal(JSON.parse(readFileSync(join(postDirectory, "input.json"), "utf8")).requiresProfessionalReview, undefined);
   const firstInputPath = join(postDirectory, "input.json");
