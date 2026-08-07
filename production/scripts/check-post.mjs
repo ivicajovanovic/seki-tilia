@@ -136,6 +136,7 @@ const videoProps = readJson(resolve(postDirectory, "video-props.json"), "video-p
 const designDirection = readJson(resolve(postDirectory, "generated/design-direction.json"), "generated/design-direction.json");
 const assetReview = readJson(resolve(postDirectory, "generated/asset-review.json"), "generated/asset-review.json");
 const qualityReview = readJson(resolve(postDirectory, "generated/quality-review.json"), "generated/quality-review.json");
+const copyReview = readJson(resolve(postDirectory, "generated/copy-review.json"), "generated/copy-review.json");
 const referenceManifestPath = resolve(repositoryRoot, "brand/design-references/references.json");
 const referenceManifest = readJson(referenceManifestPath, "brand/design-references/references.json");
 const approvedReferenceList = Array.isArray(referenceManifest?.approved) ? referenceManifest.approved : [];
@@ -161,8 +162,26 @@ const review = existsSync(reviewPath) ? readFileSync(reviewPath, "utf8") : "";
 const visualDesignSkillPath = resolve(repositoryRoot, "agent-skills-required/visual-design/SKILL.md");
 const captionPath = ["final/caption.md", "generated/caption.md"].map((file) => resolve(postDirectory, file)).find(existsSync);
 const caption = captionPath ? readFileSync(captionPath, "utf8") : "";
+const captionBody = caption.replace(/#[^\s#]+/g, "").trim();
+const captionParagraphs = captionBody.split(/\n\s*\n/).filter(Boolean);
+const forbiddenCaptionPhrases = ["vaše zdravlje je na prvom mestu", "mali korak ka boljem sutra", "otkrijte moć", "ne propustite", "požurite", "najbolja ponuda"];
 
 if (approvedReferenceFiles.size === 0) errors.push("references.json mora sadržati najmanje jednu odobrenu referencu.");
+if (input?.captionMode !== "universal") errors.push("input.json mora potvrditi captionMode: universal, jer isti caption prati Feed, Story i Reels.");
+if (!captionPath) {
+  errors.push("Caption mora biti sačuvan u generated/caption.md ili final/caption.md.");
+} else {
+  if (captionParagraphs.length < 3 || captionBody.length < 220) errors.push("Univerzalni caption mora imati najmanje tri kratka pasusa i dovoljno konteksta, ne samo prepis vizuala.");
+  if (/\b(?:instagram|facebook|reels|story|alternativni hook|tvrdnje i izvori)\b/i.test(caption)) errors.push("caption.md mora sadržati jedan univerzalan tekst, bez odvojenih verzija po formatu ili internog komentara.");
+  if (forbiddenCaptionPhrases.some((phrase) => caption.toLowerCase().includes(phrase))) errors.push("caption.md sadrži generičku marketinšku frazu koju copy gate ne dozvoljava.");
+  const productToken = input?.product?.trim().split(/\s+/)[0]?.toLowerCase();
+  if (productToken && !caption.toLowerCase().includes(productToken)) errors.push("Univerzalni caption mora imenovati aktuelni proizvod.");
+  if (input?.confirmedOffer?.value?.trim() && !caption.toLowerCase().includes(input.confirmedOffer.value.trim().toLowerCase())) errors.push("Univerzalni caption mora jasno navesti potvrđenu vrednost akcije.");
+  if (input?.confirmedOffer?.validUntil && !caption.includes(String(new Date(`${input.confirmedOffer.validUntil}T00:00:00Z`).getUTCFullYear()))) errors.push("Univerzalni caption mora navesti potvrđeni rok akcije.");
+}
+if (!copyReview || copyReview.status !== "approved" || copyReview.captionMode !== "universal" || !copyReview.primaryAction?.trim() || !copyReview.confirmedValue?.trim() || !copyReview.valueAddedBeyondVisual?.trim() || Object.values(copyReview.factualChecks ?? {}).some((value) => value !== true) || Object.values(copyReview.languageReview ?? {}).some((value) => value !== true)) {
+  errors.push("generated/copy-review.json mora potvrditi univerzalan, informativan i jezički pregledan caption.");
+}
 if (paletteIds.size < 2 || safeTextPairs.size === 0 || approvedLogoBackgrounds.size === 0 || Object.keys(approvedLogoPlacements).length === 0) errors.push("color-palette.json mora imati boje, bezbedne tekstualne parove i mapu odobrenih logo-varijanti i pozadina.");
 if (paletteIds.size !== paletteColors.length || paletteColors.some((color) => typeof color?.id !== "string" || !/^#[0-9a-f]{6}$/i.test(color?.hex ?? ""))) errors.push("color-palette.json mora imati jedinstvene ID vrednosti i validne šestocifrene HEX kodove.");
 const relativeLuminance = (hex) => {

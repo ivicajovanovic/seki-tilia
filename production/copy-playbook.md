@@ -182,13 +182,6 @@ Srbija posebno uređuje zdravstvene izjave za hranu i dodatke ishrani, pa se tak
 
 ## Obavezni izlaz agenta za svaki caption
 
-Agent u `generated/caption.md` isporučuje sledeće odvojene delove:
+`generated/caption.md` sadrži jedan gotov, univerzalan tekst za objavu: isti caption prati Feed, Story i Reels. Ne sadrži interne naslove, odvojene verzije po kanalu, tabelu izvora ni alternativne hookove. U tri kratka pasusa mora jasno navesti proizvod i akciju, dodati potvrđeni kontekst koji nije samo prepis grafike i završiti jednim prirodnim CTA-om, zatim relevantnim hashtagovima.
 
-1. `Instagram/Facebook caption`
-2. `Reels caption` (ako se radi video)
-3. `Story tekst` (kratko)
-4. `Hashtagovi`
-5. `Tvrdnje i izvori` — tabela: tvrdnja, izvor, status provere
-6. `Alternativni hook` — jedna dodatna varijanta, bez novih činjenica
-
-Agent ne sme koristiti alternativni hook ako uvodi činjenicu koja nije u izvorima.
+Agent uz njega popunjava `generated/copy-review.json`: primarnu radnju, potvrđenu vrednost, konkretnu informaciju koju caption dodaje vizualu, proveru činjenica i jezički pregled. Pre-flight blokira caption bez ovog dokaza, caption koji ponavlja samo grafiku ili tekst koji deli isti sadržaj na zasebne Feed, Story i Reels verzije.

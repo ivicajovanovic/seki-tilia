@@ -70,6 +70,7 @@ const makeFixture = () => {
     product: "Test tema",
     contentApproach: "local-availability",
     copyFreshnessNote: "Testira neutralan ugao dostupnosti, različit od poslednje tri objave.",
+    captionMode: "universal",
     clientFacts: [],
     claims: [],
     confirmedOffer: { mechanic: null, value: null, regularPrice: null, promoPrice: null, validFrom: null, validUntil: null, source: null },
@@ -140,7 +141,17 @@ const makeFixture = () => {
   writeJson(join(generated, "design-direction.json"), direction);
   writeJson(join(generated, "asset-review.json"), { version: 1, assets: [] });
   writeFileSync(join(postDirectory, "review.md"), "# Provera\n\nStatus: SPREMNO ZA LJUDSKU PROVERU\n");
-  writeFileSync(join(final, "caption.md"), "Test caption za ručnu proveru.\n");
+  writeFileSync(join(final, "caption.md"), "Test tema je dostupna u AU Šeki-Tilia apotekama i donosi jasnu praktičnu informaciju za osobu koja prati objavu.\n\nUz objavu su navedene proverene informacije o ponudi i dostupnosti, kako biste imali dovoljno konteksta pre posete.\n\nSvratite do najbliže apoteke i pogledajte ponudu.\n\n#AUSekiTilia\n");
+  writeJson(join(generated, "copy-review.json"), {
+    version: 1,
+    status: "approved",
+    captionMode: "universal",
+    primaryAction: "Svratite do najbliže apoteke i pogledajte ponudu.",
+    confirmedValue: "Dostupnost u AU Šeki-Tilia apotekama.",
+    valueAddedBeyondVisual: "Caption objašnjava dostupnost i sledeći korak.",
+    factualChecks: { product: true, offer: true, deadline: true, availability: true },
+    languageReview: { serbianLatin: true, naturalTone: true, noUnsupportedClaims: true, noGenericPhrases: true }
+  });
 
   for (const [source, target] of [
     ["feed.png", join(final, "feed-1080x1350.png")],
@@ -386,6 +397,19 @@ test("Reels zahteva postojeću dozvoljenu numeru i audioVolume u opsegu", () => 
   const output = runBlocked(fixture.postDirectory);
   assert.match(output, /važeći audioTrack/);
   assert.match(output, /audioVolume mora biti broj između 0.75 i 1/);
+});
+
+test("univerzalni caption mora imati sadržajni i jezički copy review", () => {
+  const fixture = makeFixture();
+  fixture.input.captionMode = "separate";
+  writeJson(join(fixture.postDirectory, "input.json"), fixture.input);
+  writeFileSync(join(fixture.final, "caption.md"), "Instagram caption\n\nAkcija.\n");
+  writeJson(join(fixture.generated, "copy-review.json"), { version: 1, status: "pending" });
+  const output = runBlocked(fixture.postDirectory);
+  assert.match(output, /captionMode: universal/);
+  assert.match(output, /najmanje tri kratka pasusa/);
+  assert.match(output, /jedan univerzalan tekst/);
+  assert.match(output, /copy-review\.json/);
 });
 
 test("Reels bez stvarnog audio streama ne prolazi", () => {

@@ -77,6 +77,7 @@ writeFileSync(join(postDirectory, "input.json"), JSON.stringify({
   product: null,
   contentApproach: null,
   copyFreshnessNote: null,
+  captionMode: "universal",
   clientFacts: [],
   claims: [],
   confirmedOffer: {
@@ -207,6 +208,16 @@ writeFileSync(join(postDirectory, "generated", "design-direction.json"), JSON.st
   validatedRenders: []
 }, null, 2) + "\n");
 writeFileSync(join(postDirectory, "generated", "asset-review.json"), JSON.stringify({ version: 1, generatedAt: null, assets: [] }, null, 2) + "\n");
+writeFileSync(join(postDirectory, "generated", "copy-review.json"), JSON.stringify({
+  version: 1,
+  status: "pending",
+  captionMode: "universal",
+  primaryAction: null,
+  confirmedValue: null,
+  valueAddedBeyondVisual: null,
+  factualChecks: { product: false, offer: false, deadline: false, availability: false },
+  languageReview: { serbianLatin: false, naturalTone: false, noUnsupportedClaims: false, noGenericPhrases: false }
+}, null, 2) + "\n");
 writeFileSync(join(postDirectory, "generated", "quality-review.json"), JSON.stringify({
   version: 1,
   status: "pending",
