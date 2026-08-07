@@ -702,10 +702,10 @@ for (const family of ["offer-orbit", "type-stage", "gallery-shelf"]) {
     errors.push(`Renderer nema podržanu familiju ${family}.`);
   }
 }
-if (!renderer.includes("<Sequence") || !renderer.includes("PromoHook") || !renderer.includes('data-qa="reels-hook"') || !renderer.includes('data-qa="reels-closing"') || !renderer.includes("motionTreatment") || !renderer.includes("HeroScene")) {
+if (!renderer.includes("<Sequence") || !renderer.includes("PromoHook") || !renderer.includes('data-qa="reels-hook"') || !renderer.includes('data-qa="reels-closing"') || !renderer.includes("motionTreatment") || !renderer.includes("HeroScene") || !renderer.includes("const reelsTiming") || !renderer.includes("reelsTiming.hook") || !renderer.includes("reelsTiming.hero") || !renderer.includes("reelsTiming.closing")) {
   errors.push("Renderer nema stvarni višescenski Reels tok sa čisim HeroScene tranzicijama (bez preklapanja u 8. i 9. sekundi).");
 }
-if (!renderer.includes('from "@remotion/media"') || !renderer.includes("trimBefore={30 * fps}") || renderer.includes("pillPulse") || renderer.includes("limePulse") || renderer.includes("scale: bgScale")) {
+if (!renderer.includes('from "@remotion/media"') || !renderer.includes("<RemotionAudio loop") || !renderer.includes("volume={volume}") || renderer.includes("trimBefore=") || renderer.includes("pillPulse") || renderer.includes("limePulse") || renderer.includes("scale: bgScale")) {
   errors.push("Renderer mora koristiti čujnu MP3 podlogu i stabilan tekst bez pulsiranja nakon ulazne animacije.");
 }
 if (/\b(?:drop-shadow|box-shadow|shadow|blur)\b/i.test(renderer)) errors.push("Renderer ne sme koristiti senke ili blur.");

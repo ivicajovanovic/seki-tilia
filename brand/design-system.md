@@ -91,6 +91,8 @@ Pre izvoza proveri sledeće. Ako dve ili više stavki nisu prolazne, uradi korek
 13. Gornji tekstualni blok ima jasan vertikalni ritam, rok je veći i zatvoren u svoj pill, a footer ima svetlozelenu razdvojnu liniju.
 14. Feed, Story i Reels koriste glatki gradijent iz istog aktivnog tona, tamniji na vrhu i svetliji na dnu.
 15. Reels uvod, hero i završetak koriste fazni ritam: identitet, ponuda, detalj/rok i proizvod ne ulaze u istom trenutku. Svaki ulazak ima čitljiv interval zadržavanja, dok tekst nakon ulaska ostaje stabilan.
+16. Reels renderer čuva eksplicitnu `reelsTiming` mapu. U svakom kadru susedni sadržajni beatovi su najmanje 18 frejmova udaljeni, a poslednji beat ima najmanje 24 frejma zadržavanja pre tranzicije. Produžavanje trajanja videa bez raspodele beatova nije dozvoljena zamena za režiju.
+17. Hook i Closing imaju zasebnu kompozicionu mrežu: najviše jedna tekstualna kolona do 48% širine, dominantan slobodan proizvod u svojoj zoni i optički planiran odnos praznog prostora. Pre prolaza agent pregleda vremenske uzorke na početku, posle svakog beata i neposredno pre svake tranzicije, ne samo tri reprezentativna kadra.
 
 ### Layout architecture i optička kontrola
 

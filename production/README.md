@@ -104,7 +104,7 @@ Za svaku grafičku i video objavu koristi se najmanje jedna semantička ikona iz
 
 Iz foldera `video-renderer/` agent koristi `video-props.json` iz foldera objave.
 
-Za Reels `audioTrack` je obavezan, `audioVolume` je između 0.75 i 1, a renderer koristi čujni deo numere nakon njenog tihog uvoda. Pre-flight meri glasnoću finalnog MP4 fajla i blokira tih ili praktično nečujan audio. Tekst sme da se pomera ili skalira samo tokom ulazne i izlazne animacije; nakon pojavljivanja ostaje stabilan, dok kontinuirani pokret nose proizvod i dekorativni elementi.
+Za Reels `audioTrack` je obavezan, `audioVolume` je između 0.75 i 1, a renderer učitava numeru od njenog početka i ponavlja je do kraja videa. Pre-flight meri glasnoću finalnog MP4 fajla i blokira tih ili praktično nečujan audio. Tekst sme da se pomera ili skalira samo tokom ulazne i izlazne animacije; nakon pojavljivanja ostaje stabilan, dok kontinuirani pokret nose proizvod i dekorativni elementi.
 
 ```bash
 npx remotion still SekiTiliaFeed ../productions/.../final/feed-1080x1350.png --props=../productions/.../video-props.json

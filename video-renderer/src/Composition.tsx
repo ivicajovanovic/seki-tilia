@@ -71,6 +71,13 @@ const promoTokens = {
   copy: { eyebrow: 28, badge: 14, descriptor: 65, detail: 72, deadline: 32, footerPrimary: 40, footerSecondary: 55 },
 } as const;
 
+/** Explicit Reels choreography. Each beat has its own reading interval, never a simultaneous reveal. */
+const reelsTiming = {
+  hook: { identity: 8, offer: 34, product: 60, detail: 84, deadline: 104 },
+  hero: { eyebrow: 0, offer: 18, headline: 36, detail: 54, deadline: 72, product: 90, footer: 112 },
+  closing: { logo: 0, brand: 18, product: 38, title: 58, offer: 80, cta: 104 },
+} as const;
+
 const cut = (value: string | undefined, max: number) => (value ?? "").trim().slice(0, max);
 const promoStack = (props: VideoProps) => ({
   // In a promotion the confirmed offer is always the primary message.
@@ -898,9 +905,9 @@ const PromoSupportShape: React.FC<{ story: boolean }> = ({ story }) => (
   </div>
 );
 
-const PromoProductHero: React.FC<{ imageSrc?: string; imageBackground?: VideoProps["imageBackground"]; productShape?: ProductShape; story: boolean; animated?: boolean; dominant?: boolean }> = ({ imageSrc, imageBackground, productShape, story, animated = false, dominant = false }) => {
+const PromoProductHero: React.FC<{ imageSrc?: string; imageBackground?: VideoProps["imageBackground"]; productShape?: ProductShape; story: boolean; animated?: boolean; dominant?: boolean; entranceDelay?: number }> = ({ imageSrc, imageBackground, productShape, story, animated = false, dominant = false, entranceDelay = 22 }) => {
   const frame = useCurrentFrame();
-  const product = useSpringEntrance(animated, 22, { damping: 13, stiffness: 80, mass: 0.8 });
+  const product = useSpringEntrance(animated, entranceDelay, { damping: 16, stiffness: 60, mass: 0.9 });
   const tall = productShape === "tall";
   const floatY = animated ? Math.sin(frame * 0.05) * 5 : 0;
   const breathScale = animated ? 1 + Math.sin(frame * 0.04) * 0.012 : 1;
@@ -915,8 +922,8 @@ const PromoProductHero: React.FC<{ imageSrc?: string; imageBackground?: VideoPro
   );
 };
 
-const PromoFooter: React.FC<{ cta: string; retail: string; brand: string; story: boolean }> = ({ cta, retail, brand, story }) => (
-  <div data-qa="cta-footer" style={{ alignItems: "center", backgroundColor: colors.petrol, borderTop: `6px solid ${colors.lime}`, bottom: 0, boxSizing: "border-box", color: colors.cream, display: "grid", gridTemplateColumns: story ? "76px minmax(0, 1fr) 334px" : "64px minmax(0, 1fr) 290px", height: story ? promoTokens.story.footer : promoTokens.feed.footer, columnGap: story ? 20 : 18, left: 0, padding: story ? "26px 72px" : "24px 52px", position: "absolute", right: 0, zIndex: 20 }}>
+const PromoFooter: React.FC<{ cta: string; retail: string; brand: string; story: boolean; opacity?: number }> = ({ cta, retail, brand, story, opacity = 1 }) => (
+  <div data-qa="cta-footer" style={{ alignItems: "center", backgroundColor: colors.petrol, borderTop: `6px solid ${colors.lime}`, bottom: 0, boxSizing: "border-box", color: colors.cream, display: "grid", gridTemplateColumns: story ? "76px minmax(0, 1fr) 334px" : "64px minmax(0, 1fr) 290px", height: story ? promoTokens.story.footer : promoTokens.feed.footer, columnGap: story ? 20 : 18, left: 0, opacity, padding: story ? "26px 72px" : "24px 52px", position: "absolute", right: 0, zIndex: 20 }}>
     <MapPin color={colors.lime} size={story ? 44 : 38} strokeWidth={2.1} />
     <div style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: 0 }}>
       <div style={{ fontSize: story ? 38 : 32, fontWeight: 800, lineHeight: 1.08 }}>{cut(cta, promoTokens.copy.footerPrimary)}</div>
@@ -952,21 +959,26 @@ const PromoFeed45: React.FC<VideoProps & { animated?: boolean }> = (props) => {
 
 const PromoStory916: React.FC<VideoProps & { animated?: boolean }> = (props) => {
   const { primary, secondary, support, detail, deadline, retail, brand } = promoStack(props);
-  const intro = useSpringEntrance(Boolean(props.animated), 0);
-  const headline = useSpringEntrance(Boolean(props.animated), 8);
+  const animated = Boolean(props.animated);
+  const intro = useSpringEntrance(animated, reelsTiming.hero.eyebrow, { damping: 18, stiffness: 58, mass: 0.9 });
+  const offer = useSpringEntrance(animated, reelsTiming.hero.offer, { damping: 18, stiffness: 56, mass: 0.9 });
+  const headline = useSpringEntrance(animated, reelsTiming.hero.headline, { damping: 18, stiffness: 54, mass: 0.9 });
+  const productDetail = useSpringEntrance(animated, reelsTiming.hero.detail, { damping: 18, stiffness: 52, mass: 0.9 });
+  const deadlineEntrance = useSpringEntrance(animated, reelsTiming.hero.deadline, { damping: 18, stiffness: 50, mass: 0.9 });
+  const footer = useSpringEntrance(animated, reelsTiming.hero.footer, { damping: 20, stiffness: 48, mass: 0.9 });
   return (
     <AbsoluteFill data-qa="promo-story-template" style={{ background: promoLightBackground, color: colors.petrol, fontFamily: brandFontFamily, overflow: "hidden" }}>
       <div style={{ boxSizing: "border-box", left: promoTokens.story.centeredTextAxis, position: "absolute", top: promoTokens.story.safeTop, width: promoTokens.story.textWidth, zIndex: 6 }}>
         <div style={{ fontSize: 28, fontWeight: 800, letterSpacing: 3, opacity: intro, textAlign: "center", textTransform: "uppercase", whiteSpace: "nowrap" }}>{cut(props.eyebrow, promoTokens.copy.eyebrow)}</div>
         <div style={{ alignItems: "center", display: "flex", flexDirection: "column", gap: promoTokens.spacing.xl, marginTop: 38, textAlign: "center" }}>
-          <PromoBadge label={primary} story />
+          <div style={{ opacity: offer, translate: `0 ${interpolate(offer, [0, 1], [34, 0])}px` }}><PromoBadge label={primary} story /></div>
           <div data-qa="headline" style={{ fontSize: 103, fontWeight: 800, letterSpacing: -5, lineHeight: 0.9, maxHeight: 290, maxWidth: "92%", opacity: headline, overflow: "hidden", whiteSpace: "pre-line" }}>{secondary}</div>
-          <PromoProductDetail detail={detail || support} story />
-          <PromoDeadline deadline={deadline} story />
+          <div style={{ opacity: productDetail, translate: `0 ${interpolate(productDetail, [0, 1], [30, 0])}px` }}><PromoProductDetail detail={detail || support} story /></div>
+          <div style={{ opacity: deadlineEntrance, translate: `0 ${interpolate(deadlineEntrance, [0, 1], [26, 0])}px` }}><PromoDeadline deadline={deadline} story /></div>
         </div>
       </div>
-      <div style={{ bottom: 1920 - promoTokens.story.heroBottom, left: 0, position: "absolute", right: 0, top: promoTokens.story.heroTop, zIndex: 3 }}><PromoProductHero {...props} story /></div>
-      <PromoFooter brand={brand} cta={props.cta} retail={retail} story />
+      <div style={{ bottom: 1920 - promoTokens.story.heroBottom, left: 0, position: "absolute", right: 0, top: promoTokens.story.heroTop, zIndex: 3 }}><PromoProductHero {...props} animated={animated} entranceDelay={reelsTiming.hero.product} story /></div>
+      <PromoFooter brand={brand} cta={props.cta} opacity={footer} retail={retail} story />
     </AbsoluteFill>
   );
 };
@@ -1028,12 +1040,12 @@ const Variant: React.FC<VideoProps & { animated?: boolean }> = (props) => {
 const PromoHook: React.FC<VideoProps & { durationInFrames: number }> = ({ durationInFrames, eyebrow, headline, offerLabel, primaryMessage, secondaryMessage, productDetailMessage, deadlineMessage, imageSrc, locationLine, motionTreatment = "staged-reveal" }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const hookDelay = motionTreatment === "detail-cutaway" ? 8 : 2;
-  const hookSpring = frame >= hookDelay + 45 ? 1 : spring({ frame: Math.max(0, frame - hookDelay), fps, config: { damping: 14, stiffness: motionTreatment === "offer-build" ? 72 : 85 } });
-  const offerSpring = spring({ frame: Math.max(0, frame - 16), fps, config: { damping: 16, stiffness: 68 } });
-  const detailSpring = spring({ frame: Math.max(0, frame - 32), fps, config: { damping: 18, stiffness: 62 } });
-  const deadlineSpring = spring({ frame: Math.max(0, frame - 44), fps, config: { damping: 18, stiffness: 60 } });
-  const productSpring = spring({ frame: Math.max(0, frame - 54), fps, config: { damping: 16, stiffness: 58, mass: 0.9 } });
+  const hookDelay = motionTreatment === "detail-cutaway" ? 8 : reelsTiming.hook.identity;
+  const hookSpring = spring({ frame: Math.max(0, frame - hookDelay), fps, config: { damping: 18, stiffness: 56, mass: 0.9 } });
+  const offerSpring = spring({ frame: Math.max(0, frame - reelsTiming.hook.offer), fps, config: { damping: 18, stiffness: 54, mass: 0.9 } });
+  const detailSpring = spring({ frame: Math.max(0, frame - reelsTiming.hook.detail), fps, config: { damping: 18, stiffness: 52, mass: 0.9 } });
+  const deadlineSpring = spring({ frame: Math.max(0, frame - reelsTiming.hook.deadline), fps, config: { damping: 18, stiffness: 50, mass: 0.9 } });
+  const productSpring = spring({ frame: Math.max(0, frame - reelsTiming.hook.product), fps, config: { damping: 16, stiffness: 54, mass: 0.9 } });
   const opacity = interpolate(frame, [0, fps * 0.4, Math.max(fps * 0.4, durationInFrames - 18), durationInFrames], [0, 1, 1, 0], { easing: easeOut, extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const primary = primaryMessage?.trim() || offerLabel;
   const title = secondaryMessage?.trim() || headline;
@@ -1057,8 +1069,8 @@ const PromoHook: React.FC<VideoProps & { durationInFrames: number }> = ({ durati
       {isEditorialPan && <div aria-hidden="true" style={{ border: `9px solid ${colors.lime}`, borderRadius: "50%", height: 760, position: "absolute", right: editorialTravel - 260, top: 370, width: 760 }} />}
       {isLocationClose && <div aria-hidden="true" style={{ background: `linear-gradient(145deg, ${colors.petrol} 0%, ${colors.aqua} 100%)`, borderRadius: "50%", height: 760, position: "absolute", right: -520, top: 420, width: 760 }} />}
       <div style={{ alignItems: "center", display: "flex", justifyContent: "space-between", position: "relative", zIndex: 2 }}>
-        <div style={{ color: isLocationClose ? colors.petrol : colors.lime, fontSize: isOfferBuild ? 58 : 34, fontWeight: 800, letterSpacing: isOfferBuild ? -1.5 : 3.4, lineHeight: 1.05, maxWidth: isOfferBuild ? 620 : 760 }}>{lead}</div>
-        <LogoMark background={isLocationClose ? "light" : "dark"} size={70} />
+        <div style={{ color: isLocationClose ? colors.petrol : colors.lime, fontSize: isOfferBuild ? 58 : 34, fontWeight: 800, letterSpacing: isOfferBuild ? -1.5 : 3.4, lineHeight: 1.05, maxWidth: isOfferBuild ? 620 : 760, opacity: hookSpring, translate: `0 ${interpolate(hookSpring, [0, 1], [30, 0])}px` }}>{lead}</div>
+        <div style={{ opacity: hookSpring, translate: `0 ${interpolate(hookSpring, [0, 1], [24, 0])}px` }}><LogoMark background={isLocationClose ? "light" : "dark"} size={70} /></div>
       </div>
       <div style={{ bottom: isOfferBuild ? undefined : isLocationClose ? 560 : 480, color: isOfferBuild ? colors.lime : undefined, fontSize: isOfferBuild ? 112 : isDetailCutaway ? 112 : 126, fontWeight: 800, left: 84, letterSpacing: -7, lineHeight: 0.88, maxWidth: isOfferBuild ? 520 : isDetailCutaway ? 680 : 850, opacity: offerSpring, position: "absolute", top: isOfferBuild ? 520 : undefined, translate: horizontalEntrance ? `${titleTranslate}px 0` : `0 ${interpolate(offerSpring, [0, 1], [42, 0])}px`, whiteSpace: "pre-line", zIndex: 2 }}>{isOfferBuild ? primary : title}</div>
       <div style={{ backgroundColor: isLocationClose ? colors.petrol : colors.lime, bottom: isOfferBuild ? undefined : isLocationClose ? 472 : 398, height: 8, left: 84, opacity: offerSpring, position: "absolute", scale: `${barPulse} 1`, top: isOfferBuild ? 690 : undefined, transformOrigin: "left center", width: interpolate(lineProgress, [0, 1], [0, isEditorialPan ? 520 : 360]), zIndex: 2 }} />
@@ -1083,19 +1095,16 @@ const PromoHook: React.FC<VideoProps & { durationInFrames: number }> = ({ durati
   );
 };
 
-const Closing: React.FC<Pick<VideoProps, "cta" | "imageSrc" | "locationLine" | "motionTreatment" | "offerLabel" | "productShape" | "primaryMessage" | "secondaryMessage" | "productDetailMessage" | "retailMessage" | "brandSignature">> = ({ offerLabel, primaryMessage, secondaryMessage, productDetailMessage, retailMessage, brandSignature, cta, imageSrc, locationLine, motionTreatment = "staged-reveal" }) => {
+const Closing: React.FC<Pick<VideoProps, "cta" | "imageSrc" | "locationLine" | "offerLabel" | "productShape" | "primaryMessage" | "secondaryMessage" | "retailMessage" | "brandSignature">> = ({ offerLabel, primaryMessage, secondaryMessage, retailMessage, brandSignature, cta, imageSrc, locationLine }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const opacity = interpolate(frame, [0, fps * 0.35], [0, 1], { easing: easeOut, extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const isLocationClose = motionTreatment === "location-close";
-  const isOfferBuild = motionTreatment === "offer-build";
-  const logoSpring = spring({ frame: Math.max(0, frame - (isLocationClose ? 10 : 2)), fps, config: { damping: 16, stiffness: 68 } });
-  const productSpring = spring({ frame: Math.max(0, frame - (isOfferBuild ? 28 : 16)), fps, config: { damping: 16, stiffness: 62, mass: 0.9 } });
-  const brandSpring = spring({ frame: Math.max(0, frame - 22), fps, config: { damping: 18, stiffness: 62 } });
-  const titleSpring = spring({ frame: Math.max(0, frame - 38), fps, config: { damping: 18, stiffness: 60 } });
-  const offerSpring = spring({ frame: Math.max(0, frame - 54), fps, config: { damping: 18, stiffness: 58 } });
-  const detailSpring = spring({ frame: Math.max(0, frame - 68), fps, config: { damping: 18, stiffness: 56 } });
-  const ctaSpring = spring({ frame: Math.max(0, frame - 82), fps, config: { damping: 20, stiffness: 54 } });
+  const logoSpring = spring({ frame: Math.max(0, frame - reelsTiming.closing.logo), fps, config: { damping: 18, stiffness: 56, mass: 0.9 } });
+  const productSpring = spring({ frame: Math.max(0, frame - reelsTiming.closing.product), fps, config: { damping: 16, stiffness: 54, mass: 0.9 } });
+  const brandSpring = spring({ frame: Math.max(0, frame - reelsTiming.closing.brand), fps, config: { damping: 18, stiffness: 54, mass: 0.9 } });
+  const titleSpring = spring({ frame: Math.max(0, frame - reelsTiming.closing.title), fps, config: { damping: 18, stiffness: 52, mass: 0.9 } });
+  const offerSpring = spring({ frame: Math.max(0, frame - reelsTiming.closing.offer), fps, config: { damping: 18, stiffness: 50, mass: 0.9 } });
+  const ctaSpring = spring({ frame: Math.max(0, frame - reelsTiming.closing.cta), fps, config: { damping: 20, stiffness: 46, mass: 0.9 } });
 
   // Continuous float and breath in Closing scene
   const floatY = Math.sin(frame * 0.05) * 6;
@@ -1131,9 +1140,10 @@ const Closing: React.FC<Pick<VideoProps, "cta" | "imageSrc" | "locationLine" | "
         <div style={{ fontSize: 68, fontWeight: 800, letterSpacing: -3, lineHeight: 0.96, opacity: brandSpring, translate: `0 ${interpolate(brandSpring, [0, 1], [30, 0])}px` }}>{brand}</div>
         <div style={{ fontSize: 46, fontWeight: 800, lineHeight: 1.06, opacity: titleSpring, translate: `0 ${interpolate(titleSpring, [0, 1], [30, 0])}px` }}>{cut(secondaryMessage, 44)}</div>
         <div data-qa="promo-primary" style={{ color: colors.lime, fontSize: 94, fontWeight: 800, letterSpacing: -4.8, lineHeight: 0.9, maxHeight: 140, opacity: offerSpring, overflow: "hidden", translate: `0 ${interpolate(offerSpring, [0, 1], [30, 0])}px` }}>{cut(primary, promoTokens.copy.badge)}</div>
-        {productDetailMessage?.trim() && <div data-qa="promo-product-detail" style={{ fontSize: 36, fontWeight: 700, lineHeight: 1.12, opacity: detailSpring, translate: `0 ${interpolate(detailSpring, [0, 1], [26, 0])}px` }}>{cut(productDetailMessage, promoTokens.copy.detail)}</div>}
-        {!isDuplicateCta && <div style={{ fontSize: 48, fontWeight: 700, lineHeight: 1.12, opacity: ctaSpring, translate: `0 ${interpolate(ctaSpring, [0, 1], [26, 0])}px` }}>{cut(cta, promoTokens.copy.footerPrimary)}</div>}
-        <div style={{ opacity: ctaSpring, translate: `0 ${interpolate(ctaSpring, [0, 1], [26, 0])}px` }}><LocationMarker label={retail} size={38} /></div>
+      </div>
+      <div data-qa="promo-closing-cta" style={{ bottom: 150, display: "flex", flexDirection: "column", gap: 20, left: 88, maxWidth: 430, opacity: ctaSpring, position: "absolute", translate: `0 ${interpolate(ctaSpring, [0, 1], [26, 0])}px`, zIndex: 3 }}>
+        {!isDuplicateCta && <div style={{ fontSize: 48, fontWeight: 700, lineHeight: 1.12 }}>{cut(cta, promoTokens.copy.footerPrimary)}</div>}
+        <LocationMarker label={retail} size={38} />
       </div>
     </AbsoluteFill>
   );
@@ -1158,23 +1168,23 @@ const HeroScene: React.FC<VideoProps & { durationInFrames: number }> = ({ durati
 };
 
 const motionPlans: Record<MotionTreatment, { hookDuration: number; heroFrom: number; heroDuration: number; closingFrom: number; closingDuration: number }> = {
-  "staged-reveal": { hookDuration: 92, heroFrom: 78, heroDuration: 250, closingFrom: 328, closingDuration: 122 },
-  "offer-build": { hookDuration: 110, heroFrom: 96, heroDuration: 226, closingFrom: 322, closingDuration: 128 },
-  "detail-cutaway": { hookDuration: 88, heroFrom: 74, heroDuration: 252, closingFrom: 326, closingDuration: 124 },
-  "editorial-pan": { hookDuration: 98, heroFrom: 84, heroDuration: 244, closingFrom: 328, closingDuration: 122 },
-  "location-close": { hookDuration: 82, heroFrom: 70, heroDuration: 250, closingFrom: 320, closingDuration: 130 },
+  "staged-reveal": { hookDuration: 150, heroFrom: 138, heroDuration: 182, closingFrom: 320, closingDuration: 130 },
+  "offer-build": { hookDuration: 150, heroFrom: 138, heroDuration: 182, closingFrom: 320, closingDuration: 130 },
+  "detail-cutaway": { hookDuration: 150, heroFrom: 138, heroDuration: 182, closingFrom: 320, closingDuration: 130 },
+  "editorial-pan": { hookDuration: 150, heroFrom: 138, heroDuration: 182, closingFrom: 320, closingDuration: 130 },
+  "location-close": { hookDuration: 150, heroFrom: 138, heroDuration: 182, closingFrom: 320, closingDuration: 130 },
 };
 
 export const SekiTiliaPromo: React.FC<VideoProps> = (props) => {
-  const { fps } = useVideoConfig();
   const plan = motionPlans[props.motionTreatment ?? "staged-reveal"];
   const rawTrack = props.audioTrack?.trim() || "paper-sun-parade.mp3";
   const audioSrc = rawTrack.startsWith("mp3/") ? rawTrack : `mp3/${rawTrack}`;
-  const volume = props.audioVolume ?? 0.9;
+  // A Reels export always carries an audible licensed track. Clamp here as a final renderer-side guard.
+  const volume = Math.min(1, Math.max(0.75, props.audioVolume ?? 0.9));
 
   return (
     <AbsoluteFill style={paletteStyle(props.colorScheme)}>
-      <RemotionAudio src={staticFile(audioSrc)} trimBefore={30 * fps} volume={volume} />
+      <RemotionAudio loop src={staticFile(audioSrc)} volume={volume} />
       <Sequence durationInFrames={plan.hookDuration} premountFor={30}><PromoHook {...props} durationInFrames={plan.hookDuration} /></Sequence>
       <Sequence from={plan.heroFrom} durationInFrames={plan.heroDuration} premountFor={30}><HeroScene {...props} durationInFrames={plan.heroDuration} /></Sequence>
       <Sequence from={plan.closingFrom} durationInFrames={plan.closingDuration} premountFor={30}><Closing {...props} /></Sequence>

@@ -403,7 +403,7 @@ test("Reels sa praktično nečujnom muzikom ne prolazi", () => {
 test("renderer drži tekst stabilnim i koristi čujni MP3 segment", () => {
   const renderer = readFileSync(join(repositoryRoot, "video-renderer/src/Composition.tsx"), "utf8");
   assert.match(renderer, /from "@remotion\/media"/);
-  assert.match(renderer, /trimBefore=\{30 \* fps\}/);
+  assert.match(renderer, /<RemotionAudio loop src=\{staticFile\(audioSrc\)\} volume=\{volume\} \/>/);
   assert.match(renderer, /frame >= delayFrames \+ 45/);
   assert.doesNotMatch(renderer, /pillPulse|limePulse|scale: bgScale/);
   const heroStart = renderer.indexOf("const HeroScene");
