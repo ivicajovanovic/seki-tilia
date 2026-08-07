@@ -446,14 +446,40 @@ test("reel-v2 zaključava naučene korekcije bez postolja, treperenja i praznog 
   const reveal = renderer.slice(revealStart, revealEnd);
   assert.match(reveal, /opacity: progress/);
   assert.match(reveal, /translate:/);
+  assert.match(reveal, /Math\.round/);
+  assert.match(reveal, /translateY/);
+  assert.match(reveal, /const settled = frame >= end/);
+  assert.match(reveal, /settled \? \{position: "relative"\}/);
   assert.doesNotMatch(reveal, /trail|aria-hidden|\.map\(/);
   assert.doesNotMatch(renderer, /reel-v2-(?:hero-)?podium|podiumEntrance|postolj/i);
   assert.match(renderer, /<MapPin color=\{palette\.accent\} fill="none" size=\{158\} strokeWidth=\{2\.6\}/);
   assert.match(renderer, /staticFile\(src\.replace\(\/\^\\\/\/, ""\)\)/);
   assert.match(renderer, /const titleFontSize/);
   assert.match(renderer, /const kickerFontSize/);
+  assert.match(renderer, /unicodeRange: latinUnicodeRange/);
+  assert.match(renderer, /unicodeRange: latinExtUnicodeRange/);
+  assert.match(renderer, /document\.fonts\.load\(`600 48px/);
+  assert.match(renderer, /document\.fonts\.load\(`700 48px/);
+  assert.match(renderer, /document\.fonts\.load\(`800 112px/);
   assert.match(renderer, /data-qa="reel-v2-logo"/);
   assert.match(renderer, /data-qa="reel-v2-info-panel"[\s\S]*?width: 520/);
+});
+
+test("Reels render koristi viši kvalitet da statičan tekst ne shimmeruje", () => {
+  const renderScript = readFileSync(join(repositoryRoot, "production/scripts/render-reels.mjs"), "utf8");
+  assert.match(renderScript, /"--crf=12"/);
+});
+
+test("oba Reels šablona čuvaju donje poteze promotivnih slova", () => {
+  const reelV1 = readFileSync(join(repositoryRoot, "video-renderer/src/Composition.tsx"), "utf8");
+  const reelV2 = readFileSync(join(repositoryRoot, "video-renderer/src/ReelV2.tsx"), "utf8");
+  for (const renderer of [reelV1, reelV2]) {
+    assert.match(renderer, /const descenderSafeText/);
+    assert.match(renderer, /lineHeight: 1\.02/);
+    assert.match(renderer, /paddingBottom: "0\.12em"/);
+  }
+  assert.match(reelV1, /data-qa="promo-primary" style=\{\{ \.\.\.descenderSafeText/);
+  assert.match(reelV2, /qa="reel-v2-headline"[\s\S]*?\.\.\.descenderSafeText/);
 });
 
 test("logoVariant mora odgovarati neposrednoj logo pozadini", () => {

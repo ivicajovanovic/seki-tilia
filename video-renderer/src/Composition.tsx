@@ -63,6 +63,7 @@ const colors = {
 
 const promoLightBackground = `linear-gradient(180deg, color-mix(in srgb, ${colors.cream} 80%, black) 0%, ${colors.cream} 52%, color-mix(in srgb, ${colors.cream} 75%, white) 100%)`;
 const promoDarkBackground = `linear-gradient(180deg, color-mix(in srgb, ${colors.petrol} 80%, black) 0%, ${colors.petrol} 52%, color-mix(in srgb, ${colors.petrol} 75%, white) 100%)`;
+const descenderSafeText: React.CSSProperties = { lineHeight: 1.02, paddingBottom: "0.12em" };
 
 /** Shared, measurable rules for promotional Feed and Story layouts. */
 const promoTokens = {
@@ -1073,7 +1074,7 @@ const PromoHook: React.FC<VideoProps & { durationInFrames: number }> = ({ durati
         <div style={{ color: isLocationClose ? colors.petrol : colors.lime, fontSize: isOfferBuild ? 58 : 34, fontWeight: 800, letterSpacing: isOfferBuild ? -1.5 : 3.4, lineHeight: 1.05, maxWidth: isOfferBuild ? 620 : 760, opacity: hookSpring, translate: `0 ${interpolate(hookSpring, [0, 1], [30, 0])}px` }}>{lead}</div>
         <div style={{ opacity: hookSpring, translate: `0 ${interpolate(hookSpring, [0, 1], [24, 0])}px` }}><LogoMark background={isLocationClose ? "light" : "dark"} size={70} /></div>
       </div>
-      <div style={{ bottom: isOfferBuild ? undefined : isLocationClose ? 560 : 480, color: isOfferBuild ? colors.lime : undefined, fontSize: isOfferBuild ? 112 : isDetailCutaway ? 112 : 126, fontWeight: 800, left: 84, letterSpacing: -7, lineHeight: 0.88, maxWidth: isOfferBuild ? 520 : isDetailCutaway ? 680 : 850, opacity: offerSpring, position: "absolute", top: isOfferBuild ? 520 : undefined, translate: horizontalEntrance ? `${titleTranslate}px 0` : `0 ${interpolate(offerSpring, [0, 1], [42, 0])}px`, whiteSpace: "pre-line", zIndex: 2 }}>{isOfferBuild ? primary : title}</div>
+      <div style={{ ...descenderSafeText, bottom: isOfferBuild ? undefined : isLocationClose ? 560 : 480, color: isOfferBuild ? colors.lime : undefined, fontSize: isOfferBuild ? 112 : isDetailCutaway ? 112 : 126, fontWeight: 800, left: 84, letterSpacing: -7, maxWidth: isOfferBuild ? 520 : isDetailCutaway ? 680 : 850, opacity: offerSpring, position: "absolute", top: isOfferBuild ? 520 : undefined, translate: horizontalEntrance ? `${titleTranslate}px 0` : `0 ${interpolate(offerSpring, [0, 1], [42, 0])}px`, whiteSpace: "pre-line", zIndex: 2 }}>{isOfferBuild ? primary : title}</div>
       <div style={{ backgroundColor: isLocationClose ? colors.petrol : colors.lime, bottom: isOfferBuild ? undefined : isLocationClose ? 472 : 398, height: 8, left: 84, opacity: offerSpring, position: "absolute", scale: `${barPulse} 1`, top: isOfferBuild ? 690 : undefined, transformOrigin: "left center", width: interpolate(lineProgress, [0, 1], [0, isEditorialPan ? 520 : 360]), zIndex: 2 }} />
       {isOfferBuild && (
         <div data-qa="reels-product-detail" style={{ alignItems: "center", display: "flex", gap: 14, left: 84, maxWidth: 520, opacity: detailSpring, position: "absolute", top: 750, translate: `0 ${interpolate(detailSpring, [0, 1], [28, 0])}px`, zIndex: 2 }}>
@@ -1140,7 +1141,7 @@ const Closing: React.FC<Pick<VideoProps, "cta" | "imageSrc" | "locationLine" | "
         </div>
         <div style={{ fontSize: 68, fontWeight: 800, letterSpacing: -3, lineHeight: 0.96, opacity: brandSpring, translate: `0 ${interpolate(brandSpring, [0, 1], [30, 0])}px` }}>{brand}</div>
         <div style={{ fontSize: 46, fontWeight: 800, lineHeight: 1.06, opacity: titleSpring, translate: `0 ${interpolate(titleSpring, [0, 1], [30, 0])}px` }}>{cut(secondaryMessage, 44)}</div>
-        <div data-qa="promo-primary" style={{ color: colors.lime, fontSize: 94, fontWeight: 800, letterSpacing: -4.8, lineHeight: 0.9, maxHeight: 140, opacity: offerSpring, overflow: "hidden", translate: `0 ${interpolate(offerSpring, [0, 1], [30, 0])}px` }}>{cut(primary, promoTokens.copy.badge)}</div>
+        <div data-qa="promo-primary" style={{ ...descenderSafeText, color: colors.lime, fontSize: 94, fontWeight: 800, letterSpacing: -4.8, maxHeight: 156, opacity: offerSpring, overflow: "hidden", translate: `0 ${interpolate(offerSpring, [0, 1], [30, 0])}px` }}>{cut(primary, promoTokens.copy.badge)}</div>
       </div>
       <div data-qa="promo-closing-cta" style={{ bottom: 150, display: "flex", flexDirection: "column", gap: 20, left: 88, maxWidth: 430, opacity: ctaSpring, position: "absolute", translate: `0 ${interpolate(ctaSpring, [0, 1], [26, 0])}px`, zIndex: 3 }}>
         {!isDuplicateCta && <div style={{ fontSize: 48, fontWeight: 700, lineHeight: 1.12 }}>{cut(cta, promoTokens.copy.footerPrimary)}</div>}

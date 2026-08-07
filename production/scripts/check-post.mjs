@@ -761,10 +761,12 @@ const reelV2MotionReveal = reelV2MotionRevealStart === -1 ? "" : reelV2Renderer.
 if (!reelV2MotionReveal.includes("opacity: progress") || !reelV2MotionReveal.includes("translate:") || /trail|aria-hidden|\.map\(/.test(reelV2MotionReveal)) {
   errors.push("reel-v2 tekst mora koristiti jedan čist slide-up/fade sloj bez trail kopija ili treperenja.");
 }
+if (!reelV2MotionReveal.includes("Math.round") || !reelV2MotionReveal.includes("translateY") || !reelV2MotionReveal.includes("const settled = frame >= end") || !reelV2MotionReveal.includes('settled ? {position: "relative"}')) errors.push("reel-v2 tekst mora koristiti celobrojne piksele i ukloniti animaciona CSS svojstva čim se ulazak završi.");
 if (/reel-v2-(?:hero-)?podium|podiumEntrance|postolj/i.test(reelV2Renderer)) errors.push("reel-v2 proizvod mora ostati slobodan bez postolja ili podijuma.");
 if (!reelV2Renderer.includes('<MapPin color={palette.accent} fill="none" size={158}') || !reelV2Renderer.includes('strokeWidth={2.6}')) errors.push("reel-v2 veliki lokacijski akcenat mora biti outline MapPin sa vidljivim centrom.");
 if (!reelV2Renderer.includes('staticFile(src.replace(/^\\//, ""))')) errors.push("reel-v2 mora normalizovati vodeću kosu crtu pre staticFile učitavanja /jobs/ asseta.");
 if (!reelV2Renderer.includes("const titleFontSize") || !reelV2Renderer.includes("const kickerFontSize") || !reelV2Renderer.includes('data-qa="reel-v2-logo"')) errors.push("reel-v2 mora zadržati adaptivnu tipografiju i vidljiv originalni logo.");
+if (!renderer.includes("const descenderSafeText") || !renderer.includes('paddingBottom: "0.12em"') || !reelV2Renderer.includes("const descenderSafeText") || !reelV2Renderer.includes('paddingBottom: "0.12em"')) errors.push("Oba Reels šablona moraju čuvati descender-safe prostor za slova g, j, p, q i y u promotivnom tekstu.");
 if (!reelV2Renderer.includes('data-qa="reel-v2-info-panel"') || !reelV2Renderer.includes("width: 520")) errors.push("reel-v2 informativni panel mora ostati odvojen od produktne zone.");
 if (/\b(?:drop-shadow|box-shadow|shadow|blur)\b/i.test(reelV2Renderer)) errors.push("reel-v2 ne sme koristiti senke ili CSS zamućenje.");
 if (/\b(?:drop-shadow|box-shadow|shadow|blur)\b/i.test(renderer)) errors.push("Renderer ne sme koristiti senke ili blur.");

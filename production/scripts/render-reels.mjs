@@ -34,7 +34,7 @@ const run = (commandArgs) => {
   if (result.status !== 0) process.exit(result.status ?? 1);
 };
 
-run(["remotion", "render", composition, join(generatedDirectory, "reels-1080x1920.mp4"), `--props=${propsPath}`]);
+run(["remotion", "render", composition, join(generatedDirectory, "reels-1080x1920.mp4"), `--props=${propsPath}`, "--crf=12"]);
 for (const [index, name] of ["reels-intro.png", "reels-offer.png", "reels-closing.png"].entries()) {
   run(["remotion", "still", composition, join(generatedDirectory, name), `--frame=${evidenceFrames[index]}`, `--props=${propsPath}`]);
 }

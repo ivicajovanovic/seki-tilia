@@ -122,6 +122,7 @@ node production/scripts/render-reels.mjs --post productions/.../
 ```
 
 `render-reels.mjs` automatski bira `SekiTiliaPromo` za `reel-v1`, odnosno zasebnu kompoziciju `SekiTiliaReelV2` samo kada je `videoTemplate` eksplicitno postavljen na `reel-v2`, i generiše jedan MP4 plus tri dokazna kadra.
+Oba izlaza koriste `CRF 12`; `reel-v2` dodatno kvantizuje tekstualni slide-up na cele piksele i registruje lokalne Manrope podskupove sa eksplicitnim `unicode-range` vrednostima. Time se sprečavaju i subpikselni shimmer i Chromiumovo naizmenično rasterizovanje latin/latin-ext font-face slojeva između susednih frejmova.
 
 Za pregled i uređivanje šablona:
 

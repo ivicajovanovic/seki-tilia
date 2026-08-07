@@ -67,18 +67,24 @@ export const reelV2DefaultProps: ReelV2Props = {
 };
 
 const fontFamily = "AUSekiManrope";
+const latinUnicodeRange = "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD";
+const latinExtUnicodeRange = "U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF";
 let fontRequested = false;
 const fontPromise = Promise.all([
-  loadFont({display: "block", family: fontFamily, format: "woff2", url: staticFile("assets/manrope-latin.woff2"), weight: "200 800"}),
-  loadFont({display: "block", family: fontFamily, format: "woff2", url: staticFile("assets/manrope-latin-ext.woff2"), weight: "200 800"}),
+  loadFont({display: "block", family: fontFamily, format: "woff2", unicodeRange: latinUnicodeRange, url: staticFile("assets/manrope-latin.woff2"), weight: "200 800"}),
+  loadFont({display: "block", family: fontFamily, format: "woff2", unicodeRange: latinExtUnicodeRange, url: staticFile("assets/manrope-latin-ext.woff2"), weight: "200 800"}),
 ]);
 
 const ensureFont = () => {
   if (fontRequested) return;
   fontRequested = true;
   const handle = delayRender("Loading Reel V2 Manrope font");
-  void fontPromise.then(() => document.fonts.load(`800 112px "${fontFamily}"`)).then(async () => {
-    if (!document.fonts.check(`800 112px "${fontFamily}"`)) throw new Error("Manrope font nije dostupan za reel-v2.");
+  void fontPromise.then(() => Promise.all([
+    document.fonts.load(`600 48px "${fontFamily}"`),
+    document.fonts.load(`700 48px "${fontFamily}"`),
+    document.fonts.load(`800 112px "${fontFamily}"`),
+  ])).then(async () => {
+    if (![600, 700, 800].every((weight) => document.fonts.check(`${weight} 112px "${fontFamily}"`))) throw new Error("Manrope font nije dostupan za reel-v2.");
     await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
     continueRender(handle);
   }).catch((error) => cancelRender(error));
@@ -94,12 +100,15 @@ const resolvePalette = (schemeId: string) => {
 
 const easeOut = Easing.bezier(0.16, 1, 0.3, 1);
 const clamp = {extrapolateLeft: "clamp" as const, extrapolateRight: "clamp" as const};
+const descenderSafeText: React.CSSProperties = {lineHeight: 1.02, paddingBottom: "0.12em"};
 
 const MotionReveal: React.FC<{children: React.ReactNode; start: number; end: number; distance?: number; qa?: string}> = ({children, start, end, distance = 54, qa}) => {
   const frame = useCurrentFrame();
   const progress = interpolate(frame, [start, end], [0, 1], {...clamp, easing: easeOut});
+  const translateY = Math.round(interpolate(progress, [0, 1], [distance, 0]));
+  const settled = frame >= end;
   return (
-    <div data-qa={qa} style={{opacity: progress, position: "relative", translate: `0 ${interpolate(progress, [0, 1], [distance, 0])}px`}}>
+    <div data-qa={qa} style={settled ? {position: "relative"} : {opacity: progress, position: "relative", translate: `0 ${translateY}px`}}>
       <div style={{position: "relative"}}>{children}</div>
     </div>
   );
@@ -172,7 +181,7 @@ export const ReelV2: React.FC<ReelV2Props> = (props) => {
         </MotionReveal>
         <div style={{marginTop: 64}}>
           <MotionReveal end={50} start={40}><div style={{fontSize: kickerFontSize, fontWeight: 600, lineHeight: 1.08}}>{reelV2.kicker}</div></MotionReveal>
-          <MotionReveal end={63} qa="reel-v2-headline" start={52}><div style={{fontSize: titleFontSize, fontWeight: 800, letterSpacing: -5.5, lineHeight: 0.88, marginTop: 22, maxHeight: 266, overflow: "hidden"}}>{reelV2.title}</div></MotionReveal>
+          <MotionReveal end={63} qa="reel-v2-headline" start={52}><div style={{...descenderSafeText, fontSize: titleFontSize, fontWeight: 800, letterSpacing: -5.5, marginTop: 22, maxHeight: 306, overflow: "hidden"}}>{reelV2.title}</div></MotionReveal>
           {reelV2.subtitle && <MotionReveal end={72} start={62}><div style={{fontSize: 48, fontWeight: 700, lineHeight: 1.04, marginTop: 26}}>{reelV2.subtitle}</div></MotionReveal>}
         </div>
       </div>
